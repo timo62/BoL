@@ -1,5 +1,5 @@
 local ToUpdate = {}
-  ToUpdate.Version = 0.1
+  ToUpdate.Version = 1.1
   DelayAction(function()
   ToUpdate.UseHttps = true
   ToUpdate.Host = "raw.githubusercontent.com"
