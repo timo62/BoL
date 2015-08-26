@@ -1,4 +1,4 @@
-local version = "1.130"
+local version = "0.1"
 local AUTOUPDATE = true
 local UPDATE_HOST = "raw.github.com"
 local UPDATE_PATH = "/HiranN/BoL/master/scripts/Teste.lua".."?rand="..math.random(1,10000)
