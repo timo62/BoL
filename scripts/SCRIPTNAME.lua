@@ -2,7 +2,7 @@ local version = "1.2"
 local AUTOUPDATE = true
 local UPDATE_HOST = "raw.github.com"
 local UPDATE_PATH = "/HiranN/BoL/scripts/SCRIPTNAME.lua".."?rand="..math.random(1,10000)
-local UPDATE_FILE_PATH = LIB_PATH.."SOW.lua"
+local UPDATE_FILE_PATH = LIB_PATH.."SCRIPTNAME.lua"
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
 
 function _AutoupdaterMsg(msg) print("<font color=\"#6698ff\"><b>SCRIPTNAME :</b></font> <font color=\"#FFFFFF\">"..msg..".</font>") end
