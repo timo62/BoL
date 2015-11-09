@@ -16,8 +16,8 @@ function OnLoad()
 	Menu.killsteal:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	
-	Menu:addSubMenu("Anti-GapCloser", "antigap")
-	Menu.antigap:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+	--Menu:addSubMenu("Anti-GapCloser", "antigap")
+	--Menu.antigap:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -233,15 +233,6 @@ function LaneClear()
 					CastSpell(_Q, minion.x, minion.z)
 				end
 			end		 
-		end
-	end
-end
-
-function OnProcessSpell(unit, spell)
-	if table.contains(gapcloserTable, spell.name) and Menu.antigap.UseE then
-		if (spell and spell.target and spell.target.isMe or GetDistance(spell.endPos or Geometry.Vector3(0,0,0) <= myHero.boundingRadius + 10)) then 
-			local jmpToPos = Target + (Vector(myHero) - Target):normalized() * 2000
-			CastSpell(_E, jmpToPos.x , jmpToPos.z)
 		end
 	end
 end
