@@ -35,8 +35,21 @@ function OnLoad()
 	
 	Menu:addSubMenu("Auto", "misc")
 	
-	Menu:addSubMenu("Drawing", "draw")
-	--Menu.draw:addParam("PermaShow", "Perma Show", SCRIPT_PARAM_ONOFF, true)
+	Menu:addSubMenu("Draw Settings", "drawing")	
+	Menu.drawing:addParam("mDraw", "Disable All Range Draws", SCRIPT_PARAM_ONOFF, false)
+	Menu.drawing:addParam("myHero", "Draw My Range", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("myColor", "Draw My Range Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
+	Menu.drawing:addParam("qDraw", "Draw Mystic Shot (Q) Range", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("qColor", "Draw Mystic Shot (Q) Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
+	Menu.drawing:addParam("wDraw", "Draw Essence Flux (W) Range", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("wColor", "Draw Essence Flux (W) Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
+	Menu.drawing:addParam("tColor", "Draw Target Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
+	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
+
+	Menu.drawing:addSubMenu("Lag Free Circles", "lfc")	
+	Menu.drawing.lfc:addParam("lfc", "Lag Free Circles", SCRIPT_PARAM_ONOFF, false)
+	Menu.drawing.lfc:addParam("CL", "Quality", 4, 75, 75, 2000, 0)
+	Menu.drawing.lfc:addParam("Width", "Width", 4, 1, 1, 10, 0)
 	
  	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
@@ -55,6 +68,29 @@ function OnLoad()
   ts = TargetSelector(TARGET_LESS_CAST, MyBasicRange, DAMAGE_PHYSICAL)
 	ts.name = "Ezreal"
 	Menu:addTS(ts)
+end
+
+function OnDraw()
+	if not myHero.dead and not Menu.drawing.mDraw then
+		if myHero:CanUseSpell(_Q) == READY and Menu.drawing.qDraw then 
+			DrawCircle(myHero.x, myHero.y, myHero.z, SkillQ.range, RGB(Menu.drawing.qColor[2], Menu.drawing.qColor[3], Menu.drawing.qColor[4]))
+		end
+		if myHero:CanUseSpell(_W) == READY and Menu.drawing.wDraw then 
+			DrawCircle(myHero.x, myHero.y, myHero.z, SkillW.range, RGB(Menu.drawing.wColor[2], Menu.drawing.wColor[3], Menu.drawing.wColor[4]))
+		end
+		
+		if Menu.drawing.myHero then
+			
+			DrawCircle(myHero.x, myHero.y, myHero.z, myHero.range + GetDistance(myHero, myHero.minBBox), RGB(Menu.drawing.myColor[2], Menu.drawing.myColor[3], Menu.drawing.myColor[4]))
+		end
+
+		if Target ~= nil and ValidTarget(Target) then
+			if Menu.drawing.tText then
+				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
+			end
+			DrawCircle(Target.x, Target.y, Target.z, 200, RGB(Menu.drawing.tColor[2], Menu.drawing.tColor[3], Menu.drawing.tColor[4]))
+		end
+	end
 end
 
 function CheckVPred()
@@ -307,6 +343,7 @@ function Skills()
 	SkillW = { name = "Essence Flux", range = 950, delay = 0.25, speed = 1600, width = 80, ready = false }
 	SkillE = { name = "Arcane Shift", range = 475, delay = nil, speed = nil, width = nil, ready = false }
 	SkillR = { name = "Trueshot Barrage", range = math.huge, delay = 1.0, speed = 2000, width = 160, ready = false }
+
 	enemyMinions = minionManager(MINION_ENEMY, SkillQ.range, myHero, MINION_SORT_HEALTH_ASC)
 
 	priorityTable = {
