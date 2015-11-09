@@ -196,12 +196,12 @@ end
 
 function CheckUpdate()
 	local ToUpdate = {}
-    ToUpdate.Version = 1.0
+    ToUpdate.Version = 0.1
     ToUpdate.UseHttps = true
-	ToUpdate.Name = "HREzReal"
+	ToUpdate.Name = "HR EzReal"
     ToUpdate.Host = "raw.githubusercontent.com"
-    ToUpdate.VersionPath = "/HiranN/BoL/master/HREzReal.version"
-    ToUpdate.ScriptPath =  "/HiranN/BoL/master/HREzReal.lua"
+    ToUpdate.VersionPath = "/HiranN/BoL/master/HR%20EzReal.version"
+    ToUpdate.ScriptPath =  "/HiranN/BoL/master/HR%20EzReal.lua"
     ToUpdate.SavePath = SCRIPT_PATH.."/" .. GetCurrentEnv().FILE_NAME
     ToUpdate.CallbackUpdate = function(NewVersion,OldVersion) print("<font color=\"#FF794C\"><b>" .. ToUpdate.Name .. ": </b></font> <font color=\"#FFDFBF\">Updated to "..NewVersion..". Please Reload with 2x F9</b></font>") end
     ToUpdate.CallbackNoUpdate = function(OldVersion) print("<font color=\"#FF794C\"><b>" .. ToUpdate.Name .. ": </b></font> <font color=\"#FFDFBF\">No Updates Found</b></font>") end
