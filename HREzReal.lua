@@ -186,7 +186,6 @@ function OnLoad()
   orbwalkCheck()
 	CheckVPred()
 	Skills()
-	Checks()
 	CheckUpdate()
   end
 	
@@ -199,7 +198,7 @@ function CheckUpdate()
 	local ToUpdate = {}
     ToUpdate.Version = 1.0
     ToUpdate.UseHttps = true
-	ToUpdate.Name = "HR EzReal"
+	ToUpdate.Name = "HREzReal"
     ToUpdate.Host = "raw.githubusercontent.com"
     ToUpdate.VersionPath = "/HiranN/BoL/master/HREzReal.version"
     ToUpdate.ScriptPath =  "/HiranN/BoL/master/HREzReal.lua"
@@ -242,27 +241,27 @@ end
 end
 
  function AutoHeal()
-		if ValidTarget(GetCustomTarget(), 750) then
+ if Heal then
 			if Menu.misc.AutoHeal and myHero:CanUseSpell(Heal) == READY then
 				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.HealCc/100 then
 					CastSpell(Heal)
 				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.HealCc/100)*.75 then
 					CastSpell(Heal)
 				end
-			end
 		end
+end
 end
 
  function AutoBarrier()
-		if ValidTarget(GetCustomTarget(), 750) then
-			if Menu.misc.AutoBarrier and myHero:CanUseSpell(Heal) == READY then
+ if Barrier then
+			if Menu.misc.AutoBarrier and myHero:CanUseSpell(Barrier) == READY then
 				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.BarrierCc/100 then
 					CastSpell(Barrier)
 				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.BarrierCc/100)*.75 then
 					CastSpell(Barrier)
 				end
-			end
 		end
+end
 end
 
  function HealCheck()
@@ -276,10 +275,10 @@ elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerheal") then Heal = SUM
 end
 
  function BarrierCheck()
-if myHero:GetSpellData(SUMMONER_1).name:find("summonerbarrier") then Barrier = SUMMONER_1
+if myHero:GetSpellData(SUMMONER_1).name:find("summonerbar") then Barrier = SUMMONER_1
   Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true)
 	Menu.misc:addParam("BarrierCc", "Barrier",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
-elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbarrier") then Barrier = SUMMONER_2
+elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbar") then Barrier = SUMMONER_2
   Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true)
 	Menu.misc:addParam("BarrierCc", "Barrier",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
  end
@@ -382,7 +381,7 @@ function LaneClear()
 	if not IsMyManaLowLaneClear() then
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and SkillQ.ready then
+				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 					CastSpell(_Q, minion.x, minion.z)
 				end
 			end		 
@@ -411,17 +410,17 @@ function KillSteal()
 		local health = unit.health
 		local dmgW = getDmg("W", unit, myHero) + ((myHero.ap)*0.8)
 		local dmgQ = getDmg("Q", unit, myHero) + ((myHero.damage)*1.1) + ((myHero.ap)*0.4)
-			if health < dmgW and Menu.killsteal.UseW and SkillW.ready and ValidTarget(unit) then
+			if health < dmgW and Menu.killsteal.UseW and myHero:CanUseSpell(_W) == READY and ValidTarget(unit) then
 				CastW(unit)
 			end
-			if health < dmgQ and Menu.killsteal.UseQ and SkillQ.ready and ValidTarget(unit) then
+			if health < dmgQ and Menu.killsteal.UseQ and myHero:CanUseSpell(_Q) == READY and ValidTarget(unit) then
 				CastQ(unit)
 			end
 	 end
 end
 
 function CastQ(unit)
-	if unit ~= nil and GetDistance(unit) <= SkillQ.range and SkillQ.ready then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, true)
 				
 		if HitChance >= 2 then
@@ -431,7 +430,7 @@ function CastQ(unit)
 end
 
 function CastW(unit)
-	if unit ~= nil and GetDistance(unit) <= SkillW.range and SkillW.ready then
+	if unit ~= nil and GetDistance(unit) <= SkillW.range and myHero:CanUseSpell(_W) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillW.delay, SkillW.width, SkillW.range, SkillW.speed, myHero, false)
 				
 		if HitChance >= 2 then
@@ -441,7 +440,7 @@ function CastW(unit)
 end
 
 function CastR(unit)
-	if unit ~= nil and SkillR.ready then
+	if unit ~= nil and myHero:CanUseSpell(_R) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineAOECastPosition(unit, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero)
 				
 		if HitChance >= 2 then
@@ -457,11 +456,4 @@ function Skills()
 	SkillR = { name = "Trueshot Barrage", range = math.huge, delay = 1.0, speed = 2000, width = 160, ready = false }
 
 	enemyMinions = minionManager(MINION_ENEMY, SkillQ.range, myHero, MINION_SORT_HEALTH_ASC)
-end
-	
-function Checks()
-	VP = VPrediction()
-	SkillQ.ready = (myHero:CanUseSpell(_Q) == READY)
-	SkillW.ready = (myHero:CanUseSpell(_W) == READY)
-	SkillR.ready = (myHero:CanUseSpell(_R) == READY)
 end
