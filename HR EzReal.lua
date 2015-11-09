@@ -33,10 +33,10 @@ function OnLoad()
 	Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.laneclear:addParam("mManager", "LaneClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
 	
+	Menu:addSubMenu("Auto", "misc")
+	
 	Menu:addSubMenu("Drawing", "draw")
 	--Menu.draw:addParam("PermaShow", "Perma Show", SCRIPT_PARAM_ONOFF, true)
-	
-	Menu:addSubMenu("Auto", "misc")
 	
  	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
@@ -44,12 +44,12 @@ function OnLoad()
 	PrintChat("<font color=\"#ff0000\"><b>Loading Sac.</b></font>")	
 	SACLoaded = true
 	else
+  orbwalkCheck()
+	CheckVPred()
+	Skills()		
 	IgniteCheck()
 	HealCheck()
 	BarrierCheck()
-  orbwalkCheck()
-	CheckVPred()
-	Skills()
   end
 	
   ts = TargetSelector(TARGET_LESS_CAST, MyBasicRange, DAMAGE_PHYSICAL)
