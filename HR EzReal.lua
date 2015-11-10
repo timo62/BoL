@@ -1,10 +1,10 @@
 if myHero.charName ~= "Ezreal" then return end
+
 local ts
-local LocalVersion = "1.3"
+local LocalVersion = "1.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 function OnLoad()	
-	MyBasicRange = myHero.range + (GetDistance(myHero.minBBox) - 3)
 	Menu = scriptConfig("HR EzReal", "menu")
 	
 	Menu:addSubMenu("Combo", "combo")
@@ -66,7 +66,7 @@ function OnLoad()
   end
 	
 	enemyMinions = minionManager(MINION_ENEMY, SkillQ.range, myHero, MINION_SORT_HEALTH_ASC)
-  ts = TargetSelector(TARGET_LESS_CAST, MyBasicRange, DAMAGE_PHYSICAL)
+  ts = TargetSelector(TARGET_LESS_CAST, 900, DAMAGE_PHYSICAL)
 	ts.name = "Ezreal"
 	Menu:addTS(ts)
 	PriorityOnLoad()
@@ -246,9 +246,6 @@ function OnTick()
 end
  
 function GetCustomTarget()
-	if SelectedTarget ~= nil and ValidTarget(SelectedTarget, 1500) then
-		return SelectedTarget
-	end
 	ts:update()	
 	if ts.target and not ts.target.dead and ts.target.type == myHero.type then
 		return ts.target
