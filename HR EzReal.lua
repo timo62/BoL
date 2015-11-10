@@ -1,6 +1,7 @@
 if myHero.charName ~= "Ezreal" then return end
 local ts
-local LocalVersion = "1.1"
+local autoupdate = true --Change to false if you don't wan't autoupdates
+local LocalVersion = "1.2"
 
 function OnLoad()	
 	MyBasicRange = myHero.range + (GetDistance(myHero.minBBox) - 3)
@@ -411,8 +412,8 @@ function arrangePrioritysTT()
 end
 
 
-local serveradress = "github.com"
-local scriptadress = "HiranN/BoL/master"
+local serveradress = "raw.githubusercontent.com"
+local scriptadress = "/HiranN/BoL/master"
 
 function findupdates()
 	if not autoupdate then return end
