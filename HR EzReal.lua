@@ -71,7 +71,7 @@ end
 
 function PriorityOnLoad()
 	if heroManager.iCount < 10 or (TwistedTreeline and heroManager.iCount < 6) then
-		print("</b><font color=\"#FFFFFF\">Too few champions to arrange priority.</font>")
+		print("</b><font color=\"#FFFFFF\">HR EzReal : Too few champions to arrange priority.</font>")
 	elseif heroManager.iCount == 6 then
 		arrangePrioritysTT()
     else
