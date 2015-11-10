@@ -1,6 +1,6 @@
 if myHero.charName ~= "Ezreal" then return end
 local ts
-local LocalVersion = "1.2"
+local LocalVersion = "1.3"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 function OnLoad()	
@@ -187,12 +187,27 @@ elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SU
 end
 
 function orbwalkCheck()
+	if FileExist(LIB_PATH .. "/SxOrbWalk.lua") then
 	PrintChat("<font color=\"#00ff00\"><b>HR EzReal Loaded.</b></font>")	
 	PrintChat("<font color=\"#ff0000\"><b>Loading SxOrbWalk.</b></font>")	
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
 	SACLoaded = false
+	else
+	local ToUpdate = {}
+    ToUpdate.Version = 1
+    ToUpdate.UseHttps = true
+    ToUpdate.Host = "raw.githubusercontent.com"
+    ToUpdate.VersionPath = "/Superx321/BoL/master/common/SxOrbWalk.Version"
+    ToUpdate.ScriptPath =  "/Superx321/BoL/master/common/SxOrbWalk.lua"
+    ToUpdate.SavePath = LIB_PATH.."/SxOrbWalk.lua"
+    ToUpdate.CallbackUpdate = function(NewVersion,OldVersion) print("<font color=\"#FF794C\"><b>SxOrbWalk: </b></font> <font color=\"#FFDFBF\">Updated to "..NewVersion..". </b></font>") end
+    ToUpdate.CallbackNoUpdate = function(OldVersion) print("<font color=\"#FF794C\"><b>SxOrbWalk: </b></font> <font color=\"#FFDFBF\">No Updates Found</b></font>") end
+    ToUpdate.CallbackNewVersion = function(NewVersion) print("<font color=\"#FF794C\"><b>SxOrbWalk: </b></font> <font color=\"#FFDFBF\">New Version found ("..NewVersion.."). Please wait until its downloaded</b></font>") end
+    ToUpdate.CallbackError = function(NewVersion) print("<font color=\"#FF794C\"><b>SxOrbWalk: </b></font> <font color=\"#FFDFBF\">Error while Downloading. Please try again.</b></font>") end
+    ScriptUpdate(ToUpdate.Version,ToUpdate.UseHttps, ToUpdate.Host, ToUpdate.VersionPath, ToUpdate.ScriptPath, ToUpdate.SavePath, ToUpdate.CallbackUpdate,ToUpdate.CallbackNoUpdate, ToUpdate.CallbackNewVersion,ToUpdate.CallbackError)
+	end
 end
 
 function OnTick()	
