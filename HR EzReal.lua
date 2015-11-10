@@ -15,6 +15,7 @@ function OnLoad()
 	Menu.killsteal:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+	Menu.killsteal:addParam("RangeR", "Range R",  SCRIPT_PARAM_SLICE, 2500, 1000, 6000, 0) 
 	
 	--Menu:addSubMenu("Anti-GapCloser", "antigap")
 	--Menu.antigap:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
@@ -65,6 +66,17 @@ function OnLoad()
   ts = TargetSelector(TARGET_LESS_CAST, MyBasicRange, DAMAGE_PHYSICAL)
 	ts.name = "Ezreal"
 	Menu:addTS(ts)
+	PriorityOnLoad()
+end
+
+function PriorityOnLoad()
+	if heroManager.iCount < 10 or (TwistedTreeline and heroManager.iCount < 6) then
+		print("</b><font color=\"#FFFFFF\">Too few champions to arrange priority.</font>")
+	elseif heroManager.iCount == 6 then
+		arrangePrioritysTT()
+    else
+		arrangePrioritys()
+	end
 end
 
 function OnDraw()
@@ -297,7 +309,7 @@ function KillSteal()
 			if health < dmgQ and Menu.killsteal.UseQ and myHero:CanUseSpell(_Q) == READY and ValidTarget(unit) then
 				CastQ(unit)
 			end
-			if health < dmgR and Menu.killsteal.UseR and myHero:CanUseSpell(_R) == READY and ValidTarget(unit) then
+			if health < dmgR and Menu.killsteal.UseR and myHero:CanUseSpell(_R) == READY and ValidTarget(unit) and GetDistance(unit) <= Menu.killsteal.RangeR then
 				CastR(unit)
 			end
 	 end
@@ -343,7 +355,7 @@ function Skills()
 			AP = {
 				"Annie", "Ahri", "Akali", "Anivia", "Annie", "Brand", "Cassiopeia", "Diana", "Evelynn", "FiddleSticks", "Fizz", "Gragas", "Heimerdinger", "Karthus",
 				"Kassadin", "Katarina", "Kayle", "Kennen", "Leblanc", "Lissandra", "Lux", "Malzahar", "Mordekaiser", "Morgana", "Nidalee", "Orianna",
-				"Ryze", "Sion", "Swain", "Syndra", "Teemo", "TwistedFate", "Veigar", "Viktor", "Vladimir", "Xerath", "Ziggs", "Zyra", "Velkoz"
+				"Ryze", "Sion", "Swain", "Syndra", "Teemo", "TwistedFate", "Veigar", "Viktor", "Vladimir", "Xerath", "Ziggs", "Zyra", "Velkoz", "Azir", "Ekko"
 			},
 			
 			Support = {
@@ -352,17 +364,17 @@ function Skills()
 			
 			Tank = {
 				"Amumu", "Chogath", "DrMundo", "Galio", "Hecarim", "Malphite", "Maokai", "Nasus", "Rammus", "Sejuani", "Nautilus", "Shen", "Singed", "Skarner", "Volibear",
-				"Warwick", "Yorick", "Zac"
+				"Warwick", "Yorick", "Zac", "Tahm Kench", "Bard"
 			},
 			
 			AD_Carry = {
 				"Ashe", "Caitlyn", "Corki", "Draven", "Ezreal", "Graves", "Jayce", "Jinx", "KogMaw", "Lucian", "MasterYi", "MissFortune", "Pantheon", "Quinn", "Shaco", "Sivir",
-				"Talon","Tryndamere", "Tristana", "Twitch", "Urgot", "Varus", "Vayne", "Yasuo", "Zed"
+				"Talon","Tryndamere", "Tristana", "Twitch", "Urgot", "Varus", "Vayne", "Yasuo", "Zed", "Kindred"
 			},
 			
 			Bruiser = {
 				"Aatrox", "Darius", "Elise", "Fiora", "Gangplank", "Garen", "Irelia", "JarvanIV", "Jax", "Khazix", "LeeSin", "Nocturne", "Olaf", "Poppy",
-				"Renekton", "Rengar", "Riven", "Rumble", "Shyvana", "Trundle", "Udyr", "Vi", "MonkeyKing", "XinZhao"
+				"Renekton", "Rengar", "Riven", "Rumble", "Shyvana", "Trundle", "Udyr", "Vi", "MonkeyKing", "XinZhao", "Gnar"
 			}
 	}
 
