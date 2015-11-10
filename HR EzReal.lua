@@ -65,6 +65,7 @@ function OnLoad()
 	BarrierCheck()
   end
 	
+	enemyMinions = minionManager(MINION_ENEMY, SkillQ.range, myHero, MINION_SORT_HEALTH_ASC)
   ts = TargetSelector(TARGET_LESS_CAST, MyBasicRange, DAMAGE_PHYSICAL)
 	ts.name = "Ezreal"
 	Menu:addTS(ts)
@@ -189,16 +190,18 @@ function OnTick()
 	Target = GetCustomTarget()
 
 	ComboKey = Menu.keys.ComboKey
+	HarassKey = Menu.keys.Harass
+	LaneClearKey = Menu.keys.LaneClear
 	
 	if ComboKey then 
 	Combo(Target)
 	end
 	
-	if Menu.keys.Harass and not ComboKey then
+	if HarassKey and not ComboKey then
 	Harass(Target)
 	end	
 	
-	if Menu.keys.LaneClear and not ComboKey then
+	if LaneClearKey and not ComboKey then
 	LaneClear()
 	end
 	
@@ -248,15 +251,11 @@ function Combo(unit)
 end
 
 function Harass(unit)
-	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type and not IsMyManaLowHarass() then
-	
-		if Menu.harass.UseQ then 
-			CastQ(unit)
-		end	
-
-		if Menu.harass.UseW then
-			CastW(unit)
-		end
+	if(myHero:CanUseSpell(_Q) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and 				ts.target~=nil and Menu.harass.UseQ ) then 
+  CastQ(unit)
+	end
+	if(myHero:CanUseSpell(_W) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and 				ts.target~=nil and Menu.harass.UseW ) then 
+  CastW(unit)
 	end
 end
 
@@ -343,8 +342,6 @@ function Skills()
 	SkillW = { name = "Essence Flux", range = 950, delay = 0.25, speed = 1600, width = 80, ready = false }
 	SkillE = { name = "Arcane Shift", range = 475, delay = nil, speed = nil, width = nil, ready = false }
 	SkillR = { name = "Trueshot Barrage", range = math.huge, delay = 1.0, speed = 2000, width = 160, ready = false }
-
-	enemyMinions = minionManager(MINION_ENEMY, SkillQ.range, myHero, MINION_SORT_HEALTH_ASC)
 
 	priorityTable = {
 			AP = {
