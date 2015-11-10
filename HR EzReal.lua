@@ -1,7 +1,7 @@
 if myHero.charName ~= "Ezreal" then return end
 
 local ts
-local LocalVersion = "1.4"
+local LocalVersion = "1.5"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 function OnLoad()	
@@ -10,14 +10,13 @@ function OnLoad()
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("UseR", "R To Kill", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
-	Menu.killsteal:addParam("RangeR", "Range R",  SCRIPT_PARAM_SLICE, 2500, 1000, 6000, 0) 
+	Menu.killsteal:addParam("RangeR", "Range R",  SCRIPT_PARAM_SLICE, 2500, 2000, 10000, 0) 
 	
 	--Menu:addSubMenu("Anti-GapCloser", "antigap")
 	--Menu.antigap:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
@@ -263,13 +262,6 @@ function Combo(unit)
 		if Menu.combo.UseW then 
 			CastW(unit)
 		end	
-
-		if Menu.combo.UseR then
-				local dmgR = getDmg("R", unit, myHero) + ((myHero.damage)*0.44) + ((myHero.ap)*0.9)
-				if unit.health < dmgR then
-					CastR(unit)
-				end
-		end
 	end
 end
 
