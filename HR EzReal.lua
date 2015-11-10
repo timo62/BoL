@@ -1,4 +1,5 @@
 if myHero.charName ~= "Ezreal" then return end
+
 local ts
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local LocalVersion = "1.2"
