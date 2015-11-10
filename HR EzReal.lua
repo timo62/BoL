@@ -1,7 +1,5 @@
 if myHero.charName ~= "Ezreal" then return end
-
 local ts
-local autoupdate = true --Change to false if you don't wan't autoupdates
 local LocalVersion = "1.2"
 
 function OnLoad()	
@@ -413,8 +411,8 @@ function arrangePrioritysTT()
 end
 
 
-local serveradress = "raw.githubusercontent.com"
-local scriptadress = "/HiranN/BoL/master"
+local serveradress = "github.com"
+local scriptadress = "HiranN/BoL/master"
 
 function findupdates()
 	if not autoupdate then return end
@@ -423,20 +421,21 @@ function findupdates()
 		local ServerVersion = tonumber(ServerVersionDATA)
 		if ServerVersion then
 			if ServerVersion > tonumber(LocalVersion) then
-				PrintChat("Updating HR EzReal, don't press F9")
+			PrintChat("<font color=\"#00ff00\"><b>Updating HR EzReal, don't press F9.</b></font>")	
 				update()
 			end
 		else
-			PrintChat("An error occured, while updating, please reload")
+		PrintChat("<font color=\"#00ff00\"><b>An error occured, while updating, please reload.</b></font>")
+
 		end
 	else
-		PrintChat("Could not connect to update Server")
+		PrintChat("<font color=\"#00ff00\"><b>Could not connect to update Server.</b></font>")	
 	end
 end
 
 function update()
 	DownloadFile("http://"..serveradress..scriptadress.."/HR EzReal.lua",SCRIPT_PATH.."HR EzReal.lua", function ()
-		PrintChat("Updated, press 2xF9")
+		PrintChat("<font color=\"#00ff00\"><bUpdated, press 2xF9.</b></font>")	
 		updated = true
-	end)
+	end
 end
