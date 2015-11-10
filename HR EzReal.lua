@@ -437,5 +437,5 @@ function update()
 	DownloadFile("http://"..serveradress..scriptadress.."/HR EzReal.lua",SCRIPT_PATH.."HR EzReal.lua", function ()
 		PrintChat("<font color=\"#00ff00\"><b>Updated, press 2xF9.</b></font>")	
 		updated = true
-	end
+	end)
 end
