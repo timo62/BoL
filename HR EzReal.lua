@@ -1,13 +1,7 @@
 if myHero.charName ~= "Ezreal" then return end
 local ts
 
-function OnLoad()
-	CheckVPred()
-	Skills()		
-	IgniteCheck()
-	HealCheck()
-	BarrierCheck()
-	
+function OnLoad()	
 	MyBasicRange = myHero.range + (GetDistance(myHero.minBBox) - 3)
 	Menu = scriptConfig("HR EzReal", "menu")
 	
@@ -51,6 +45,12 @@ function OnLoad()
 	Menu.drawing:addParam("wColor", "Draw Essence Flux (W) Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tColor", "Draw Target Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
+	
+	CheckVPred()
+	Skills()		
+	IgniteCheck()
+	HealCheck()
+	BarrierCheck()
 	
  	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
