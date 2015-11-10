@@ -2,6 +2,12 @@ if myHero.charName ~= "Ezreal" then return end
 local ts
 
 function OnLoad()
+	CheckVPred()
+	Skills()		
+	IgniteCheck()
+	HealCheck()
+	BarrierCheck()
+	
 	MyBasicRange = myHero.range + (GetDistance(myHero.minBBox) - 3)
 	Menu = scriptConfig("HR EzReal", "menu")
 	
@@ -53,11 +59,6 @@ function OnLoad()
 	SACLoaded = true
 	else
   orbwalkCheck()
-	CheckVPred()
-	Skills()		
-	IgniteCheck()
-	HealCheck()
-	BarrierCheck()
   end
 	
 	enemyMinions = minionManager(MINION_ENEMY, SkillQ.range, myHero, MINION_SORT_HEALTH_ASC)
