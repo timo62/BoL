@@ -45,11 +45,6 @@ function OnLoad()
 	Menu.drawing:addParam("wColor", "Draw Essence Flux (W) Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tColor", "Draw Target Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
-
-	Menu.drawing:addSubMenu("Lag Free Circles", "lfc")	
-	Menu.drawing.lfc:addParam("lfc", "Lag Free Circles", SCRIPT_PARAM_ONOFF, false)
-	Menu.drawing.lfc:addParam("CL", "Quality", 4, 75, 75, 2000, 0)
-	Menu.drawing.lfc:addParam("Width", "Width", 4, 1, 1, 10, 0)
 	
  	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
