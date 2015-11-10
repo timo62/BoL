@@ -1,5 +1,6 @@
 if myHero.charName ~= "Ezreal" then return end
 local ts
+local LocalVersion = "1.1"
 
 function OnLoad()	
 	MyBasicRange = myHero.range + (GetDistance(myHero.minBBox) - 3)
@@ -52,6 +53,7 @@ function OnLoad()
 	IgniteCheck()
 	HealCheck()
 	BarrierCheck()
+	findupdates()
 	
  	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
@@ -406,4 +408,33 @@ function arrangePrioritysTT()
 		SetPriority(priorityTable.Bruiser,  enemy, 2)
 		SetPriority(priorityTable.Tank,     enemy, 3)
         end
+end
+
+
+local serveradress = "github.com"
+local scriptadress = "HiranN/BoL/master"
+
+function findupdates()
+	if not autoupdate then return end
+	local ServerVersionDATA = GetWebResult(serveradress , scriptadress.."/HR EzReal.version")
+	if ServerVersionDATA then
+		local ServerVersion = tonumber(ServerVersionDATA)
+		if ServerVersion then
+			if ServerVersion > tonumber(LocalVersion) then
+				PrintChat("Updating HR EzReal, don't press F9")
+				update()
+			end
+		else
+			PrintChat("An error occured, while updating, please reload")
+		end
+	else
+		PrintChat("Could not connect to update Server")
+	end
+end
+
+function update()
+	DownloadFile("http://"..serveradress..scriptadress.."/HR EzReal.lua",SCRIPT_PATH.."HR EzReal.lua", function ()
+		PrintChat("Updated, press 2xF9")
+		updated = true
+	end)
 end
