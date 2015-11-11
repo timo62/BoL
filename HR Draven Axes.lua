@@ -219,13 +219,6 @@ function OnDeleteObj(obj)
   end
 end
 
-
-function OnProcessSpell(unit, spell)
-    if unit.isMe and spell.name == "dravenspinning" then
-        qStacks = qStacks + 1
-    end
-end
-
 function Skills()
 	SkillQ = { name = "Spinning Axe", range = nil, delay = nil, speed = nil, width = nil, ready = false }
 	SkillW = { name = "Blood Rush", range = nil, delay = nil, speed = nil, width = nil, ready = false }
@@ -370,7 +363,7 @@ function KillSteal()
 	for _, unit in pairs(GetEnemyHeroes()) do
 		local health = unit.health
 		local dmgE = getDmg("E", unit, myHero)
-		local dmgR = getDmg("R", unit, myHero)
+		local dmgR = getDmg("R", unit, myHero) * 2
 		
 			if health < dmgE and Menu.killsteal.UseE and myHero:CanUseSpell(_E) == READY and ValidTarget(unit) then
 				CastE(unit)
