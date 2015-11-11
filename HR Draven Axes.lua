@@ -83,7 +83,7 @@ function OnDraw()
 		end
 		
 		if Menu.drawing.myHero then
-			DrawCircle(myHero.x, myHero.y, myHero.z, 550, RGB(Menu.drawing.myColor[2], Menu.drawing.myColor[3], Menu.drawing.myColor[4]))
+			DrawCircle(myHero.x, myHero.y, myHero.z, 610, RGB(Menu.drawing.myColor[2], Menu.drawing.myColor[3], Menu.drawing.myColor[4]))
 		end
 
 		if Target ~= nil and ValidTarget(Target) then
