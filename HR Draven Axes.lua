@@ -50,6 +50,7 @@ function OnLoad()
 	HealCheck()
 	BarrierCheck()
 	orbwalkCheck()
+	findupdates()
 	
 	enemyMinions = minionManager(MINION_ENEMY, myHero.range, myHero, MINION_SORT_HEALTH_ASC)
 	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 900, DAMAGE_PHYSICAL)
