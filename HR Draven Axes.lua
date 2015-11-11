@@ -10,6 +10,7 @@ function OnLoad()
 	wait = nil
  
   orbwalkCheck()
+	findupdates()
 end
 
 function orbwalkCheck()
