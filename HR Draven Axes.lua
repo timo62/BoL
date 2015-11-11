@@ -357,8 +357,8 @@ function LaneClear()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseQ and GetDistance(minion) <= myHero.range and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
-					CastSpell(_Q, minion.x, minion.z)
+				if Menu.laneclear.UseQ and GetDistance(minion) <= 610 and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
+					CastSpell(_Q)
 				end
 			end		 
 		end
