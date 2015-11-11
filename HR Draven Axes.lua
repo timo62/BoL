@@ -1,7 +1,7 @@
 if myHero.charName ~= "Draven" then return end
 
 local ts
-local LocalVersion = "1.0"
+local LocalVersion = "1.1"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local wait = nil
@@ -52,7 +52,7 @@ function OnLoad()
 	orbwalkCheck()
 	
 	enemyMinions = minionManager(MINION_ENEMY, myHero.range, myHero, MINION_SORT_HEALTH_ASC)
-	ts = TargetSelector(TARGET_LESS_CAST, 900, DAMAGE_PHYSICAL)
+	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 900, DAMAGE_PHYSICAL)
 	ts.name = "Draven"
 	Menu:addTS(ts)
 	PriorityOnLoad()
@@ -213,13 +213,17 @@ function OnDeleteObj(obj)
       if obj.x == reticle.x and obj.z == reticle.z then
         table.remove(reticles, i)
         qStacks = qStacks - 1
-        --SxOrb:ForcePoint(nil)
       end
     end
 	 end     
-	 elseif obj.name == "Draven_Q_buf.troy" then
-        qBuff = qBuff - 1
   end
+end
+
+
+function OnProcessSpell(unit, spell)
+    if unit.isMe and spell.name == "dravenspinning" then
+        qStacks = qStacks + 1
+    end
 end
 
 function Skills()
@@ -333,7 +337,7 @@ end
 function Combo(unit)
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
 	
-		if Menu.combo.UseQ and qStacks <= 0 then 
+		if Menu.combo.UseQ and qStacks <= 2 then 
 			CastSpell(_Q)
 		end	
 		if Menu.combo.UseW and qBuff >= 1 then 
@@ -346,7 +350,7 @@ function Combo(unit)
 end
 
 function Harass(unit)
-	if(myHero:CanUseSpell(_Q) == READY  and ts.target~=nil and Menu.harass.UseQ and qStacks <= 0 ) then 
+	if(myHero:CanUseSpell(_Q) == READY  and ts.target~=nil and Menu.harass.UseQ and qStacks <= 1 ) then 
   CastSpell(_Q)
 	end
 end
@@ -355,7 +359,7 @@ function LaneClear()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseQ and GetDistance(minion) <= myHero.range and myHero:CanUseSpell(_Q) == READY and qStacks <= 0 then
+				if Menu.laneclear.UseQ and GetDistance(minion) <= myHero.range and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
 					CastSpell(_Q, minion.x, minion.z)
 				end
 			end		 
