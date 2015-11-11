@@ -53,7 +53,7 @@ function OnLoad()
 	findupdates()
 	
 	enemyMinions = minionManager(MINION_ENEMY, myHero.range, myHero, MINION_SORT_HEALTH_ASC)
-	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 900, DAMAGE_PHYSICAL)
+	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 600, DAMAGE_PHYSICAL)
 	ts.name = "Draven"
 	Menu:addTS(ts)
 	PriorityOnLoad()
@@ -79,7 +79,7 @@ function OnDraw()
 		end
 		
 		if Menu.drawing.myHero then
-			DrawCircle(myHero.x, myHero.y, myHero.z, myHero.range, RGB(Menu.drawing.myColor[2], Menu.drawing.myColor[3], Menu.drawing.myColor[4]))
+			DrawCircle(myHero.x, myHero.y, myHero.z, 550, RGB(Menu.drawing.myColor[2], Menu.drawing.myColor[3], Menu.drawing.myColor[4]))
 		end
 
 		if Target ~= nil and ValidTarget(Target) then
