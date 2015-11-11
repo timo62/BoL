@@ -50,13 +50,17 @@ function OnLoad()
 	HealCheck()
 	BarrierCheck()
 	orbwalkCheck()
-	findupdates()
+	customLoad()
 	
 	enemyMinions = minionManager(MINION_ENEMY, myHero.range, myHero, MINION_SORT_HEALTH_ASC)
 	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 600, DAMAGE_PHYSICAL)
 	ts.name = "Draven"
 	Menu:addTS(ts)
 	PriorityOnLoad()
+end
+
+function customLoad()
+	findupdates()
 end
 
 function PriorityOnLoad()
