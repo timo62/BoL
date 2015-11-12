@@ -7,7 +7,7 @@ local reticles = {}
 local wait = nil
 local qBuff = 0
 local qStacks = 0
-local sacOrb = AutoCarry.Helper:GetClasses()
+local SacOrb = AutoCarry.Helper:GetClasses()
 local orbWalk
 local orbWalk2
 
