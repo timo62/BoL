@@ -47,6 +47,7 @@ function OnLoad()
 	Menu.drawing:addParam("tColor", "Draw Target Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
 	
+	CheckVPred()
 	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
@@ -55,10 +56,9 @@ function OnLoad()
 	orbWalk = SacOrb:OverrideOrbwalkLocation(reticle.x, reticle.z)
 	orbWalk2 = SacOrb:OverrideOrbwalkLocation(nil)
 	else
-  	orbwalkCheck()
-  	end
-	 
-	CheckVPred()
+  orbwalkCheck()
+  end
+	
 	Skills()		
 	IgniteCheck()
 	HealCheck()
@@ -199,6 +199,7 @@ function orbwalkCheck()
 	SxOrb:LoadToMenu(Menu.SXMenu)
 	orbWalk = SxOrb:ForcePoint(reticle.x, reticle.z)
 	orbWalk2 = SxOrb:ForcePoint(nil)
+	SACLoaded = false
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
