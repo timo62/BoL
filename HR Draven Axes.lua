@@ -1,12 +1,15 @@
 if myHero.charName ~= "Draven" then return end
 
 local ts
-local LocalVersion = "1.1"
+local LocalVersion = "1.2"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local wait = nil
 local qBuff = 0
 local qStacks = 0
+local sacOrb = AutoCarry.Helper:GetClasses()
+local orbWalk
+local orbWalk2
 
 function OnLoad()
   Menu = scriptConfig("HR Draven Axes", "Draven")
@@ -45,11 +48,21 @@ function OnLoad()
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
 	
 	CheckVPred()
+	if _G.Reborn_Initialised then
+	elseif _G.Reborn_Loaded then
+	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
+	PrintChat("<font color=\"#ff0000\"><b>Loading Sac.</b></font>")	
+	SACLoaded = true
+	orbWalk = SacOrb:OverrideOrbwalkLocation(reticle.x, reticle.z)
+	orbWalk2 = SacOrb:OverrideOrbwalkLocation(nil)
+	else
+  orbwalkCheck()
+  end
+	
 	Skills()		
 	IgniteCheck()
 	HealCheck()
 	BarrierCheck()
-	orbwalkCheck()
 	customLoad()
 	
 	enemyMinions = minionManager(MINION_ENEMY, myHero.range, myHero, MINION_SORT_HEALTH_ASC)
@@ -184,6 +197,8 @@ function orbwalkCheck()
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
+	orbWalk = SxOrb:ForcePoint(reticle.x, reticle.z)
+	orbWalk2 = SxOrb:ForcePoint(nil)
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
@@ -357,8 +372,8 @@ function LaneClear()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseQ and GetDistance(minion) <= 610 and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
-					CastSpell(_Q)
+				if Menu.laneclear.UseQ and GetDistance(minion) <= myHero.range and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
+					CastSpell(_Q, minion.x, minion.z)
 				end
 			end		 
 		end
@@ -403,7 +418,7 @@ function CatchAxes()
 	if not wait then return end
     for i, reticle in ipairs(reticles) do
       if (math.abs(mousePos.x - reticle.x) <= 500 and math.abs(mousePos.z - reticle.z) <= 500) and not (reticle.x <= 55 and reticle.y <= 55) then
-        SxOrb:ForcePoint(reticle.x, reticle.z)
+				orbWalk
 				DelayAction(ForcePointSx, 0.8)
 				wait = nil
 				end
@@ -411,7 +426,7 @@ end
 end
 
 function ForcePointSx()
-  SxOrb:ForcePoint(nil)
+  orbWalk2
 end
 
 
