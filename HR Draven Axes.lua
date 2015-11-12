@@ -416,7 +416,7 @@ function CatchAxes()
     for i, reticle in ipairs(reticles) do
       if (math.abs(mousePos.x - reticle.x) <= 500 and math.abs(mousePos.z - reticle.z) <= 500) and not (reticle.x <= 55 and reticle.y <= 55) then
 	if OrbWalker == Sac then
-	SacOrb:OverrideOrbwalkLocation(reticle.x, reticle.z)
+	_G.AutoCarry.Orbwalker:Orbwalk(reticle.x, reticle.z)
 	end
 	if OrbWalker == SxOrb then
 	SxOrb:ForcePoint(reticle.x, reticle.z)
@@ -429,7 +429,7 @@ end
 
 function ForcePointSx()
 	if OrbWalker == Sac then
-	_G.AutoCarry.Orbwalker:Orbwalk(Target)
+	_G.AutoCarry.Orbwalker:Orbwalk(nil)
 	end
 	if OrbWalker == SxOrb then
 	SxOrb:ForcePoint(nil)
