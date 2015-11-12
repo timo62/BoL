@@ -1,13 +1,12 @@
 if myHero.charName ~= "Draven" then return end
 
 local ts
-local LocalVersion = "1.3"
+local LocalVersion = "1.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local wait = nil
 local qBuff = 0
 local qStacks = 0
-local SacOrb = AutoCarry.Helper:GetClasses()
 local OrbWalker
 
 function OnLoad()
@@ -430,7 +429,7 @@ end
 
 function ForcePointSx()
 	if OrbWalker == Sac then
-	SacOrb:OverrideOrbwalkLocation(nil)
+	_G.AutoCarry.Orbwalker:Orbwalk(Target)
 	end
 	if OrbWalker == SxOrb then
 	SxOrb:ForcePoint(nil)
