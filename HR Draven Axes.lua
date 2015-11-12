@@ -56,8 +56,8 @@ function OnLoad()
 	orbWalk = SacOrb:OverrideOrbwalkLocation(reticle.x, reticle.z)
 	orbWalk2 = SacOrb:OverrideOrbwalkLocation(nil)
 	else
-  orbwalkCheck()
-  end
+	orbwalkCheck()
+	end
 	
 	Skills()		
 	IgniteCheck()
