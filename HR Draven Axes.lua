@@ -431,7 +431,7 @@ function ForcePointSx()
 	if OrbWalker == Sac then
 	_G.AutoCarry.Orbwalker:Orbwalk(nil)
 	end
-	if OrbWalker == SxOrb then
+	if OrbWalker == SxOrb1 then
 	SxOrb:ForcePoint(nil)
 	end
 end
