@@ -1,13 +1,14 @@
 if myHero.charName ~= "Draven" then return end
 
 local ts
-local LocalVersion = "1.4"
+local LocalVersion = "1.6"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local wait = nil
 local qBuff = 0
 local qStacks = 0
-local OrbWalker
+local SAC = false
+local SX = false
 
 function OnLoad()
   Menu = scriptConfig("HR Draven Axes", "Draven")
@@ -51,7 +52,8 @@ function OnLoad()
 	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
 	PrintChat("<font color=\"#ff0000\"><b>Loading Sac.</b></font>")	
 	SACLoaded = true
-	OrbWalker = Sac
+	SAC = true
+	SX = false
 	else
   orbwalkCheck()
   end
@@ -194,8 +196,8 @@ function orbwalkCheck()
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
-	OrbWalker = SxOrb1
-	SACLoaded = false
+	SAC = false
+	SX = true
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
@@ -415,10 +417,10 @@ function CatchAxes()
 	if not wait then return end
     for i, reticle in ipairs(reticles) do
       if (math.abs(mousePos.x - reticle.x) <= 500 and math.abs(mousePos.z - reticle.z) <= 500) and not (reticle.x <= 55 and reticle.y <= 55) then
-	if OrbWalker == Sac then
+	if SAC then
 	_G.AutoCarry.Orbwalker:Orbwalk(reticle.x, reticle.z)
 	end
-	if OrbWalker == SxOrb1 then
+	if SX then
 	SxOrb:ForcePoint(reticle.x, reticle.z)
 	end
 				DelayAction(ForcePointSx, 0.8)
@@ -428,10 +430,10 @@ end
 end
 
 function ForcePointSx()
-	if OrbWalker == Sac then
+	if SAC then
 	_G.AutoCarry.Orbwalker:Orbwalk(nil)
 	end
-	if OrbWalker == SxOrb1 then
+	if SX then
 	SxOrb:ForcePoint(nil)
 	end
 end
