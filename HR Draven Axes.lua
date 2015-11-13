@@ -194,7 +194,7 @@ function orbwalkCheck()
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
-	OrbWalker = SxOrb
+	OrbWalker = SxOrb1
 	SACLoaded = false
 	else
 	local ToUpdate = {}
@@ -418,7 +418,7 @@ function CatchAxes()
 	if OrbWalker == Sac then
 	_G.AutoCarry.Orbwalker:Orbwalk(reticle.x, reticle.z)
 	end
-	if OrbWalker == SxOrb then
+	if OrbWalker == SxOrb1 then
 	SxOrb:ForcePoint(reticle.x, reticle.z)
 	end
 				DelayAction(ForcePointSx, 0.8)
