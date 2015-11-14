@@ -1,7 +1,7 @@
 if myHero.charName ~= "Draven" then return end
 
 local ts
-local LocalVersion = "1.6"
+local LocalVersion = "1.7"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local wait = nil
@@ -64,7 +64,7 @@ function OnLoad()
 	BarrierCheck()
 	customLoad()
 	
-	enemyMinions = minionManager(MINION_ENEMY, myHero.range, myHero, MINION_SORT_HEALTH_ASC)
+	enemyMinions = minionManager(MINION_ENEMY, 600, myHero, MINION_SORT_HEALTH_ASC)
 	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 600, DAMAGE_PHYSICAL)
 	ts.name = "Draven"
 	Menu:addTS(ts)
@@ -371,8 +371,8 @@ function LaneClear()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseQ and GetDistance(minion) <= myHero.range and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
-					CastSpell(_Q, minion.x, minion.z)
+				if Menu.laneclear.UseQ and GetDistance(minion) <= 600 and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
+					CastSpell(_Q)
 				end
 			end		 
 		end
