@@ -121,7 +121,6 @@ function OnDraw()
 			if Menu.drawing.tText then
 				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
 			end
-			DrawCircle(Target.x, Target.y, Target.z, 200, RGB(Menu.drawing.tColor[2], Menu.drawing.tColor[3], Menu.drawing.tColor[4]))
 		end
 	end
 end
