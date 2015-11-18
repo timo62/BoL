@@ -348,6 +348,7 @@ end
 	
 function OnTick()
 	if qStacks < 0 then qStacks = 0 end
+	if myHero.dead then qStacks = 0 end
 	if myHero.dead then return end
 	ts:update()
 	Target = GetCustomTarget()
