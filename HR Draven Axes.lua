@@ -1,14 +1,16 @@
 if myHero.charName ~= "Draven" then return end
 
 local ts
-local LocalVersion = "1.7"
+local LocalVersion = "1.8"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
-local wait = nil
+local wait = false
 local qBuff = 0
 local qStacks = 0
 local SAC = false
 local SX = false
+local BarrierMenu = false
+local HealMenu = false
 
 function OnLoad()
   Menu = scriptConfig("HR Draven Axes", "Draven")
@@ -28,6 +30,7 @@ function OnLoad()
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
 	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
 	Menu.keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	Menu.keys:addParam("LastHit", "LastHit", SCRIPT_PARAM_ONKEYDOWN, false, 88)
 	
 	Menu:addSubMenu("Harass", "harass")
 	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
@@ -35,7 +38,17 @@ function OnLoad()
 	Menu:addSubMenu("LaneClear", "laneclear")
 	Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	
+	Menu:addSubMenu("LastHit", "lasthit")
+	Menu.lasthit:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+	
+	-- Mana Managers
+	Menu.harass:addParam("manaUseQ", "Mana Q", SCRIPT_PARAM_SLICE, 50, 0, 100, 0)
+    Menu.laneclear:addParam("manaUseQ", "Mana Q", SCRIPT_PARAM_SLICE, 50, 0, 100, 0)
+    Menu.lasthit:addParam("manaUseQ", "Mana Q", SCRIPT_PARAM_SLICE, 50, 0, 100, 0)
+	-- Mana Managers
+	
 	Menu:addSubMenu("Auto", "misc")
+	
 	
 	Menu:addSubMenu("Draw Settings", "drawing")	
 	Menu.drawing:addParam("mDraw", "Disable All Range Draws", SCRIPT_PARAM_ONOFF, false)
@@ -58,10 +71,6 @@ function OnLoad()
   orbwalkCheck()
   end
 	
-	Skills()		
-	IgniteCheck()
-	HealCheck()
-	BarrierCheck()
 	customLoad()
 	
 	enemyMinions = minionManager(MINION_ENEMY, 600, myHero, MINION_SORT_HEALTH_ASC)
@@ -73,6 +82,10 @@ end
 
 function customLoad()
 	findupdates()
+	Skills()		
+	IgniteCheck()
+	HealCheck()
+	BarrierCheck()
 end
 
 function PriorityOnLoad()
@@ -83,6 +96,12 @@ function PriorityOnLoad()
     else
 		arrangePrioritys()
 	end
+end
+
+function tablelength(T)
+	local count = 0
+	for _ in pairs(T) do count = count + 1 end
+	return count
 end
 
 function OnDraw()
@@ -165,9 +184,11 @@ end
 if myHero:GetSpellData(SUMMONER_1).name:find("summonerheal") then Heal = SUMMONER_1
   Menu.misc:addParam("AutoHeal", "Auto Heal", SCRIPT_PARAM_ONOFF, true)
 	Menu.misc:addParam("HealCc", "Heal",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0) 
+	HealMenu = true
 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerheal") then Heal = SUMMONER_2
   Menu.misc:addParam("AutoHeal", "Auto Heal", SCRIPT_PARAM_ONOFF, true)
 	Menu.misc:addParam("HealCc", "Heal",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0) 
+	HealMenu = true
  end
 end
 
@@ -175,9 +196,11 @@ end
 if myHero:GetSpellData(SUMMONER_1).name:find("summonerbar") then Barrier = SUMMONER_1
   Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true)
 	Menu.misc:addParam("BarrierCc", "Barrier",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
+	BarrierMenu = true
 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbar") then Barrier = SUMMONER_2
   Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true)
 	Menu.misc:addParam("BarrierCc", "Barrier",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
+	BarrierMenu = true
  end
 end
 
@@ -215,29 +238,43 @@ function orbwalkCheck()
 end
 
 function OnCreateObj(obj)
-    if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
-        if obj.name:find("reticle_self.troy") then
-    table.insert(reticles, obj)
-		wait = obj
-        qStacks = qStacks + 1
+    if obj.name == "Draven_Q_buf.troy" then
         qBuff = qBuff + 1
-		end
-		end
-  end
-
-function OnDeleteObj(obj)
+    end
+               
     if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
         if obj.name:find("reticle_self.troy") then
-    for i, reticle in ipairs(reticles) do
-      if obj.x == reticle.x and obj.z == reticle.z then
-        table.remove(reticles, i)
-        qStacks = qStacks - 1
-      end
+            table.insert(reticles, obj)
+        elseif obj.name == "draven_spinning_buff_end_sound.troy" then
+            qStacks = 0
+        end
     end
-	 end     
-  end
 end
 
+
+function OnDeleteObj(obj)
+    if obj ~= nil and obj.name ~= nil then
+	if obj.name:find("reticle_self.troy") then
+        if GetDistance(obj) > 90 then
+            qStacks = qStacks - 1
+        end
+        for i, reticle in ipairs(reticles) do
+            if obj and obj.valid and reticle.object and reticle.object.valid and obj.x == reticle.object.x and obj.z == reticle.object.z then
+                table.remove(reticles, i)
+            end
+        end
+    elseif obj.name == "Draven_Q_buf.troy" then
+        qBuff = qBuff - 1            
+    end
+end
+end
+  
+function DebugPrint(to_print)
+	if Menu.Debug then
+		print(to_print)
+	end
+end
+  
 function Skills()
 	SkillQ = { name = "Spinning Axe", range = nil, delay = nil, speed = nil, width = nil, ready = false }
 	SkillW = { name = "Blood Rush", range = nil, delay = nil, speed = nil, width = nil, ready = false }
@@ -300,8 +337,18 @@ function arrangePrioritysTT()
 		SetPriority(priorityTable.Tank,     enemy, 3)
         end
 end
-
+	
+	-- USE
+	function OnProcessSpell(unit, spell)
+	    if unit.isMe and spell.name == "dravenspinning" then
+        qStacks = qStacks + 1
+		end
+end
+	
+	
+	
 function OnTick()
+	if qStacks < 0 then qStacks = 0 end
 	if myHero.dead then return end
 	ts:update()
 	Target = GetCustomTarget()
@@ -309,6 +356,7 @@ function OnTick()
 	ComboKey = Menu.keys.ComboKey
 	HarassKey = Menu.keys.Harass
 	LaneClearKey = Menu.keys.LaneClear
+	LastHitKey = Menu.keys.LastHit
 	
 	if ComboKey then 
 	Combo(Target)
@@ -320,6 +368,9 @@ function OnTick()
 	
 	if LaneClearKey and not ComboKey then
 	LaneClear()
+	end
+	if LastHitKey and not ComboKey then
+	LastHit()
 	end
 	
 	if Menu.killsteal.KSOn then
@@ -348,11 +399,10 @@ end
 
 function Combo(unit)
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
-	
-		if Menu.combo.UseQ and qStacks <= 2 then 
+		if qStacks < 2 and Menu.combo.UseQ then 
 			CastSpell(_Q)
 		end	
-		if Menu.combo.UseW and qBuff >= 1 then 
+		if Menu.combo.UseW then 
 			CastSpell(_W)
 		end	
 		if Menu.combo.UseE then 
@@ -362,7 +412,7 @@ function Combo(unit)
 end
 
 function Harass(unit)
-	if(myHero:CanUseSpell(_Q) == READY  and ts.target~=nil and Menu.harass.UseQ and qStacks <= 1 ) then 
+	if (myHero:CanUseSpell(_Q) == READY  and ts.target~=nil and Menu.harass.UseQ and qStacks < 1 ) and Menu.harass.manaUseQ <= 100*myHero.mana/myHero.maxMana then 
   CastSpell(_Q)
 	end
 end
@@ -371,7 +421,18 @@ function LaneClear()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseQ and GetDistance(minion) <= 600 and myHero:CanUseSpell(_Q) == READY and qStacks <= 1 then
+				if Menu.laneclear.UseQ and GetDistance(minion) <= 600 and myHero:CanUseSpell(_Q) == READY and qStacks < 1 and Menu.laneclear.manaUseQ <= 100*myHero.mana/myHero.maxMana then
+					CastSpell(_Q)
+				end
+			end		 
+		end
+	end
+	
+function LastHit()
+	enemyMinions:update()
+		for i, minion in pairs(enemyMinions.objects) do
+			if ValidTarget(minion) and minion ~= nil then
+				if Menu.lasthit.UseQ and GetDistance(minion) <= 600 and myHero:CanUseSpell(_Q) == READY and qStacks < 1 and Menu.lasthit.manaUseQ <= 100*myHero.mana/myHero.maxMana then
 					CastSpell(_Q)
 				end
 			end		 
@@ -395,7 +456,7 @@ end
 
 function CastE(unit)
 	if unit ~= nil and myHero:CanUseSpell(_E) == READY then
-		CastPosition,  HitChance,  Position = VP:GetLineAOECastPosition(unit, SkillE.delay, SkillE.width, SkillE.range, SkillE.speed, myHero)
+		CastPosition,  HitChance,  Position = VP:GetLineAOECastPosition(unit, SkillE.delay, SkillE.width, SkillE.range, SkillE.speed, myHero, false)
 				
 		if HitChance >= 2 then
 			CastSpell(_E, CastPosition.x, CastPosition.z)
@@ -414,7 +475,7 @@ function CastR(unit)
 end
 
 function CatchAxes()
-	if not wait then return end
+	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
       if (math.abs(mousePos.x - reticle.x) <= 500 and math.abs(mousePos.z - reticle.z) <= 500) and not (reticle.x <= 55 and reticle.y <= 55) then
 	if SAC then
@@ -424,8 +485,8 @@ function CatchAxes()
 	SxOrb:ForcePoint(reticle.x, reticle.z)
 	end
 				DelayAction(ForcePointSx, 0.8)
-				wait = nil
 				end
+end
 end
 end
 
@@ -438,7 +499,18 @@ function ForcePointSx()
 	end
 end
 
-
+function CheckQstacks()
+	toreturnint = 0
+	for i = 1, myHero.buffCount, 1 do
+		local buff = myHero:getBuff(i)
+		if buff.valid then
+			if buff.name == "dravenspinning" then
+				toreturnint = buff.stack
+				return toreturnint
+			end
+		end
+	end
+end
 
 local serveradress = "raw.githubusercontent.com"
 local scriptadress = "/HiranN/BoL/master"
