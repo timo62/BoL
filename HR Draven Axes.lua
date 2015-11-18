@@ -1,7 +1,7 @@
 if myHero.charName ~= "Draven" then return end
 
 local ts
-local LocalVersion = "1.8"
+local LocalVersion = "1.9"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local wait = false
@@ -48,7 +48,6 @@ function OnLoad()
 	-- Mana Managers
 	
 	Menu:addSubMenu("Auto", "misc")
-	
 	
 	Menu:addSubMenu("Draw Settings", "drawing")	
 	Menu.drawing:addParam("mDraw", "Disable All Range Draws", SCRIPT_PARAM_ONOFF, false)
