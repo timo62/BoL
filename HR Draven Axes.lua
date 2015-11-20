@@ -4,7 +4,7 @@ local ts
 local LocalVersion = "1.9"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
-local wait = false
+local movementHuman = true
 local qBuff = 0
 local qStacks = 0
 local SAC = false
@@ -474,9 +474,11 @@ function CastR(unit)
 end
 
 function CatchAxes()
+	if movementHuman then
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
       if (math.abs(mousePos.x - reticle.x) <= 500 and math.abs(mousePos.z - reticle.z) <= 500) and not (reticle.x <= 55 and reticle.y <= 55) then
+	  movementHuman = false
 	if SAC then
 	_G.AutoCarry.Orbwalker:Orbwalk(reticle.x, reticle.z)
 	end
@@ -484,7 +486,9 @@ function CatchAxes()
 	SxOrb:ForcePoint(reticle.x, reticle.z)
 	end
 				DelayAction(ForcePointSx, 0.8)
+				movementHuman = true
 				end
+end
 end
 end
 end
