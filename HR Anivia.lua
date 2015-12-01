@@ -39,10 +39,10 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.harass:addParam("mManager", "Harass Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
 	
 	Menu:addSubMenu("LaneClear", "laneclear")
-	Menu.laneclear:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+	Menu.laneclear:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.laneclear:addParam("mManager", "LaneClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
 	
-	Menu:addSubMenu("Auto", "misc")
+	--Menu:addSubMenu("Auto", "misc")
 	
 	Menu:addSubMenu("Draw Settings", "drawing")	
 	Menu.drawing:addParam("mDraw", "Disable All Range Draws", SCRIPT_PARAM_ONOFF, false)
@@ -168,6 +168,7 @@ end
 	if LaneClearKey and not ComboKey then
 	LaneClear()
 	end
+	
 	UseSpells()
 	
 	if Qm ~= nil then
@@ -220,8 +221,8 @@ function LaneClear()
     if myHero.mana < (myHero.maxMana * ( Menu.laneclear.mManager / 100)) then
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseR and GetDistance(minion) <= 300 and myHero:CanUseSpell(_R) == READY then
-					CastSpell(_R, minion.x, minion.z)
+				if Menu.laneclear.UseE and GetDistance(minion) <= 600 and myHero:CanUseSpell(_E) == READY then
+				CastSpell(_E, minion)
 				end
 			end		 
 		end
@@ -347,7 +348,7 @@ function Skills()
 	SkillE = { name = "Frostbite", range = 650, delay = 0.25, speed = 850, width = nil, ready = false }
 	SkillR = { name = "Glacial Storm", range = 625, delay = 0.100, speed = math.huge, width = 350, ready = false }
 end
-
+	
 local serveradress = "raw.githubusercontent.com"
 local scriptadress = "/HiranN/BoL/master"
 	function FindUpdates()
