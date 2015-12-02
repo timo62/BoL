@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.7"
+local LocalVersion = "1.8"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -21,6 +21,10 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("RCheck", "Disable R if no enemies on R", SCRIPT_PARAM_ONOFF, true)
+	
+	Menu:addSubMenu("W Settings", "wSettings")
+	Menu.wSettings:addParam("QingapCloser", "Q if Gap Closer", SCRIPT_PARAM_ONOFF, true)
+	Menu.wSettings:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
@@ -74,11 +78,12 @@ end
 	CheckVPred()
 	Skills()		
 	FindUpdates()
+	GenerateTables()
 	
 	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
-	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")	
+	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")
 	else
     LoadOrb()
 	end
@@ -195,7 +200,7 @@ end
 	end
 	
 function WIntoR(unit)
-	if Menu.combo.WintoR then
+	if Menu.wSettings.WintoR then
 	if unit and unit.type == myHero.type and unit.team ~= myHero.team then
 	if unit.hasMovePath and unit.path.count > 1 and Rm and myHero:CanUseSpell(_W) == READY then
 	local path = unit.path:Path(2)
@@ -385,6 +390,72 @@ function OnDraw()
 			end
 		end
 	end
+end
+
+function OnProcessSpell(unit, spell)
+	if not Menu.wSettings.QingapCloser then return end
+    if unit.team ~= myHero.team then
+        if isAGapcloserUnitTarget[spell.name] then
+            if spell.target and spell.target.networkID == myHero.networkID then
+                CastQ(unit)
+            end
+        end
+
+        if isAChampToInterrupt[spell.name] and GetDistanceSqr(unit) <= 715*715 then
+                CastQ(unit)
+        end
+    end
+	end
+
+
+function GenerateTables()
+    isAGapcloserUnitTarget = {
+        ['AkaliShadowDance']		= {true, Champ = 'Akali', 		spellKey = 'R'},
+        ['Headbutt']     			= {true, Champ = 'Alistar', 	spellKey = 'W'},
+        ['DianaTeleport']       	= {true, Champ = 'Diana', 		spellKey = 'R'},
+        ['IreliaGatotsu']     		= {true, Champ = 'Irelia',		spellKey = 'Q'},
+        ['JaxLeapStrike']         	= {true, Champ = 'Jax', 		spellKey = 'Q'},
+        ['JayceToTheSkies']       	= {true, Champ = 'Jayce',		spellKey = 'Q'},
+        ['MaokaiUnstableGrowth']    = {true, Champ = 'Maokai',		spellKey = 'W'},
+        ['MonkeyKingNimbus']  		= {true, Champ = 'MonkeyKing',	spellKey = 'E'},
+        ['Pantheon_LeapBash']   	= {true, Champ = 'Pantheon',	spellKey = 'W'},
+        ['PoppyHeroicCharge']       = {true, Champ = 'Poppy',		spellKey = 'E'},
+        ['QuinnE']       			= {true, Champ = 'Quinn',		spellKey = 'E'},
+        ['XenZhaoSweep']     		= {true, Champ = 'XinZhao',		spellKey = 'E'},
+        ['blindmonkqtwo']	    	= {true, Champ = 'LeeSin',		spellKey = 'Q'},
+        ['FizzPiercingStrike']	    = {true, Champ = 'Fizz',		spellKey = 'Q'},
+        ['RengarLeap']	    		= {true, Champ = 'Rengar',		spellKey = 'Q/R'},
+    }
+
+    isAChampToInterrupt = {
+        ['KatarinaR']					= {true, Champ = 'Katarina',	spellKey = 'R'},
+        ['GalioIdolOfDurand']			= {true, Champ = 'Galio',		spellKey = 'R'},
+        ['Crowstorm']					= {true, Champ = 'FiddleSticks',spellKey = 'R'},
+        ['Drain']						= {true, Champ = 'FiddleSticks',spellKey = 'W'},
+        ['AbsoluteZero']				= {true, Champ = 'Nunu',		spellKey = 'R'},
+        ['ShenStandUnited']				= {true, Champ = 'Shen',		spellKey = 'R'},
+        ['UrgotSwap2']					= {true, Champ = 'Urgot',		spellKey = 'R'},
+        ['AlZaharNetherGrasp']			= {true, Champ = 'Malzahar',	spellKey = 'R'},
+        ['FallenOne']					= {true, Champ = 'Karthus',		spellKey = 'R'},
+        ['Pantheon_GrandSkyfall_Jump']	= {true, Champ = 'Pantheon',	spellKey = 'R'},
+        ['VarusQ']						= {true, Champ = 'Varus',		spellKey = 'Q'},
+        ['CaitlynAceintheHole']			= {true, Champ = 'Caitlyn',		spellKey = 'R'},
+        ['MissFortuneBulletTime']		= {true, Champ = 'MissFortune',	spellKey = 'R'},
+        ['InfiniteDuress']				= {true, Champ = 'Warwick',		spellKey = 'R'},
+        ['LucianR']						= {true, Champ = 'Lucian',		spellKey = 'R'}
+    }
+
+    AutoLevelSpellTable = {
+        ['SpellOrder']	= {'QWE', 'QEW', 'WQE', 'WEQ', 'EQW', 'EWQ'},
+        ['QWE']	= {_Q,_W,_E,_Q,_Q,_R,_Q,_W,_Q,_W,_R,_W,_W,_E,_E,_R,_E,_E},
+        ['QEW']	= {_Q,_E,_W,_Q,_Q,_R,_Q,_E,_Q,_E,_R,_E,_E,_W,_W,_R,_W,_W},
+        ['WQE']	= {_W,_Q,_E,_W,_W,_R,_W,_Q,_W,_Q,_R,_Q,_Q,_E,_E,_R,_E,_E},
+        ['WEQ']	= {_W,_E,_Q,_W,_W,_R,_W,_E,_W,_E,_R,_E,_E,_Q,_Q,_R,_Q,_Q},
+        ['EQW']	= {_E,_Q,_W,_E,_E,_R,_E,_Q,_E,_Q,_R,_Q,_Q,_W,_W,_R,_W,_W},
+        ['EWQ']	= {_E,_W,_Q,_E,_E,_R,_E,_W,_E,_W,_R,_W,_W,_Q,_Q,_R,_Q,_Q}
+    }
+
+    Color = { Red = ARGB(0xFF,0xFF,0,0),Green = ARGB(0xFF,0,0xFF,0),Blue = ARGB(0xFF,0,0,0xFF), White = ARGB(0xFF,0xFF,0xFF,0xFF), Black = ARGB(0xFF, 0x00, 0x00, 0x00) }
 end
 
 function Skills()
