@@ -79,8 +79,6 @@ end
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")	
-	SAC = true
-	SX = false
 	else
     LoadOrb()
 	end
@@ -98,8 +96,6 @@ end
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
-	SAC = false
-	SX = true
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
