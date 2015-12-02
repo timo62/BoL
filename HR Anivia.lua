@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.0"
+local LocalVersion = "1.1"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -20,6 +20,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("RCheck", "Disable R if no enemies on R", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
@@ -175,9 +176,12 @@ end
 	DetectQ()
 	end
 	
+	if RCheck  then
 	if Rm ~= nil then
 	if not ValidR() then CastSpell(_R) end
 	end
+	end
+	
 	end
 	
 function GetCustomTarget()
@@ -278,7 +282,7 @@ function ValidR()
 	for i=1, heroManager.iCount do
 		local hero = heroManager:getHero(i)
         if hero.team ~= player.team then
-			if GetDistance(hero, Rm) < 400 then
+			if GetDistance(hero, Rm) < 500 then
 				rcount = rcount + 1
 			end
 	end
