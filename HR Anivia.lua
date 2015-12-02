@@ -268,14 +268,20 @@ function CastR(unit)
 end
 
 function DetectQ()
-	for i=1, heroManager.iCount, 1 do
-	local hero = heroManager:GetHero(i)
-	if hero.team ~= myHero.team then
-	if GetDistance(hero, Qm) < 150 then
-	CastSpell(_Q)
+	for i, enemy in ipairs(GetEnemyHeroes()) do
+		if ValidTarget(enemy) and enemy.visible and Qobj and not enemy.dead then
+			if GetDistance(enemy, Qm) <= 200 then
+			CastSpell(_Q)
+			end
+		end
+	end
 end
-end
-end
+
+function OnProcessSpell(object, spell)
+local Q = myHero:GetSpellData(_Q)
+	if spell.name == Q.name then
+	Qm = object
+	end
 end
 
 function ValidR()
@@ -290,20 +296,12 @@ end
 end
 	if ccount > 0 then return true else return false end	
 end
-
-function OnProcessSpell(object, spell)
-local Q = myHero:GetSpellData(_Q)
-	if spell.name == Q.name then
-	Start = spell.startPos
-	End = spell.endPos
-	Qm = Start - End
-	PrintChat("Start : "..Start)
-	PrintChat("End : "..End)
-	PrintChat("Qm : "..Qm)
-	end
-end
  
 function OnCreateObj(object)
+	if object.name == "cryo_FlashFrost_mis.troy" then
+		Qm = object
+		PrintChat("CHELO")
+	end
 	if object.name == "cryo_storm_green_team.troy" then
 		Rm = object
 	end
