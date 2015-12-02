@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.1"
+local LocalVersion = "1.2"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -132,7 +132,7 @@ end
 		local dmgQ = getDmg("Q", unit, myHero)
 		local dmgE = getDmg("E", unit, myHero)
 		local dmgR = getDmg("R", unit, myHero)
-		
+		if GetDistance(unit) <= 1000 then
 		if not Menu.killsteal.KSOn then return end
 			if health <= dmgQ and Menu.killsteal.UseQ and myHero:CanUseSpell(_Q) == READY and ValidTarget(unit) then
 				CastQ(unit)
@@ -146,6 +146,7 @@ end
 			if health <= 40 + (20 * myHero.level) and Menu.killsteal.I and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) then
 				CastSpell(Ignite, unit)
 			end
+	end
 	end
 	end
 	
@@ -176,7 +177,7 @@ end
 	DetectQ()
 	end
 	
-	if RCheck  then
+	if Menu.Combo.RCheck then
 	if Rm ~= nil then
 	if not ValidR() then CastSpell(_R) end
 	end
@@ -267,44 +268,34 @@ function CastR(unit)
 end
 
 function DetectQ()
-	for i=1, heroManager.iCount do
-		local hero = heroManager:getHero(i)
-        if hero.team ~= player.team then
-			if GetDistance(hero, Qm) < 150 then
-				CastSpell(_Q)
-			end
-	end
-	end
 end
 
 function ValidR()
-	local rcount = 0
-	for i=1, heroManager.iCount do
-		local hero = heroManager:getHero(i)
-        if hero.team ~= player.team then
-			if GetDistance(hero, Rm) < 500 then
-				rcount = rcount + 1
-			end
+	local ccount = 0
+	for i = 1, heroManager.iCount, 1 do
+	local hero = heroManager:GetHero(i)
+	if hero.team ~= myHero.team and ValidTarget(hero) then
+	if GetDistance(hero, Rm) < 500 then
+	ccount = ccount + 1
 	end
 	end
-	if rcount > 0 then 
-	return true 
-	else 
-	return false 
-	end	
+	end
+	if ccount > 0 then return true else return false end	
 end
 
 function OnProcessSpell(object, spell)
 local Q = myHero:GetSpellData(_Q)
 	if spell.name == Q.name then
-		Qm = object
+	Start = spell.startPos
+	End = spell.endPos
+	Qm = Start - End
+	PrintChat("Start : "..Start)
+	PrintChat("End : "..End)
+	PrintChat("Qm : "..Qm)
 	end
 end
  
 function OnCreateObj(object)
-	if object.name == "cryo_FlashFrost_mis.troy" then
-		Qm = object
-	end
 	if object.name == "cryo_storm_green_team.troy" then
 		Rm = object
 	end
