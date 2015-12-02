@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.3"
+local LocalVersion = "1.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -53,9 +53,21 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("eDraw", "(E) Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("rDraw", "(R) Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
-	
+	Menu:addParam("pred", "Prediction Type", SCRIPT_PARAM_LIST, 1, { "VPrediction", "HPrediction"})
 	CustomLoad()
 	
+	if FileExist(LIB_PATH .. "/HPrediction.lua") then
+	require 'HPrediction'
+	
+	HPred = HPrediction()
+	HP_Q = HPSkillshot({type = "DelayLine", delay = 0.250, range = 1075, width = 110, speed = 850})
+	HP_W = HPSkillshot({type = "DelayLine", delay = 0.25, range = 1000, width = 100, speed = math.huge})
+	HP_R = HPSkillshot({type = "DelayLine", delay = 0.100, range = 625, width = 350, speed = math.huge})
+	UseHP = true
+else
+	UseHP = false
+	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>If you want other Prediction download : HPrediction.</b></font>")
+end
 	end
 	
 	function CustomLoad()
@@ -238,16 +250,25 @@ function CastQ(unit)
 	if Qm ~=nil then
 	return
 	end
+	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
-				
+ 
 		if HitChance >= 2 then
 			CastSpell(_Q, CastPosition.x, CastPosition.z)
 		end
 	end
+	elseif Menu.pred == 2 then
+  local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+  if QHitChance >= 1 then
+    CastSpell(_Q, QPos.x, QPos.z)
+  end
+  end
 end
 
 function CastW(unit)
+	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillW.range and myHero:CanUseSpell(_W) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillW.delay, SkillW.width, SkillW.range, SkillW.speed, myHero, false)
 				
@@ -255,9 +276,17 @@ function CastW(unit)
 			CastSpell(_W, CastPosition.x, CastPosition.z)
 		end
 	end
+		elseif Menu.pred == 2 then
+  local WPos, WHitChance = HPred:GetPredict(HP_W, unit, myHero)
+  
+  if WHitChance >= 1 then
+    CastSpell(_W, WPos.x, WPos.z)
+  end
+		end
 end
 
 function CastR(unit)
+	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
 				
@@ -265,6 +294,13 @@ function CastR(unit)
 			CastSpell(_R, CastPosition.x, CastPosition.z)
 		end
 	end
+		elseif Menu.pred == 2 then
+  local RPos, RHitChance = HPred:GetPredict(HP_R, unit, myHero)
+  
+  if RHitChance >= 1 then
+    CastSpell(_R, RPos.x, RPos.z)
+  end
+		end
 end
 
 function DetectQ()
