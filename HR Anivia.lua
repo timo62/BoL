@@ -22,8 +22,10 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("RCheck", "Disable R if no enemies on R", SCRIPT_PARAM_ONOFF, true)
 	
+	Menu:addSubMenu("Q Settings", "qSettings")
+	Menu.qSettings:addParam("QingapCloser", "Q if Gap Closer", SCRIPT_PARAM_ONOFF, true)
+	
 	Menu:addSubMenu("W Settings", "wSettings")
-	Menu.wSettings:addParam("QingapCloser", "Q if Gap Closer", SCRIPT_PARAM_ONOFF, true)
 	Menu.wSettings:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("KillSteal", "killsteal")
@@ -393,7 +395,7 @@ function OnDraw()
 end
 
 function OnProcessSpell(unit, spell)
-	if not Menu.wSettings.QingapCloser then return end
+	if not Menu.qSettings.QingapCloser then return end
     if unit.team ~= myHero.team then
         if isAGapcloserUnitTarget[spell.name] then
             if spell.target and spell.target.networkID == myHero.networkID then
