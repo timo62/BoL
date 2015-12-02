@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.6"
+local LocalVersion = "1.7"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -17,7 +17,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("RCheck", "Disable R if no enemies on R", SCRIPT_PARAM_ONOFF, true)
@@ -165,7 +165,9 @@ end
 	if myHero.dead then return end
 	ts:update()
 	Target = GetCustomTarget()
-
+	
+	WIntoR(Target)
+	
 	ComboKey = Menu.keys.ComboKey
 	HarassKey = Menu.keys.Harass
 	LaneClearKey = Menu.keys.LaneClear
@@ -196,6 +198,24 @@ end
 	
 	end
 	
+function WIntoR(unit)
+	if Menu.combo.WintoR then
+	if unit and unit.type == myHero.type and unit.team ~= myHero.team then
+	if unit.hasMovePath and unit.path.count > 1 and Rm and myHero:CanUseSpell(_W) == READY then
+	local path = unit.path:Path(2)
+
+	if GetDistance(path, Rm) > 210 and GetDistance(unit, Rm) < 175  then
+	local p1 = Vector(unit) + (Vector(path) - Vector(unit)):normalized() * 0.6 * unit.ms
+
+	if GetDistance(p1) < 1000 and GetDistance(Rm, p1) > 150 and GetDistance(Rm, p1) < 250 and GetDistance(unit, path) > GetDistance(unit, p1) then
+		CastSpell(_W, p1.x, p1.z)
+end
+end
+end
+end
+end
+end
+	
 function GetCustomTarget()
 	ts:update()	
 	if ts.target and not ts.target.dead and ts.target.type == myHero.type then
@@ -210,9 +230,6 @@ function Combo(unit)
 	
 		if Menu.combo.UseQ then 
 			CastQ(unit)
-		end	
-		if Menu.combo.UseW then 
-			CastW(unit)
 		end	
 		if Menu.combo.UseE then 
 			CastSpell(_E, unit)
@@ -260,7 +277,7 @@ function CastQ(unit)
 	elseif Menu.pred == 2 then
   local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
   
-  if QHitChance >= 1 then
+  if QHitChance > 0 then
     CastSpell(_Q, QPos.x, QPos.z)
   end
   end
@@ -278,7 +295,7 @@ function CastW(unit)
 		elseif Menu.pred == 2 then
   local WPos, WHitChance = HPred:GetPredict(HP_W, unit, myHero)
   
-  if WHitChance >= 1 then
+  if WHitChance > 0 then
     CastSpell(_W, WPos.x, WPos.z)
   end
 		end
@@ -300,7 +317,7 @@ function CastR(unit)
 		elseif Menu.pred == 2 then
   local RPos, RHitChance = HPred:GetPredict(HP_R, unit, myHero)
   
-  if RHitChance >= 1 then
+  if RHitChance > 0 then
     CastSpell(_R, RPos.x, RPos.z)
   end
 		end
