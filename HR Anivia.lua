@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.2"
+local LocalVersion = "1.3"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -269,18 +269,11 @@ end
 
 function DetectQ()
 	for i, enemy in ipairs(GetEnemyHeroes()) do
-		if ValidTarget(enemy) and enemy.visible and Qobj and not enemy.dead then
+		if ValidTarget(enemy) and enemy.visible and Qm and not enemy.dead then
 			if GetDistance(enemy, Qm) <= 200 then
 			CastSpell(_Q)
 			end
 		end
-	end
-end
-
-function OnProcessSpell(object, spell)
-local Q = myHero:GetSpellData(_Q)
-	if spell.name == Q.name then
-	Qm = object
 	end
 end
 
@@ -298,9 +291,8 @@ end
 end
  
 function OnCreateObj(object)
-	if object.name == "cryo_FlashFrost_mis.troy" then
+	if object.name == "cryo_FlashFrost_Player_mis.troy" then
 		Qm = object
-		PrintChat("CHELO")
 	end
 	if object.name == "cryo_storm_green_team.troy" then
 		Rm = object
