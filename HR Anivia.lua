@@ -177,7 +177,7 @@ end
 	DetectQ()
 	end
 	
-	if Menu.Combo.RCheck then
+	if Menu.combo.RCheck then
 	if Rm ~= nil then
 	if not ValidR() then CastSpell(_R) end
 	end
@@ -268,6 +268,14 @@ function CastR(unit)
 end
 
 function DetectQ()
+	for i=1, heroManager.iCount, 1 do
+	local hero = heroManager:GetHero(i)
+	if hero.team ~= myHero.team then
+	if GetDistance(hero, Qm) < 150 then
+	CastSpell(_Q)
+end
+end
+end
 end
 
 function ValidR()
@@ -277,9 +285,9 @@ function ValidR()
 	if hero.team ~= myHero.team and ValidTarget(hero) then
 	if GetDistance(hero, Rm) < 500 then
 	ccount = ccount + 1
-	end
-	end
-	end
+end
+end
+end
 	if ccount > 0 then return true else return false end	
 end
 
