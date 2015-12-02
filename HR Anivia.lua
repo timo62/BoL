@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.4"
+local LocalVersion = "1.5"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -83,13 +83,12 @@ end
 	SX = false
 	else
     LoadOrb()
+	end
 	
 	enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
 	ts = TargetSelector(TARGET_LESS_CAST, 1000, DAMAGE_PHYSICAL)
 	ts.name = "Anivia"
 	Menu:addTS(ts)
-	
-  end
   end
 	
 	function LoadOrb()
