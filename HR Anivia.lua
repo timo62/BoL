@@ -64,7 +64,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
 	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
 	Menu.keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
-	Menu.keys:addParam("JungleClear", "JungleClear", SCRIPT_PARAM_ONKEYDOWN,false, 86)
+	Menu.keys:addParam("JungleClear", "JungleClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
 	
 	Menu:addParam("pred", "Prediction Type", SCRIPT_PARAM_LIST, 1, { "VPrediction", "HPrediction"})
 	CustomLoad()
