@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.8"
+local LocalVersion = "1.9"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -17,16 +17,23 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("RCheck", "Disable R if no enemies on R", SCRIPT_PARAM_ONOFF, true)
 	
-	Menu:addSubMenu("Q Settings", "qSettings")
-	Menu.qSettings:addParam("QingapCloser", "Q if Gap Closer", SCRIPT_PARAM_ONOFF, true)
+	Menu:addSubMenu("Harass", "harass")
+	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+	Menu.harass:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+	Menu.harass:addParam("mManager", "Harass Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
 	
-	Menu:addSubMenu("W Settings", "wSettings")
-	Menu.wSettings:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
+	Menu:addSubMenu("LaneClear", "laneclear")
+	Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+	Menu.laneclear:addParam("mManager", "LaneClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
+	
+	Menu:addSubMenu("JungleClear", "jungleclear")
+	Menu.jungleclear:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+	Menu.jungleclear:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+	Menu.jungleclear:addParam("mManager", "JungleClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
 	
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
@@ -35,19 +42,11 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	if Ignite then Menu.killsteal:addParam("I", "Use Ignite", SCRIPT_PARAM_ONOFF, true) end
 	
-	Menu:addSubMenu("Keys", "keys")
-	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
-	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
-	Menu.keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	Menu:addSubMenu("Q Settings", "qSettings")
+	Menu.qSettings:addParam("QingapCloser", "Q if Gap Closer", SCRIPT_PARAM_ONOFF, true)
 	
-	Menu:addSubMenu("Harass", "harass")
-	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.harass:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
-	Menu.harass:addParam("mManager", "Harass Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
-	
-	Menu:addSubMenu("LaneClear", "laneclear")
-	Menu.laneclear:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
-	Menu.laneclear:addParam("mManager", "LaneClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
+	Menu:addSubMenu("W Settings", "wSettings")
+	Menu.wSettings:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
 	
 	--Menu:addSubMenu("Auto", "misc")
 	
@@ -59,6 +58,14 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("eDraw", "(E) Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("rDraw", "(R) Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("particles", "Particles", SCRIPT_PARAM_ONOFF, true)
+	
+	Menu:addSubMenu("Keys", "keys")
+	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
+	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
+	Menu.keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	Menu.keys:addParam("JungleClear", "JungleClear", SCRIPT_PARAM_ONKEYDOWN,false, 86)
+	
 	Menu:addParam("pred", "Prediction Type", SCRIPT_PARAM_LIST, 1, { "VPrediction", "HPrediction"})
 	CustomLoad()
 	
@@ -174,6 +181,7 @@ end
 	ComboKey = Menu.keys.ComboKey
 	HarassKey = Menu.keys.Harass
 	LaneClearKey = Menu.keys.LaneClear
+	JungleClearKey = Menu.keys.JungleClear
 	
 	if ComboKey then 
 	Combo(Target)
@@ -185,6 +193,10 @@ end
 	
 	if LaneClearKey and not ComboKey then
 	LaneClear()
+	end
+	
+	if JungleClearKey and not ComboKey then
+	JungleClear()
 	end
 	
 	UseSpells()
@@ -252,17 +264,52 @@ function Harass(unit)
 	end
 end
 
+function IsMyManaLowLaneClear()
+    if myHero.mana < (myHero.maxMana * ( Menu.laneclear.mManager / 100)) then
+        return true
+    else
+        return false
+    end
+end
+
+function IsMyManaLowJungleClear()
+    if myHero.mana < (myHero.maxMana * ( Menu.jungleclear.mManager / 100)) then
+        return true
+    else
+        return false
+    end
+end
+
 function LaneClear()
 	enemyMinions:update()
-    if myHero.mana < (myHero.maxMana * ( Menu.laneclear.mManager / 100)) then
+	if not IsMyManaLowLaneClear() then
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.laneclear.UseE and GetDistance(minion) <= 600 and myHero:CanUseSpell(_E) == READY then
-				CastSpell(_E, minion)
+				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+					CastQ(minion)
 				end
 			end		 
 		end
 	end
+end
+
+function JungleClear()
+	if not IsMyManaLowJungleClear() then
+	JungleMob = GetJungleMob()
+	if JungleMob ~= nil then
+		if Menu.jungleclear.UseE and GetDistance(JungleMob) <= SkillE.range then CastSpell(_E, JungleMob) end
+		if Menu.jungleclear.UseR and GetDistance(JungleMob) <= SkillR.range then CastR(JungleMob) end
+	end
+end
+end
+
+function GetJungleMob()
+        for _, Mob in pairs(JungleFocusMobs) do
+                if ValidTarget(Mob, SkillQ.range) then return Mob end
+        end
+        for _, Mob in pairs(JungleMobs) do
+                if ValidTarget(Mob, SkillQ.range) then return Mob end
+        end
 end
 
 function CastQ(unit)
@@ -309,6 +356,10 @@ function CastR(unit)
 	return
 	end
 	
+	if Menu.keys.JungleClear then
+	return
+	end
+	
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
@@ -327,6 +378,15 @@ function CastR(unit)
 end
 
 function DetectQ()
+	if Menu.keys.LaneClear then 
+	for i, minion in ipairs(enemyMinions.objects) do
+		if ValidTarget(minion) and minion.visible and Qm and not minion.dead then
+			if GetDistance(minion, Qm) <= 200 then
+			CastSpell(_Q)
+			end
+		end
+	end
+	end
 	for i, enemy in ipairs(GetEnemyHeroes()) do
 		if ValidTarget(enemy) and enemy.visible and Qm and not enemy.dead then
 			if GetDistance(enemy, Qm) <= 200 then
@@ -334,6 +394,7 @@ function DetectQ()
 			end
 		end
 	end
+	
 end
 
 function ValidR()
@@ -390,8 +451,14 @@ function OnDraw()
 			if Menu.drawing.tText then
 				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
 			end
+			end
+	if Menu.drawing.particles then
+		if Qm ~= nil then
+			local Vec2 = Vector(Qm.pos) + (Vector(myHero.pos) - Vector(Qm.pos)):normalized()
+			DrawCircle(Vec2.x, Vec2.y, Vec2.z, 200, ARGB(120, 38, 140, 1))
 		end
-	end
+		end
+end
 end
 
 function OnProcessSpell(unit, spell)
@@ -406,11 +473,18 @@ function OnProcessSpell(unit, spell)
         if isAChampToInterrupt[spell.name] and GetDistanceSqr(unit) <= 715*715 then
                 CastQ(unit)
         end
+		
+        if isAGapcloserUnitNoTarget[spell.name] and GetDistanceSqr(unit) <= 2000*2000 and (spell.target == nil or (spell.target and spell.target.isMe)) then
+                CastQ(unit)
+        end
     end
 	end
 
 
 function GenerateTables()
+	JungleMobs = {}
+	JungleFocusMobs = {}
+	
     isAGapcloserUnitTarget = {
         ['AkaliShadowDance']		= {true, Champ = 'Akali', 		spellKey = 'R'},
         ['Headbutt']     			= {true, Champ = 'Alistar', 	spellKey = 'W'},
@@ -427,8 +501,29 @@ function GenerateTables()
         ['blindmonkqtwo']	    	= {true, Champ = 'LeeSin',		spellKey = 'Q'},
         ['FizzPiercingStrike']	    = {true, Champ = 'Fizz',		spellKey = 'Q'},
         ['RengarLeap']	    		= {true, Champ = 'Rengar',		spellKey = 'Q/R'},
+        ['YasuoDashWrapper']	    = {true, Champ = 'Yasuo',		spellKey = 'E'},
     }
-
+	
+    isAGapcloserUnitNoTarget = {
+        ['AatroxQ']					= {true, Champ = 'Aatrox', 		range = 1000,  	projSpeed = 1200, spellKey = 'Q'},
+        ['GragasE']					= {true, Champ = 'Gragas', 		range = 600,   	projSpeed = 2000, spellKey = 'E'},
+        ['GravesMove']				= {true, Champ = 'Graves', 		range = 425,   	projSpeed = 2000, spellKey = 'E'},
+        ['HecarimUlt']				= {true, Champ = 'Hecarim', 	range = 1000,   projSpeed = 1200, spellKey = 'R'},
+        ['JarvanIVDragonStrike']	= {true, Champ = 'JarvanIV',	range = 770,   	projSpeed = 2000, spellKey = 'Q'},
+        ['JarvanIVCataclysm']		= {true, Champ = 'JarvanIV', 	range = 650,   	projSpeed = 2000, spellKey = 'R'},
+        ['KhazixE']					= {true, Champ = 'Khazix', 		range = 900,   	projSpeed = 2000, spellKey = 'E'},
+        ['khazixelong']				= {true, Champ = 'Khazix', 		range = 900,   	projSpeed = 2000, spellKey = 'E'},
+        ['LeblancSlide']			= {true, Champ = 'Leblanc', 	range = 600,   	projSpeed = 2000, spellKey = 'W'},
+        ['LeblancSlideM']			= {true, Champ = 'Leblanc', 	range = 600,   	projSpeed = 2000, spellKey = 'WMimic'},
+        ['LeonaZenithBlade']		= {true, Champ = 'Leona', 		range = 900,  	projSpeed = 2000, spellKey = 'E'},
+        ['UFSlash']					= {true, Champ = 'Malphite', 	range = 1000,  	projSpeed = 1800, spellKey = 'R'},
+        ['RenektonSliceAndDice']	= {true, Champ = 'Renekton', 	range = 450,  	projSpeed = 2000, spellKey = 'E'},
+        ['SejuaniArcticAssault']	= {true, Champ = 'Sejuani', 	range = 650,  	projSpeed = 2000, spellKey = 'Q'},
+        ['ShenShadowDash']			= {true, Champ = 'Shen', 		range = 575,  	projSpeed = 2000, spellKey = 'E'},
+        ['RocketJump']				= {true, Champ = 'Tristana', 	range = 900,  	projSpeed = 2000, spellKey = 'W'},
+        ['slashCast']				= {true, Champ = 'Tryndamere', 	range = 650,  	projSpeed = 1450, spellKey = 'E'},
+    }
+	
     isAChampToInterrupt = {
         ['KatarinaR']					= {true, Champ = 'Katarina',	spellKey = 'R'},
         ['GalioIdolOfDurand']			= {true, Champ = 'Galio',		spellKey = 'R'},
@@ -446,18 +541,83 @@ function GenerateTables()
         ['InfiniteDuress']				= {true, Champ = 'Warwick',		spellKey = 'R'},
         ['LucianR']						= {true, Champ = 'Lucian',		spellKey = 'R'}
     }
+	
+	if not TwistedTreeline then
+		JungleMobNames = { 
+			["SRU_MurkwolfMini2.1.3"]	= true,
+			["SRU_MurkwolfMini2.1.2"]	= true,
+			["SRU_MurkwolfMini8.1.3"]	= true,
+			["SRU_MurkwolfMini8.1.2"]	= true,
+			["SRU_BlueMini1.1.2"]		= true,
+			["SRU_BlueMini7.1.2"]		= true,
+			["SRU_BlueMini21.1.3"]		= true,
+			["SRU_BlueMini27.1.3"]		= true,
+			["SRU_RedMini10.1.2"]		= true,
+			["SRU_RedMini10.1.3"]		= true,
+			["SRU_RedMini4.1.2"]		= true,
+			["SRU_RedMini4.1.3"]		= true,
+			["SRU_KrugMini11.1.1"]		= true,
+			["SRU_KrugMini5.1.1"]		= true,
+			["SRU_RazorbeakMini9.1.2"]	= true,
+			["SRU_RazorbeakMini9.1.3"]	= true,
+			["SRU_RazorbeakMini9.1.4"]	= true,
+			["SRU_RazorbeakMini3.1.2"]	= true,
+			["SRU_RazorbeakMini3.1.3"]	= true,
+			["SRU_RazorbeakMini3.1.4"]	= true
+		}
+		
+		FocusJungleNames = {
+			["SRU_Blue1.1.1"]			= true,
+			["SRU_Blue7.1.1"]			= true,
+			["SRU_Murkwolf2.1.1"]		= true,
+			["SRU_Murkwolf8.1.1"]		= true,
+			["SRU_Gromp13.1.1"]			= true,
+			["SRU_Gromp14.1.1"]			= true,
+			["Sru_Crab16.1.1"]			= true,
+			["Sru_Crab15.1.1"]			= true,
+			["SRU_Red10.1.1"]			= true,
+			["SRU_Red4.1.1"]			= true,
+			["SRU_Krug11.1.2"]			= true,
+			["SRU_Krug5.1.2"]			= true,
+			["SRU_Razorbeak9.1.1"]		= true,
+			["SRU_Razorbeak3.1.1"]		= true,
+			["SRU_Dragon6.1.1"]			= true,
+			["SRU_Baron12.1.1"]			= true
+		}
+	else
+		FocusJungleNames = {
+			["TT_NWraith1.1.1"]			= true,
+			["TT_NGolem2.1.1"]			= true,
+			["TT_NWolf3.1.1"]			= true,
+			["TT_NWraith4.1.1"]			= true,
+			["TT_NGolem5.1.1"]			= true,
+			["TT_NWolf6.1.1"]			= true,
+			["TT_Spiderboss8.1.1"]		= true
+		}		
+		JungleMobNames = {
+			["TT_NWraith21.1.2"]		= true,
+			["TT_NWraith21.1.3"]		= true,
+			["TT_NGolem22.1.2"]			= true,
+			["TT_NWolf23.1.2"]			= true,
+			["TT_NWolf23.1.3"]			= true,
+			["TT_NWraith24.1.2"]		= true,
+			["TT_NWraith24.1.3"]		= true,
+			["TT_NGolem25.1.1"]			= true,
+			["TT_NWolf26.1.2"]			= true,
+			["TT_NWolf26.1.3"]			= true
+		}
+	end
 
-    AutoLevelSpellTable = {
-        ['SpellOrder']	= {'QWE', 'QEW', 'WQE', 'WEQ', 'EQW', 'EWQ'},
-        ['QWE']	= {_Q,_W,_E,_Q,_Q,_R,_Q,_W,_Q,_W,_R,_W,_W,_E,_E,_R,_E,_E},
-        ['QEW']	= {_Q,_E,_W,_Q,_Q,_R,_Q,_E,_Q,_E,_R,_E,_E,_W,_W,_R,_W,_W},
-        ['WQE']	= {_W,_Q,_E,_W,_W,_R,_W,_Q,_W,_Q,_R,_Q,_Q,_E,_E,_R,_E,_E},
-        ['WEQ']	= {_W,_E,_Q,_W,_W,_R,_W,_E,_W,_E,_R,_E,_E,_Q,_Q,_R,_Q,_Q},
-        ['EQW']	= {_E,_Q,_W,_E,_E,_R,_E,_Q,_E,_Q,_R,_Q,_Q,_W,_W,_R,_W,_W},
-        ['EWQ']	= {_E,_W,_Q,_E,_E,_R,_E,_W,_E,_W,_R,_W,_W,_Q,_Q,_R,_Q,_Q}
-    }
-
-    Color = { Red = ARGB(0xFF,0xFF,0,0),Green = ARGB(0xFF,0,0xFF,0),Blue = ARGB(0xFF,0,0,0xFF), White = ARGB(0xFF,0xFF,0xFF,0xFF), Black = ARGB(0xFF, 0x00, 0x00, 0x00) }
+	for i = 0, objManager.maxObjects do
+		local object = objManager:getObject(i)
+		if object ~= nil then
+			if FocusJungleNames[object.name] then
+				table.insert(JungleFocusMobs, object)
+			elseif JungleMobNames[object.name] then
+				table.insert(JungleMobs, object)
+			end
+		end
+	end
 end
 
 function Skills()
