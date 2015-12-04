@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "1.9"
+local LocalVersion = "2.0"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -207,7 +207,11 @@ end
 	
 	if Menu.combo.RCheck then
 	if Rm ~= nil then
-	if not ValidR() then CastSpell(_R) end
+	if not ValidR() then 
+	if not JungleClearKey then
+	CastSpell(_R) 
+	end
+	end
 	end
 	end
 	
@@ -297,8 +301,8 @@ function JungleClear()
 	if not IsMyManaLowJungleClear() then
 	JungleMob = GetJungleMob()
 	if JungleMob ~= nil then
-		if Menu.jungleclear.UseE and GetDistance(JungleMob) <= SkillE.range then CastSpell(_E, JungleMob) end
-		if Menu.jungleclear.UseR and GetDistance(JungleMob) <= SkillR.range then CastR(JungleMob) end
+		if Menu.jungleclear.UseE then CastSpell(_E, JungleMob) end
+		if Menu.jungleclear.UseR then CastR(JungleMob) end
 	end
 end
 end
@@ -356,7 +360,8 @@ function CastR(unit)
 	return
 	end
 	
-	if Menu.keys.JungleClear then
+	if Menu.keys.JungleClear and RM ~= nil then
+	print("voltar")
 	return
 	end
 	
