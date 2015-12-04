@@ -263,10 +263,10 @@ function Combo(unit)
 end
 
 function Harass(unit)
-	if(myHero:CanUseSpell(_Q) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and ts.target~=nil and Menu.harass.UseQ ) then 
+	if(myHero:CanUseSpell(_Q) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and Target ~=nil and Menu.harass.UseQ ) then 
   CastQ(unit)
 	end
-	if(myHero:CanUseSpell(_E) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and ts.target~=nil and Menu.harass.UseW ) then 
+	if(myHero:CanUseSpell(_E) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and Target ~=nil and Menu.harass.UseW ) then 
   CastE(unit)
 	end
 end
@@ -294,6 +294,9 @@ function LaneClear()
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 					CastQ(minion)
+				end
+				if Menu.laneclear.UseR and GetDistance(minion) <= SkillR.range and myHero:CanUseSpell(_R) == READY then
+					CastR(minion)
 				end
 			end		 
 		end
