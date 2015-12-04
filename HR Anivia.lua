@@ -9,7 +9,7 @@ local Qm = nil
 local Rm = nil
 local SXORB = false
 local SAC = false
-local LocalVersion = "2.0"
+local LocalVersion = "2.1"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
