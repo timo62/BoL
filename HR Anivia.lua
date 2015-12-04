@@ -7,6 +7,8 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
+local SXORB = false
+local SAC = false
 local LocalVersion = "2.0"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
@@ -47,6 +49,9 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("W Settings", "wSettings")
 	Menu.wSettings:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
+	
+	Menu:addSubMenu("E Settings", "eSettings")
+	Menu.eSettings:addParam("UseEAfter", "Use E in units with Chilled", SCRIPT_PARAM_ONOFF, true)
 	
 	--Menu:addSubMenu("Auto", "misc")
 	
@@ -93,16 +98,15 @@ end
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")
+	SXORB = false
+	SAC = true
 	else
     LoadOrb()
 	end
 	
 	enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
-	ts = TargetSelector(TARGET_LESS_CAST, 1000, DAMAGE_PHYSICAL)
-	ts.name = "Anivia"
-	Menu:addTS(ts)
   end
-	
+  
 	function LoadOrb()
 	if FileExist(LIB_PATH .. "/SxOrbWalk.lua") then
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")
@@ -110,6 +114,8 @@ end
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
+	SXORB = true
+	SAC = false
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
@@ -173,7 +179,6 @@ end
 	
 	function OnTick()
 	if myHero.dead then return end
-	ts:update()
 	Target = GetCustomTarget()
 	
 	WIntoR(Target)
@@ -236,22 +241,20 @@ end
 end
 	
 function GetCustomTarget()
-	ts:update()	
-	if ts.target and not ts.target.dead and ts.target.type == myHero.type then
-		return ts.target
-	else
-		return nil
+	if SXORB then
+	return SxOrb:GetTarget(1000)
+	elseif SAC then
+	return AutoCarry.GetAttackTarget()
 	end
 end
 
 function Combo(unit)
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
-	
 		if Menu.combo.UseQ then 
 			CastQ(unit)
 		end	
 		if Menu.combo.UseE then 
-			CastSpell(_E, unit)
+			CastE(unit)
 		end	
 		if Menu.combo.UseR then 
 			CastR(unit)
@@ -264,7 +267,7 @@ function Harass(unit)
   CastQ(unit)
 	end
 	if(myHero:CanUseSpell(_E) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and ts.target~=nil and Menu.harass.UseW ) then 
-  CastSpell(_E, unit)
+  CastE(unit)
 	end
 end
 
@@ -320,6 +323,7 @@ function CastQ(unit)
 	if Qm ~=nil then
 	return
 	end
+	
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
@@ -353,6 +357,20 @@ function CastW(unit)
     CastSpell(_W, WPos.x, WPos.z)
   end
 		end
+end
+
+function CastE(unit)
+	if Menu.eSettings.UseEAfter then
+	if TargetHaveBuff("chilled", unit) then
+	if myHero:CanUseSpell(_E) == READY then
+	CastSpell(_E, unit)
+	end
+	end
+	else
+	if myHero:CanUseSpell(_E) == READY then
+	CastSpell(_E, unit)
+	end
+end
 end
 
 function CastR(unit)
