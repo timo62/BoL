@@ -30,6 +30,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("LaneClear", "laneclear")
 	Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+	Menu.laneclear:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	Menu.laneclear:addParam("mManager", "LaneClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
 	
 	Menu:addSubMenu("JungleClear", "jungleclear")
