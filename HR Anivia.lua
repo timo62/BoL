@@ -361,7 +361,6 @@ function CastR(unit)
 	end
 	
 	if Menu.keys.JungleClear and RM ~= nil then
-	print("voltar")
 	return
 	end
 	
