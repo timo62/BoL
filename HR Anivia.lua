@@ -7,9 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local SXORB = false
-local SAC = false
-local LocalVersion = "2.2"
+local LocalVersion = "2.3"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -99,13 +97,12 @@ end
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
 	PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")
-	SXORB = false
-	SAC = true
 	else
     LoadOrb()
 	end
 	
 	enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
+	jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
 	ts = TargetSelector(TARGET_LESS_CAST, 1000, DAMAGE_MAGIC)
 	ts.name = "Anivia"
 	Menu:addTS(ts)
@@ -118,8 +115,6 @@ end
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
-	SXORB = true
-	SAC = false
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
@@ -312,12 +307,14 @@ function LaneClear()
 end
 
 function JungleClear()
+	jungleMinions:update()
 	if not IsMyManaLowJungleClear() then
-	JungleMob = GetJungleMob()
-	if JungleMob ~= nil then
-		if Menu.jungleclear.UseE then CastSpell(_E, JungleMob) end
-		if Menu.jungleclear.UseR then CastR(JungleMob) end
-	end
+	for i, jungleMinion in pairs(jungleMinions.objects) do
+		if jungleMinion ~= nil then
+		if Menu.jungleclear.UseE then CastSpell(_E, jungleMinion)end
+		if Menu.jungleclear.UseR then CastR(jungleMinion)end
+end
+end
 end
 end
 
@@ -574,84 +571,6 @@ function GenerateTables()
         ['InfiniteDuress']				= {true, Champ = 'Warwick',		spellKey = 'R'},
         ['LucianR']						= {true, Champ = 'Lucian',		spellKey = 'R'}
     }
-	
-	if not TwistedTreeline then
-		JungleMobNames = { 
-			["SRU_MurkwolfMini2.1.3"]	= true,
-			["SRU_MurkwolfMini2.1.2"]	= true,
-			["SRU_MurkwolfMini8.1.3"]	= true,
-			["SRU_MurkwolfMini8.1.2"]	= true,
-			["SRU_BlueMini1.1.2"]		= true,
-			["SRU_BlueMini7.1.2"]		= true,
-			["SRU_BlueMini21.1.3"]		= true,
-			["SRU_BlueMini27.1.3"]		= true,
-			["SRU_RedMini10.1.2"]		= true,
-			["SRU_RedMini10.1.3"]		= true,
-			["SRU_RedMini4.1.2"]		= true,
-			["SRU_RedMini4.1.3"]		= true,
-			["SRU_KrugMini11.1.1"]		= true,
-			["SRU_KrugMini5.1.1"]		= true,
-			["SRU_RazorbeakMini9.1.2"]	= true,
-			["SRU_RazorbeakMini9.1.3"]	= true,
-			["SRU_RazorbeakMini9.1.4"]	= true,
-			["SRU_RazorbeakMini3.1.2"]	= true,
-			["SRU_RazorbeakMini3.1.3"]	= true,
-			["SRU_RazorbeakMini3.1.4"]	= true
-		}
-		
-		FocusJungleNames = {
-			["SRU_Blue1.1.1"]			= true,
-			["SRU_Blue7.1.1"]			= true,
-			["SRU_Murkwolf2.1.1"]		= true,
-			["SRU_Murkwolf8.1.1"]		= true,
-			["SRU_Gromp13.1.1"]			= true,
-			["SRU_Gromp14.1.1"]			= true,
-			["Sru_Crab16.1.1"]			= true,
-			["Sru_Crab15.1.1"]			= true,
-			["SRU_Red10.1.1"]			= true,
-			["SRU_Red4.1.1"]			= true,
-			["SRU_Krug11.1.2"]			= true,
-			["SRU_Krug5.1.2"]			= true,
-			["SRU_Razorbeak9.1.1"]		= true,
-			["SRU_Razorbeak3.1.1"]		= true,
-			["SRU_Dragon6.1.1"]			= true,
-			["SRU_Baron12.1.1"]			= true
-		}
-	else
-		FocusJungleNames = {
-			["TT_NWraith1.1.1"]			= true,
-			["TT_NGolem2.1.1"]			= true,
-			["TT_NWolf3.1.1"]			= true,
-			["TT_NWraith4.1.1"]			= true,
-			["TT_NGolem5.1.1"]			= true,
-			["TT_NWolf6.1.1"]			= true,
-			["TT_Spiderboss8.1.1"]		= true
-		}		
-		JungleMobNames = {
-			["TT_NWraith21.1.2"]		= true,
-			["TT_NWraith21.1.3"]		= true,
-			["TT_NGolem22.1.2"]			= true,
-			["TT_NWolf23.1.2"]			= true,
-			["TT_NWolf23.1.3"]			= true,
-			["TT_NWraith24.1.2"]		= true,
-			["TT_NWraith24.1.3"]		= true,
-			["TT_NGolem25.1.1"]			= true,
-			["TT_NWolf26.1.2"]			= true,
-			["TT_NWolf26.1.3"]			= true
-		}
-	end
-
-	for i = 0, objManager.maxObjects do
-		local object = objManager:getObject(i)
-		if object ~= nil then
-			if FocusJungleNames[object.name] then
-				table.insert(JungleFocusMobs, object)
-			elseif JungleMobNames[object.name] then
-				table.insert(JungleMobs, object)
-			end
-		end
-	end
-end
 
 function Skills()
 	SkillQ = { name = "Flash Frost", range = 1075, delay = 0.250, speed = 850, width = 110, ready = false }
