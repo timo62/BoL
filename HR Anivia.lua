@@ -512,8 +512,6 @@ function OnProcessSpell(unit, spell)
 
 
 function GenerateTables()
-	JungleMobs = {}
-	JungleFocusMobs = {}
 	
     isAGapcloserUnitTarget = {
         ['AkaliShadowDance']		= {true, Champ = 'Akali', 		spellKey = 'R'},
@@ -571,6 +569,7 @@ function GenerateTables()
         ['InfiniteDuress']				= {true, Champ = 'Warwick',		spellKey = 'R'},
         ['LucianR']						= {true, Champ = 'Lucian',		spellKey = 'R'}
     }
+end
 
 function Skills()
 	SkillQ = { name = "Flash Frost", range = 1075, delay = 0.250, speed = 850, width = 110, ready = false }
