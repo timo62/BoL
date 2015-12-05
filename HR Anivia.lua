@@ -318,15 +318,6 @@ end
 end
 end
 
-function GetJungleMob()
-        for _, Mob in pairs(JungleFocusMobs) do
-                if ValidTarget(Mob, SkillQ.range) then return Mob end
-        end
-        for _, Mob in pairs(JungleMobs) do
-                if ValidTarget(Mob, SkillQ.range) then return Mob end
-        end
-end
-
 function CastQ(unit)
 	if Qm ~=nil then
 	return
