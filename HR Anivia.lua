@@ -103,7 +103,7 @@ end
 	
 	enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
 	jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
-	ts = TargetSelector(TARGET_LESS_CAST, 1000, DAMAGE_MAGIC)
+	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 1000, DAMAGE_MAGIC)
 	ts.name = "Anivia"
 	Menu:addTS(ts)
   end
