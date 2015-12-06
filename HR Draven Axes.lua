@@ -13,7 +13,6 @@ local SAC = false
 local SX = false
 local BarrierMenu = false
 local HealMenu = false
-local Skills, Keys, Items, Data, Jungle, Helper, MyHero, Minions, Crosshair, Orbwalker = AutoCarry.Helper:GetClasses()
 
 function OnLoad()
   Menu = scriptConfig("HR Draven Axes", "Draven")
@@ -68,7 +67,7 @@ function OnLoad()
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
 	PrintChat("<font color=\"#ff0000\"><b>Loading Sac.</b></font>")	
-	SACLoaded = true
+	local Skills, Keys, Items, Data, Jungle, Helper, MyHero, Minions, Crosshair, Orbwalker = AutoCarry.Helper:GetClasses()
 	SAC = true
 	SX = false
 	else
