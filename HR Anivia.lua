@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "2.3"
+local LocalVersion = "2.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -106,6 +106,7 @@ end
 	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 1000, DAMAGE_MAGIC)
 	ts.name = "Anivia"
 	Menu:addTS(ts)
+	PriorityOnLoad()
   end
   
 	function LoadOrb()
@@ -567,6 +568,61 @@ function Skills()
 	SkillW = { name = "Crystallize", range = 1000, delay = 0.25, speed = math.huge, width = 100, ready = false }
 	SkillE = { name = "Frostbite", range = 650, delay = 0.25, speed = 850, width = nil, ready = false }
 	SkillR = { name = "Glacial Storm", range = 625, delay = 0.100, speed = math.huge, width = 350, ready = false }
+end
+	
+local priorityTable = {
+ 
+    AP = {
+        "Annie", "Ahri", "Akali", "Anivia", "Annie", "Brand", "Cassiopeia", "Diana", "Evelynn", "FiddleSticks", "Fizz", "Gragas", "Heimerdinger", "Karthus",
+        "Kassadin", "Katarina", "Kayle", "Kennen", "Leblanc", "Lissandra", "Lux", "Malzahar", "Mordekaiser", "Morgana", "Nidalee", "Orianna",
+        "Rumble", "Ryze", "Sion", "Swain", "Syndra", "Teemo", "TwistedFate", "Veigar", "Viktor", "Vladimir", "Xerath", "Ziggs", "Zyra", "MasterYi", "VelKoz", "Azir", "Ekko",
+    },
+    Support = {
+        "Alistar", "Blitzcrank", "Janna", "Karma", "Leona", "Lulu", "Nami", "Nunu", "Sona", "Soraka", "Taric", "Thresh", "Zilean", "Braum", "Bard", "TahmKench",
+    },
+ 
+    Tank = {
+        "Amumu", "Chogath", "DrMundo", "Galio", "Hecarim", "Malphite", "Maokai", "Nasus", "Rammus", "Sejuani", "Shen", "Singed", "Skarner", "Volibear",
+        "Warwick", "Yorick", "Zac", "Illaoi", "RekSai",
+    },
+ 
+    AD_Carry = {
+        "Ashe", "Caitlyn", "Corki", "Draven", "Ezreal", "Graves", "Jayce", "KogMaw", "MissFortune", "Pantheon", "Quinn", "Shaco", "Sivir",
+        "Talon", "Tristana", "Twitch", "Urgot", "Varus", "Vayne", "Zed", "Lucian", "Jinx",
+ 
+    },
+ 
+    Bruiser = {
+        "Aatrox", "Darius", "Elise", "Fiora", "Gangplank", "Garen", "Irelia", "JarvanIV", "Jax", "Khazix", "LeeSin", "Nautilus", "Nocturne", "Olaf", "Poppy",
+        "Renekton", "Rengar", "Riven", "Shyvana", "Trundle", "Tryndamere", "Udyr", "Vi", "MonkeyKing", "XinZhao", "Gnar", "Kindred"
+    },
+ 
+}
+ 
+function SetPriority(table, hero, priority)
+        for i=1, #table, 1 do
+                if hero.charName:find(table[i]) ~= nil then
+                        TS_SetHeroPriority(priority, hero.charName)
+                end
+        end
+end
+ 
+function arrangePrioritys()
+        for i, enemy in ipairs(GetEnemyHeroes()) do
+                SetPriority(priorityTable.AD_Carry, enemy, 1)
+                SetPriority(priorityTable.AP,       enemy, 2)
+                SetPriority(priorityTable.Support,  enemy, 3)
+                SetPriority(priorityTable.Bruiser,  enemy, 4)
+                SetPriority(priorityTable.Tank,     enemy, 5)
+        end
+end
+ 
+function PriorityOnLoad()
+        if heroManager.iCount < 10 then
+				PrintChat("<font color=\"#ccae00\"><b>HR Anivia : </b></font>".."<font color=\"#00ae26\"><b>Too few champions to arrange priority.</b></font>")	
+        else
+                arrangePrioritys()
+        end
 end
 	
 local serveradress = "raw.githubusercontent.com"
