@@ -162,25 +162,33 @@ end
 
  function AutoHeal()
  if Heal then
+ 	for _, unit in pairs(GetEnemyHeroes()) do
+		if GetDistance(unit) <= 750 then
 			if Menu.misc.AutoHeal and myHero:CanUseSpell(Heal) == READY then
 				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.HealCc/100 then
 					CastSpell(Heal)
 				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.HealCc/100)*.75 then
 					CastSpell(Heal)
-				end
-		end
+end
+end
+end
+end
 end
 end
 
  function AutoBarrier()
  if Barrier then
+ 	for _, unit in pairs(GetEnemyHeroes()) do
+		if GetDistance(unit) <= 750 then
 			if Menu.misc.AutoBarrier and myHero:CanUseSpell(Barrier) == READY then
 				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.BarrierCc/100 then
 					CastSpell(Barrier)
 				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.BarrierCc/100)*.75 then
 					CastSpell(Barrier)
-				end
-		end
+end
+end
+end
+end
 end
 end
 
