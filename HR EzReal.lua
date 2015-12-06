@@ -20,9 +20,6 @@ function OnLoad()
 	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("RangeR", "Range R",  SCRIPT_PARAM_SLICE, 900, 1200, 10000, 0) 
 	
-	--Menu:addSubMenu("Anti-GapCloser", "antigap")
-	--Menu.antigap:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
-	
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
 	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
@@ -136,25 +133,33 @@ end
 
  function AutoHeal()
  if Heal then
+ 	for _, unit in pairs(GetEnemyHeroes()) do
+		if GetDistance(unit) <= 750 then
 			if Menu.misc.AutoHeal and myHero:CanUseSpell(Heal) == READY then
 				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.HealCc/100 then
 					CastSpell(Heal)
 				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.HealCc/100)*.75 then
 					CastSpell(Heal)
-				end
-		end
+end
+end
+end
+end
 end
 end
 
  function AutoBarrier()
  if Barrier then
+ 	for _, unit in pairs(GetEnemyHeroes()) do
+		if GetDistance(unit) <= 750 then
 			if Menu.misc.AutoBarrier and myHero:CanUseSpell(Barrier) == READY then
 				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.BarrierCc/100 then
 					CastSpell(Barrier)
 				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.BarrierCc/100)*.75 then
 					CastSpell(Barrier)
-				end
-		end
+end
+end
+end
+end
 end
 end
 
@@ -281,7 +286,8 @@ function LaneClear()
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
-					CastSpell(_Q, minion.x, minion.z)
+					--CastSpell(_Q, minion.x, minion.z)
+					CastQ(minion)
 				end
 			end		 
 		end
@@ -358,7 +364,7 @@ function Skills()
 	SkillQ = { name = "Mystic Shot", range = 1150, delay = 0.25, speed = 2000, width = 60, ready = false }
 	SkillW = { name = "Essence Flux", range = 950, delay = 0.25, speed = 1600, width = 80, ready = false }
 	SkillE = { name = "Arcane Shift", range = 475, delay = nil, speed = nil, width = nil, ready = false }
-	SkillR = { name = "Trueshot Barrage", range = math.huge, delay = 1.0, speed = 2000, width = 160, ready = false }
+	SkillR = { name = "Trueshot Barrage", range = math.huge, delay = 1.0, speed = 2000, width = 140, ready = false }
 
 	priorityTable = {
 			AP = {
