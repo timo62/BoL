@@ -113,6 +113,7 @@ function OnDraw()
 	if Menu.drawing.drawAxes then
     for i, reticle in ipairs(reticles) do
       DrawCircle(reticle.x, reticle.y, reticle.z, 100, ARGB(255, 0, 0, 255))
+	  DrawCircle(mousePos.x, mousePos.y, mousePos.z, 400, ARGB(255, 0, 0, 255))
 	end
 	end
 		if myHero:CanUseSpell(_E) == READY and Menu.drawing.eDraw then 
@@ -485,7 +486,7 @@ function CatchAxes()
 	if movementHuman then
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
-      if (math.abs(mousePos.x - reticle.x) <= 500 and math.abs(mousePos.z - reticle.z) <= 500) and not (reticle.x <= 55 and reticle.y <= 55) then
+      if (math.abs(mousePos.x - reticle.x) <= 400 and math.abs(mousePos.z - reticle.z) <= 400) and not (reticle.x <= 55 and reticle.y <= 55) then
 	  movementHuman = false
 	if SAC then
 	_G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle.x, reticle.z)
