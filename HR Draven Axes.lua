@@ -154,9 +154,13 @@ function CheckVPred()
 end
 
  function AutoIgnite()
+  	for _, unit in pairs(GetEnemyHeroes()) do
+	if GetDistance(unit) <= 750 then
  if Ignite and ts.target ~= nil then
  if Menu.killsteal.UseIgnite and ts.target.health <= 40 + (20 * myHero.level) and myHero:CanUseSpell(Ignite) == READY then
   CastSpell(Ignite, ts.target)
+  end
+  end
   end
   end
 end
