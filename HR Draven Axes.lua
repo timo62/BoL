@@ -113,8 +113,10 @@ function OnDraw()
 	if Menu.drawing.drawAxes then
     for i, reticle in ipairs(reticles) do
       DrawCircle(reticle.x, reticle.y, reticle.z, 100, ARGB(255, 0, 0, 255))
-	  DrawCircle(mousePos.x, mousePos.y, mousePos.z, 400, ARGB(255, 0, 0, 255))
 	end
+	end
+	if Menu.drawing.drawAxes and Menu.AutoCatch then
+	  DrawCircle(mousePos.x, mousePos.y, mousePos.z, 400, ARGB(255, 0, 0, 255))
 	end
 		if myHero:CanUseSpell(_E) == READY and Menu.drawing.eDraw then 
 			DrawCircle(myHero.x, myHero.y, myHero.z, 1050, RGB(Menu.drawing.eColor[2], Menu.drawing.eColor[3], Menu.drawing.eColor[4]))
