@@ -499,7 +499,7 @@ function CatchAxes()
       if (math.abs(mousePos.x - reticle.x) <= 400 and math.abs(mousePos.z - reticle.z) <= 400) and not (reticle.x <= 55 and reticle.y <= 55) then
 	  movementHuman = false
 	if SAC then
-	Orbwalker:Orbwalk(reticle.x, reticle.z)
+	Orbwalker:OverrideOrbwalkLocation(reticle.x, reticle.z)
 	end
 	if SX then
 	SxOrb:ForcePoint(reticle.x, reticle.z)
@@ -515,7 +515,7 @@ end
 
 function ForcePointSx()
 	if SAC then
-	Orbwalker:Orbwalk(nil)
+	Orbwalker:OverrideOrbwalkLocation(nil)
 	end
 	if SX then
 	SxOrb:ForcePoint(nil)
