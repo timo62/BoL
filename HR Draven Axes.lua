@@ -67,7 +67,7 @@ function OnLoad()
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
 	PrintChat("<font color=\"#ff0000\"><b>Loading Sac.</b></font>")	
-	local Skills, Keys, Items, Data, Jungle, Helper, MyHero, Minions, Crosshair, Orbwalker = AutoCarry.Helper:GetClasses()
+	local Skills, Keys, Items, Data, Jungle, Helper, MyHero, Minions, Crosshair, Orbwalker = _G.AutoCarry.Helper:GetClasses()
 	SAC = true
 	SX = false
 	else
