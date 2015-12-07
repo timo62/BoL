@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.0"
+local LocalVersion = "1.1"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -44,6 +44,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("mDraw", "Disable All Range Draws", SCRIPT_PARAM_ONOFF, false)
 	Menu.drawing:addParam("myHero", "Draw My Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("qDraw", "(Q) Range", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("qColor", "(Q) Color", SCRIPT_PARAM_COLOR, {255, 255, 40, 164})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Keys", "keys")
@@ -194,8 +195,9 @@ end
 function Combo(unit)
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
 	local Name = myHero:GetSpellData(_W).name
+	spellName = nil
 		if Menu.combo.UseQ then 
-			CastQ(unit)
+			CastQC(unit)
 		end	
 		if Menu.combo.UseW then 
 
@@ -249,6 +251,7 @@ function LaneClear()
 	enemyMinions:update()
 	if not IsMyManaLowLaneClear() then
 		local Name = myHero:GetSpellData(_W).name
+		spellName = nil
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
@@ -284,6 +287,7 @@ function JungleClear()
 	jungleMinions:update()
 	if not IsMyManaLowJungleClear() then
 	local Name = myHero:GetSpellData(_W).name
+	spellName = nil
 	for i, jungleMinion in pairs(jungleMinions.objects) do
 		if jungleMinion ~= nil then
 		if Menu.jungleclear.UseQ then CastQ(jungleMinion)end
@@ -313,8 +317,8 @@ end
 end
 end
 
-function CastQ(unit)
-	
+function CastQC(unit)
+	if TargetHaveBuff("Stun", unit) then 
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
@@ -330,17 +334,36 @@ function CastQ(unit)
     CastSpell(_Q, QPos.x, QPos.z)
   end
   end
+ end
 end
+
+function CastQ(unit)
+	if Menu.pred == 1 then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
+ 
+		if HitChance >= 2 then
+			CastSpell(_Q, CastPosition.x, CastPosition.z)
+		end
+	end
+	elseif Menu.pred == 2 then
+  local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+  if QHitChance > 0 then
+    CastSpell(_Q, QPos.x, QPos.z)
+  end
+  end
+ end
 
 function OnDraw()
 	if not myHero.dead and not Menu.drawing.mDraw then
 	
 		if myHero:CanUseSpell(_Q) == READY and Menu.drawing.qDraw then 
-			DrawCircle(myHero.x, myHero.y, myHero.z, SkillQ.range, RGB(9, 40, 164))
+			DrawCircle(myHero.x, myHero.y, myHero.z, SkillQ.range, RGB(Menu.drawing.qColor[2], Menu.drawing.qColor[3], Menu.drawing.qColor[4]))
 		end
 		
 		if Menu.drawing.myHero then
-			DrawCircle(myHero.x, myHero.y, myHero.z, 660, RGB(250, 6, 6))
+			DrawCircle(myHero.x, myHero.y, myHero.z, 590, RGB(250, 6, 6))
 		end
 
 		if Target ~= nil and ValidTarget(Target) then
