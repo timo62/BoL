@@ -141,8 +141,10 @@ end
 			if health <= dmgQ and Menu.killsteal.UseQ and myHero:CanUseSpell(_Q) == READY and ValidTarget(unit) then
 				CastQ(unit)
 				end
+				if Ignite then
 			if health <= 40 + (20 * myHero.level) and Menu.killsteal.I and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) then
 				CastSpell(Ignite, unit)
+			end
 			end
 	end
 	end
