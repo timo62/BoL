@@ -381,9 +381,11 @@ function OnProcessSpell(unit, spell)
 				spellName = "goldcardlock"
 				if Name == "PickACard" then
 				CastSpell(_W) 
+				DelayAction(function()
 				if Name == spellName then
 				CastSpell(_W)
 				end		
+				end,  0.7)
     	end 
     end
 end
