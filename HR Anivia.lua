@@ -216,7 +216,7 @@ end
 	if Menu.combo.RCheck then
 	if Rm ~= nil then
 	if not ValidR() then 
-	if not JungleClearKey then
+	if not JungleClearKey or LaneClearKey then
 	CastSpell(_R) 
 	end
 	end
