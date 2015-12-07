@@ -375,6 +375,7 @@ end
 end
 
 function OnProcessSpell(unit, spell)
+	local Name = myHero:GetSpellData(_W).name
     if unit.isMe and spell.name == "gate" then 
     	if Menu.combo.goldR then 
 				spellName = "goldcardlock"
