@@ -381,12 +381,15 @@ end
 
 function UltimateCard()
 	if Ulting then
-        if myHero:GetSpellData(_W).name == "goldcardlock" then
-            CastSpell(_W)
-        	Ulting = false
-    	elseif myHero:GetSpellData(_W).name == "PickACard" then
-        	CastSpell(_W)
-        end
+	local Name = myHero:GetSpellData(_W).name
+				spellName = "goldcardlock"
+				if Name == "PickACard" then
+				CastSpell(_W)
+				end	 
+				if Name == spellName then
+				CastSpell(_W)
+				Ulting = false
+				end	
     end
 end
 
