@@ -5,7 +5,8 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.1"
+local Ulting = false
+local LocalVersion = "1.2"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -177,6 +178,10 @@ end
 	
 	if JungleClearKey and not ComboKey then
 	JungleClear()
+	end
+	
+	if Ulting then
+	UltimateCard()
 	end
 	
 	UseSpells()
@@ -374,21 +379,23 @@ function OnDraw()
 end
 end
 
-function OnProcessSpell(unit, spell)
-	local Name = myHero:GetSpellData(_W).name
-    if unit.isMe and spell.name == "gate" then 
-    	if Menu.combo.goldR then 
-				spellName = "goldcardlock"
-				if Name == "PickACard" then
-				CastSpell(_W) 
-				DelayAction(function()
-				if Name == spellName then
-				CastSpell(_W)
-				end		
-				end,  0.7)
-    	end 
+function UltimateCard()
+	if Ulting == true then
+        if myHero:GetSpellData(_W).name == "goldcardlock" then
+            CastSpell(_W)
+        	Ulting = false
+    	elseif myHero:GetSpellData(_W).name == "PickACard" then
+        	CastSpell(_W)
+        end
     end
 end
+
+function OnProcessSpell(unit, spell)
+    if unit.isMe and spell.name == "gate" then 
+    	if Menu.combo.goldR then 
+    		Ulting = true
+    	end 
+    end
 end
 
 function Skills()
