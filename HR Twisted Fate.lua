@@ -379,6 +379,7 @@ end
 
 function UltimateCard()
 	if Ulting then
+	spellName = nil
 	local Name = myHero:GetSpellData(_W).name
 				spellName = "goldcardlock"
 				if Name == "PickACard" then
