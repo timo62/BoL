@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local Ulting = false
-local LocalVersion = "1.2"
+local LocalVersion = "1.3"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -51,8 +51,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
 	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
-	Menu.keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
-	Menu.keys:addParam("JungleClear", "JungleClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	Menu.keys:addParam("LaneJungClear", "LaneClear / JungleClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
 	
 	Menu:addParam("pred", "Prediction Type", SCRIPT_PARAM_LIST, 1, { "VPrediction", "HPrediction"})
 	CustomLoad()
@@ -161,8 +160,8 @@ end
 	
 	ComboKey = Menu.keys.ComboKey
 	HarassKey = Menu.keys.Harass
-	LaneClearKey = Menu.keys.LaneClear
-	JungleClearKey = Menu.keys.JungleClear
+	LaneClearKey = Menu.keys.LaneJungClear
+	JungleClearKey = Menu.keys.LaneJungClear
 	
 	if ComboKey then 
 	Combo(Target)
@@ -292,7 +291,6 @@ function JungleClear()
 	jungleMinions:update()
 	if not IsMyManaLowJungleClear() then
 	local Name = myHero:GetSpellData(_W).name
-	spellName = nil
 	for i, jungleMinion in pairs(jungleMinions.objects) do
 		if jungleMinion ~= nil then
 		if Menu.jungleclear.UseQ then CastQ(jungleMinion)end
