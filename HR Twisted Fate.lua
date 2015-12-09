@@ -6,7 +6,9 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local Ulting = false
-local LocalVersion = "1.3"
+local SelectorCheck = false
+local Selector = "any"
+local LocalVersion = "1.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -47,6 +49,11 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("qDraw", "(Q) Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("qColor", "(Q) Color", SCRIPT_PARAM_COLOR, {255, 255, 40, 164})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
+	
+	Menu:addSubMenu("Card Selector", "cardselector")
+	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("8"))
+	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("9"))
+	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("0"))
 	
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -162,6 +169,9 @@ end
 	HarassKey = Menu.keys.Harass
 	LaneClearKey = Menu.keys.LaneJungClear
 	JungleClearKey = Menu.keys.LaneJungClear
+	GoldCardKey = Menu.cardselector.GoldCard
+	BlueCardKey = Menu.cardselector.BlueCard
+	RedCardKey = Menu.cardselector.RedCard
 	
 	if ComboKey then 
 	Combo(Target)
@@ -183,9 +193,54 @@ end
 	UltimateCard()
 	end
 	
+	if GoldCardKey then
+	Selector = "Gold"
+	SelectorCheck = true
+	end
+	
+	if BlueCardKey then
+	Selector = "Blue"
+	SelectorCheck = true
+	end
+	
+	if RedCardKey then
+	Selector = "Red"
+	SelectorCheck = true
+	end
+	
+	SelectorCards()
 	UseSpells()
 	end
 	
+function SelectorCards()
+	if SelectorCheck then
+	
+	if not myHero:CanUseSpell(_Q) then return end
+	
+	local Name = myHero:GetSpellData(_W).name
+	
+	if Name == "PickACard" then
+	CastSpell(_W)
+	end
+	
+	if Selector == "Gold" then
+	spellName = "goldcardlock"
+	
+	elseif Selector == "Blue" then
+	spellName = "bluecardlock"	
+	
+	elseif Selector == "Red" then
+	spellName = "redcardlock"
+	end
+	
+	if Name == spellName then
+	CastSpell(_W)
+	Selector = "any"
+	SelectorCheck = false
+	spellName = nil
+	end
+end
+end
 	
 function GetCustomTarget()
 	ts:update()	
