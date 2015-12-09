@@ -215,13 +215,8 @@ end
 function SelectorCards()
 	if SelectorCheck then
 	
-	if not myHero:CanUseSpell(_Q) then return end
-	
 	local Name = myHero:GetSpellData(_W).name
-	
-	if Name == "PickACard" then
-	CastSpell(_W)
-	end
+	spellName = nil
 	
 	if Selector == "Gold" then
 	spellName = "goldcardlock"
@@ -231,6 +226,10 @@ function SelectorCards()
 	
 	elseif Selector == "Red" then
 	spellName = "redcardlock"
+	end
+	
+	if Name == "PickACard" then
+	CastSpell(_W)
 	end
 	
 	if Name == spellName then
