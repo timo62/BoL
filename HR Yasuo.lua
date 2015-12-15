@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.1"
+local LocalVersion = "1.2"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -282,7 +282,7 @@ end
 
 function Flee()
     mPos = getNearestMinion(mousePos)
-    if myHero:CanUseSpell(_E) and mPos then
+    if myHero:CanUseSpell(_E) == READY and mPos then
         CastSpell(_E, mPos) 
     else 
         myHero:MoveTo(mousePos.x, mousePos.z) 
@@ -300,13 +300,13 @@ function UseEGap(unit)
     local TargetDistance = GetDistance(unit)
     if TargetDistance > SkillE.range and Menu.combo.UseEGap then
             mPos = getNearestMinion(unit)
-            if myHero:CanUseSpell(_E) and mPos then 
+            if myHero:CanUseSpell(_E) == READY and mPos then 
                 CastSpell(_E, mPos)
             end
         end             
         if TargetDistance >= Menu.combo.DistanceToE then
             object = getNearestMinion(mousePos)
-            if myHero:CanUseSpell(_E) and Menu.combo.UseEGap and object then
+            if myHero:CanUseSpell(_E) == READY and Menu.combo.UseEGap and object then
                 if object.networkID ~= unit.networkID then
                     CastSpell(_E, object)
                 end
@@ -396,12 +396,14 @@ end
 function LaneClear()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
+		local dmgE = getDmg("E", minion, myHero)
+		local health = minion.health
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.laneclear.UseQ then
 					CastQ(minion)
 					CastQ3(minion)
 				end
-				if Menu.laneclear.UseE and GetDistance(minion) <= SkillE.range and myHero:CanUseSpell(_E) == READY and not TargetDashed(unit) then
+				if Menu.laneclear.UseE and GetDistance(minion) <= SkillE.range and myHero:CanUseSpell(_E) == READY and health <= dmgE and not TargetDashed(unit) then
 					CastSpell(_E, minion)
 				end
 		end
@@ -555,7 +557,7 @@ function OnProcessSpell(object, spell)
                     end                    
                     if GetDistance(spell.startPos) <= range then
                         if GetDistance(spell.endPos) <= 475 then
-                            if myHero:CanUseSpell(_W) and Menu.wSettings.spells[spell.name] then 
+                            if myHero:CanUseSpell(_W) == READY and Menu.wSettings.spells[spell.name] then 
                                 DelayAction(function ()
                                     CastSpell(_W, object.x, object.z)
                                 end, 0.5)
