@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.0"
+local LocalVersion = "1.1"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -270,7 +270,7 @@ function Combo(unit)
 			UseEGap(unit)
 		end
 			
-		if Menu.combo.UseE and GetDistance(unit) <= SkillE.range and myHero:CanUseSpell(_E) == READY and not TargetDashed(unit) then 
+		if Menu.combo.UseE and GetDistance(unit) <= SkillE.range and myHero:CanUseSpell(_E) == READY and not TargetDashed(unit) and not UnderTurret(unit) then 
 			CastSpell(_E, unit)
 		end	
 		if Menu.combo.UseR and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= Menu.combo.rOption then
