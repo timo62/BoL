@@ -275,7 +275,7 @@ function Combo(unit)
 		end	
 		if Menu.combo.UseR and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= Menu.combo.rOption then
 			if not Menu.combo.rTower then if UnderTurret(unit) then return end end
-			DelayAction(function() CastSpell(_R) end, 0.5)
+			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
 	end
 end
