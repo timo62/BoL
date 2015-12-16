@@ -293,7 +293,7 @@ function Combo(unit)
 			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
-		else
+		elseif CountEnemyInRange(SkillR.range, myHero) <= 1 then
 		if Menu.combo.r.r1v1 and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= 1 then
 			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
