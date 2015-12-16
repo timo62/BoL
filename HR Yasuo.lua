@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.2"
+local LocalVersion = "1.3"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -369,7 +369,7 @@ end
 
 function Harass(unit)
 	ts:update()
-	if(myHero:CanUseSpell(_Q) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and ts.target ~= nil and Menu.harass.UseQ ) then 
+	if myHero:CanUseSpell(_Q) == READY and ts.target ~= nil and Menu.harass.UseQ  then 
   CastQ(unit)
   CastQ3(unit)
 	end
