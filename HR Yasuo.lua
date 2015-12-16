@@ -409,10 +409,10 @@ function LastHit()
 		local dmgE = getDmg("E", minion, myHero)
 		local health = minion.health
 			if ValidTarget(minion) and minion ~= nil then
-				if Menu.lasthit.UseQ and health <= dmgQ  then
+				if Menu.lasthit.UseQ and health <= dmgQ then
 					CastQ(minion)
 					CastQ3(minion)
-				end
+				end		
 				if Menu.lasthit.UseE and GetDistance(minion) <= SkillE.range and myHero:CanUseSpell(_E) == READY and health <= dmgE and not TargetDashed(unit) then
 					CastSpell(_E, minion)
 				end				
