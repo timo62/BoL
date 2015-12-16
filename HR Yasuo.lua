@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.3"
+local LocalVersion = "1.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -21,6 +21,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseEGap", "Use E to GapClose", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("DistanceToE", "Min Distance for GapClose",SCRIPT_PARAM_SLICE, 300, 0, 475, 0)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("r1v1", "Use R in 1v1", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("rTower", "Use R in enemy tower", SCRIPT_PARAM_ONOFF, false)
 	Menu.combo:addParam("rOption", "Use R when x enemies knocked up", SCRIPT_PARAM_SLICE, 2, 1, 5, 0)
 	
@@ -194,6 +195,19 @@ end
 	end
 	end
 	
+function CountEnemyInRange(range, object)
+    object = object or myHero
+    range = range and range * range or myHero.range * myHero.range
+    local enemyInRange = 0
+    for i = 1, heroManager.iCount, 1 do
+        local hero = heroManager:getHero(i)
+        if ValidTarget(hero) and not hero.dead and hero.visible and hero.team ~= myHero.team and GetDistanceSqr(object, hero) <= range then
+            enemyInRange = enemyInRange + 1
+        end
+    end
+    return enemyInRange
+end
+	
 	function OnTick()
 	if myHero.dead then return end
 	
@@ -277,6 +291,10 @@ function Combo(unit)
 			if not Menu.combo.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
+		if Menu.combo.r1v1 and CountEnemyInRange(SkillR.range, unit) == 1 and knockedup >= 1 and myHero:CanUseSpell(_R) == READY then
+			if not Menu.combo.rTower then if UnderTurret(unit) then return end end
+			DelayAction(function() CastSpell(_R) end, 0.3)
+		end
 	end
 end
 
