@@ -21,9 +21,10 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseEGap", "Use E to GapClose", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("DistanceToE", "Min Distance for GapClose",SCRIPT_PARAM_SLICE, 300, 0, 475, 0)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("r1v1", "Use R in 1v1", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("rTower", "Use R in enemy tower", SCRIPT_PARAM_ONOFF, false)
-	Menu.combo:addParam("rOption", "Use R when x enemies knocked up", SCRIPT_PARAM_SLICE, 2, 1, 5, 0)
+	Menu.combo:addSubMenu("R Options", "r")
+	Menu.combo.r:addParam("r1v1", "Use R in 1v1", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo.r:addParam("rTower", "Use R in enemy tower", SCRIPT_PARAM_ONOFF, false)
+	Menu.combo.r:addParam("rOption", "Use R when x enemies knocked up", SCRIPT_PARAM_SLICE, 2, 1, 5, 0)
 	
 	Menu:addSubMenu("Harass", "harass")
 	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true) 
@@ -287,12 +288,12 @@ function Combo(unit)
 		if Menu.combo.UseE and GetDistance(unit) <= SkillE.range and myHero:CanUseSpell(_E) == READY and not TargetDashed(unit) and not UnderTurret(unit) then 
 			CastSpell(_E, unit)
 		end	
-		if Menu.combo.UseR and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= Menu.combo.rOption then
-			if not Menu.combo.rTower then if UnderTurret(unit) then return end end
+		if Menu.combo.r.UseR and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= Menu.combo.r.rOption then
+			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
-		if Menu.combo.r1v1 and CountEnemyInRange(SkillR.range, unit) == 1 and knockedup >= 1 and myHero:CanUseSpell(_R) == READY then
-			if not Menu.combo.rTower then if UnderTurret(unit) then return end end
+		if Menu.combo.r.r1v1 and CountEnemyInRange(SkillR.range, unit) == 1 and knockedup >= 1 and myHero:CanUseSpell(_R) == READY then
+			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end
 	end
