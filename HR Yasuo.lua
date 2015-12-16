@@ -226,7 +226,6 @@ end
 	if ComboKey then 
 	Combo(Target)
 	end
-	
 	if HarassKey and not ComboKey then
 	Harass(Target)
 	end	
@@ -278,9 +277,11 @@ function Combo(unit)
 		if Menu.combo.UseQ then 
 			CastQ(unit)
 		end	
+		
 		if Menu.combo.UseQ3 then 
 			CastQ3(unit)
 		end
+		
 	    if Menu.combo.UseEGap then
 			UseEGap(unit)
 		end
@@ -288,18 +289,22 @@ function Combo(unit)
 		if Menu.combo.UseE and GetDistance(unit) <= SkillE.range and myHero:CanUseSpell(_E) == READY and not TargetDashed(unit) and not UnderTurret(unit) then 
 			CastSpell(_E, unit)
 		end	
+		
 		if CountEnemyInRange(SkillR.range, myHero) >= 2 then 
 		if Menu.combo.r.UseR and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= Menu.combo.r.rOption then
 			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
-		elseif CountEnemyInRange(SkillR.range, myHero) <= 1 then
+		end
+		
+		if CountEnemyInRange(SkillR.range, myHero) <= 1 then
 		if Menu.combo.r.r1v1 and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= 1 then
 			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
+		end
+		
 	end
-end
 end
 
 function Flee()
