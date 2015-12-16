@@ -8,7 +8,7 @@ local ts
 local Ulting = false
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "1.4"
+local LocalVersion = "1.5"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -18,6 +18,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 2, { "Always", "Stuned"})
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
@@ -139,7 +140,7 @@ end
 		ScriptUpdate(ToUpdate.Version,ToUpdate.UseHttps, ToUpdate.Host, ToUpdate.VersionPath, ToUpdate.ScriptPath, ToUpdate.SavePath, ToUpdate.CallbackUpdate,ToUpdate.CallbackNoUpdate, ToUpdate.CallbackNewVersion,ToUpdate.CallbackError)
 	end
 	end
-	
+
 	function UseSpells()
 	for _, unit in pairs(GetEnemyHeroes()) do
 		local health = unit.health
@@ -258,7 +259,8 @@ function Combo(unit)
 			CastQC(unit)
 		end	
 		if Menu.combo.UseW then 
-
+		for _, unit in pairs(GetEnemyHeroes()) do
+		if GetDistance(unit) <= 680 then
 				if Menu.combo.card == 1 then
 				spellName = "bluecardlock"
 				if Name == "PickACard" then
@@ -277,7 +279,9 @@ function Combo(unit)
 			end	
 				if Name == spellName then
 				CastSpell(_W)
-				end			
+				end		
+			end
+			end				
 		end	
 	end
 end
@@ -375,6 +379,24 @@ end
 end
 
 function CastQC(unit)
+				if Menu.combo.qMode == 1 then
+				spellName = "bluecardlock"
+	if Menu.pred == 1 then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
+ 
+		if HitChance >= 2 then
+			CastSpell(_Q, CastPosition.x, CastPosition.z)
+		end
+	end
+	elseif Menu.pred == 2 then
+  local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+  if QHitChance > 0 then
+    CastSpell(_Q, QPos.x, QPos.z)
+end
+end
+				elseif Menu.combo.qMode == 2 then
 	if TargetHaveBuff("Stun", unit) then 
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
@@ -389,9 +411,10 @@ function CastQC(unit)
   
   if QHitChance > 0 then
     CastSpell(_Q, QPos.x, QPos.z)
-  end
-  end
- end
+end
+end
+end
+end
 end
 
 function CastQ(unit)
