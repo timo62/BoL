@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.4"
+local LocalVersion = "1.5"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -291,14 +291,14 @@ function Combo(unit)
 		end	
 		
 		if CountEnemyInRange(SkillR.range, myHero) >= 2 then 
-		if Menu.combo.r.UseR and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= Menu.combo.r.rOption then
+		if Menu.combo.UseR and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= Menu.combo.r.rOption then
 			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
 		end
 		
 		if CountEnemyInRange(SkillR.range, myHero) <= 1 then
-		if Menu.combo.r.r1v1 and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= 1 then
+		if Menu.combo.UseR and Menu.combo.r.r1v1 and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY and knockedup >= 1 then
 			if not Menu.combo.r.rTower then if UnderTurret(unit) then return end end
 			DelayAction(function() CastSpell(_R) end, 0.3)
 		end	
