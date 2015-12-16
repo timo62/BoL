@@ -587,7 +587,7 @@ function OnProcessSpell(object, spell)
                             if myHero:CanUseSpell(_W) == READY and Menu.wSettings.spells[spell.name] then 
                                 DelayAction(function ()
                                     CastSpell(_W, object.x, object.z)
-                                end, 0.5)
+                                end, 0.2)
                             end
                         end
                     end
