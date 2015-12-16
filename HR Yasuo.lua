@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.5"
+local LocalVersion = "1.6"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
