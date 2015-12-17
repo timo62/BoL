@@ -8,7 +8,7 @@ local ts
 local Ulting = false
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "1.6"
+local LocalVersion = "1.7"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
