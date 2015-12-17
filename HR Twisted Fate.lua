@@ -420,7 +420,7 @@ function LaneClear()
 				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 					CastQ(minion)
 				end
-				if Menu.laneclear.UseW and GetDistance(minion) then
+				if Menu.laneclear.UseW and GetDistance(minion) <= 600 then
 				if Menu.laneclear.card == 1 then
 				spellName = "bluecardlock"
 				if Name == "PickACard" then
@@ -444,6 +444,8 @@ function LaneClear()
 	end
 end
 elseif IsMyManaLowLaneClear then
+		for i, minion in pairs(enemyMinions.objects) do
+			if ValidTarget(minion) and minion ~= nil then
 				spellName = nil
 				local Name = myHero:GetSpellData(_W).name
 				spellName = "bluecardlock"
@@ -454,6 +456,8 @@ elseif IsMyManaLowLaneClear then
 				if Name == spellName then
 				CastSpell(_W)
 				end		
+				end
+				end
 end
 end
 
@@ -488,6 +492,8 @@ function JungleClear()
 		end
 end
 elseif IsMyManaLowJungleClear then
+		for i, minion in pairs(jungleMinions.objects) do
+			if ValidTarget(minion) and minion ~= nil then
 				spellName = nil
 				local Name = myHero:GetSpellData(_W).name
 				spellName = "bluecardlock"
@@ -498,6 +504,8 @@ elseif IsMyManaLowJungleClear then
 				if Name == spellName then
 				CastSpell(_W)
 				end		
+				end
+				end
 end
 end
 
