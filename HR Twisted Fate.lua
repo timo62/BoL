@@ -434,6 +434,17 @@ function LaneClear()
 		end
 	end
 end
+elseif IsMyManaLowLaneClear then
+				spellName = nil
+				local Name = myHero:GetSpellData(_W).name
+				spellName = "bluecardlock"
+				if Name == "PickACard" then
+				CastSpell(_W)	
+				end
+				
+				if Name == spellName then
+				CastSpell(_W)
+				end		
 end
 end
 
@@ -467,6 +478,17 @@ function JungleClear()
 		end
 		end
 end
+elseif IsMyManaLowJungleClear then
+				spellName = nil
+				local Name = myHero:GetSpellData(_W).name
+				spellName = "bluecardlock"
+				if Name == "PickACard" then
+				CastSpell(_W)	
+				end
+				
+				if Name == spellName then
+				CastSpell(_W)
+				end		
 end
 end
 
