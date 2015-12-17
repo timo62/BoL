@@ -1,3 +1,0 @@
-	BolNameUserList = {
-	["HiranN"] = {},
-	}
