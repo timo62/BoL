@@ -8,7 +8,7 @@ local ts
 local Ulting = false
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "1.5"
+local LocalVersion = "1.6"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -22,6 +22,9 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("goldCard", "Auto Select Gold Card if low life", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("goldCardLow", "Select Gold Card When x Life %",  SCRIPT_PARAM_SLICE, 25, 0, 100, 0)
+	Menu.combo:addParam("BlockAA", "Block AA in card selection", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Harass", "harass")
 	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
@@ -50,6 +53,8 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("qDraw", "(Q) Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("qColor", "(Q) Color", SCRIPT_PARAM_COLOR, {255, 255, 40, 164})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("DrawCards", "Draw Cards", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("DrawRRange", "Draw R Range (Minimap)", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Card Selector", "cardselector")
 	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("8"))
@@ -83,6 +88,9 @@ end
 	
 	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
+	local Skills, Keys, Items, Data, Jungle, Helper, MyHero, Minions, Crosshair, Orbwalker = AutoCarry.Helper:GetClasses()
+	SAC = true
+	SXORB = false
 	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
 	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")
 	else
@@ -104,6 +112,8 @@ end
 	require("SxOrbWalk")
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
+	SAC = false
+	SXORB = true
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
@@ -211,7 +221,89 @@ end
 	
 	SelectorCards()
 	UseSpells()
+	AutoCard()
+	BlockAA()
 	end
+	
+function BlockAA()
+	if Menu.combo.BlockAA then
+	if PickingCard then
+	
+	if SAC then
+	MyHero:AttacksEnabled(false)
+	elseif SXORB then
+	SxOrb:DisableAttacks()
+	end
+	
+	else
+	
+	if SAC then
+	MyHero:AttacksEnabled(true)
+	elseif SXORB then
+	SxOrb:EnableAttacks()
+	end
+end
+end
+end
+
+function OnCreateObj(obj)
+ if obj and obj.name then
+  if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
+	PickingCard = true
+	BlueDraw = true
+  end
+  if obj.name == "TwistedFate_Base_W_RedCard.troy" then
+	PickingCard = true
+	RedDraw = true
+  end
+  if obj.name == "TwistedFate_Base_W_GoldCard.troy" then
+	PickingCard = true
+	GoldDraw = true
+  end
+ end
+end
+
+function OnDeleteObj(obj)
+ if obj and obj.name then
+  if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
+   BlueDraw = false
+  end
+  if obj.name == "TwistedFate_Base_W_RedCard.troy" then
+   RedDraw = false
+  end
+  if obj.name == "TwistedFate_Base_W_GoldCard.troy" then
+   GoldDraw = false
+  end
+ end
+end
+
+function OnRemoveBuff(unit, buff)
+	if unit.isMe and buff.name == "pickacard_tracker" then
+	PickingCard = false
+	end
+end
+	
+function AutoCard()
+	if Menu.combo.goldCard then
+	for _, unit in pairs(GetEnemyHeroes()) do
+	if GetDistance(unit) <= 750 then
+	if myHero.health > (myHero.maxHealth * (Menu.combo.goldCardLow / 100)) then return end
+	local Name = myHero:GetSpellData(_W).name
+	if not myHero:CanUseSpell(_W) == READY then return end
+	spellName = nil
+	spellName = "goldcardlock"
+	
+	if Name == "PickACard" then
+	CastSpell(_W)
+	end
+	
+	if Name == spellName then
+	CastSpell(_W)
+	end
+end
+end
+end
+end
 	
 function SelectorCards()
 	if SelectorCheck then
@@ -379,8 +471,7 @@ end
 end
 
 function CastQC(unit)
-				if Menu.combo.qMode == 1 then
-				spellName = "bluecardlock"
+	if Menu.combo.qMode == 1 then
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
@@ -396,7 +487,7 @@ function CastQC(unit)
     CastSpell(_Q, QPos.x, QPos.z)
 end
 end
-				elseif Menu.combo.qMode == 2 then
+	elseif Menu.combo.qMode == 2 then
 	if TargetHaveBuff("Stun", unit) then 
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
@@ -448,9 +539,28 @@ function OnDraw()
 
 		if Target ~= nil and ValidTarget(Target) then
 			if Menu.drawing.tText then
-				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
-			end
-			end
+			DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
+		end
+		end
+			
+		if Menu.drawing.DrawCards then
+		
+		if BlueDraw then
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, RGB(0, 9, 255))
+		end
+		
+		if RedDraw then
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, RGB(255, 0, 0))	
+		end
+		
+		if GoldDraw then
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, RGB(255, 255, 0))
+		end
+		end
+		
+		if Menu.drawing.DrawRRange then
+		DrawCircleMinimap(myHero.x + 1000, myHero.y + 1000, myHero.z - 630, 4500)
+		end
 end
 end
 
