@@ -8,7 +8,7 @@ local ts
 local Ulting = false
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "1.7"
+local LocalVersion = "1.8"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -25,6 +25,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("goldCard", "Auto Select Gold Card if low life", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("goldCardLow", "Select Gold Card When x Life %",  SCRIPT_PARAM_SLICE, 25, 0, 100, 0)
 	Menu.combo:addParam("BlockAA", "Block AA in card selection", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("randomCard", "Random Card if enemy killable", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Harass", "harass")
 	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
@@ -346,11 +347,19 @@ end
 function Combo(unit)
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
 	local Name = myHero:GetSpellData(_W).name
+	local dmgW = getDmg("W", unit, myHero)
+	local Ehealth = unit.health
 	spellName = nil
 		if Menu.combo.UseQ then 
-			CastQC(unit)
+		CastQC(unit)
 		end	
+		
 		if Menu.combo.UseW then 
+		
+		if Menu.combo.randomCard and Ehealth <= dmgW then
+		CastSpell(_W)
+		end
+		
 		for _, unit in pairs(GetEnemyHeroes()) do
 		if GetDistance(unit) <= 680 then
 				if Menu.combo.card == 1 then
