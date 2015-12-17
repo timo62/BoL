@@ -1,4 +1,2 @@
-	BolNameUserList = {
-	["HiranN1"] = {},
-	["HiranN"] = {},
-	}
+["HiranN1"] = {},
+["HiranN"] = {},
