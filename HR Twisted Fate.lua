@@ -8,7 +8,7 @@ local ts
 local Ulting = false
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "1.8"
+local LocalVersion = "1.9"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -29,19 +29,19 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("Harass", "harass")
 	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.harass:addParam("mManager", "Harass Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
+	Menu.harass:addParam("mManager", "Harass Mana",  SCRIPT_PARAM_SLICE, 30, 0, 100, 0) 
 	
 	Menu:addSubMenu("LaneClear", "laneclear")
 	Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.laneclear:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.laneclear:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 1, { "Blue Card", "Red Card", "Yellow Card"})
-	Menu.laneclear:addParam("mManager", "LaneClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
+	Menu.laneclear:addParam("mManager", "LaneClear Mana",  SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
 	
 	Menu:addSubMenu("JungleClear", "jungleclear")
 	Menu.jungleclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.jungleclear:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.jungleclear:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 1, { "Blue Card", "Red Card", "Yellow Card"})
-	Menu.jungleclear:addParam("mManager", "JungleClear Mana",  SCRIPT_PARAM_SLICE, 50, 0, 100, 0) 
+	Menu.jungleclear:addParam("mManager", "JungleClear Mana",  SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
 	
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
@@ -80,16 +80,8 @@ else
 	UseHP = false
 	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>If you want other Prediction download : HPrediction.</b></font>")
 end
-	end
-	
-	function CustomLoad()
-	CheckVPred()
-	Skills()		
-	FindUpdates()
-	
-	if _G.Reborn_Initialised then
-	elseif _G.Reborn_Loaded then
-	local Skills, Keys, Items, Data, Jungle, Helper, MyHero, Minions, Crosshair, Orbwalker = AutoCarry.Helper:GetClasses()
+
+    if _G.Reborn_Loaded or _G.AutoCarry then
 	SAC = true
 	SXORB = false
 	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
@@ -97,6 +89,13 @@ end
 	else
     LoadOrb()
 	end
+	
+	end
+	
+	function CustomLoad()
+	CheckVPred()
+	Skills()		
+	FindUpdates()
 	
 	enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
 	jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
@@ -231,7 +230,7 @@ function BlockAA()
 	if PickingCard then
 	
 	if SAC then
-	MyHero:AttacksEnabled(false)
+    _G.AutoCarry.MyHero:AttacksEnabled(false)
 	elseif SXORB then
 	SxOrb:DisableAttacks()
 	end
@@ -239,10 +238,35 @@ function BlockAA()
 	else
 	
 	if SAC then
-	MyHero:AttacksEnabled(true)
+    _G.AutoCarry.MyHero:AttacksEnabled(true)
 	elseif SXORB then
 	SxOrb:EnableAttacks()
 	end
+end
+end
+end
+	
+function BlockAA()
+	if Menu.combo.BlockAA then
+	
+	if PickingCard then
+	
+	if SAC then
+    _G.AutoCarry.MyHero:AttacksEnabled(false)
+	elseif SXORB then
+	SxOrb:DisableAttacks()
+	end
+	end
+	
+	if PickedCard then
+	
+	if SAC then
+    _G.AutoCarry.MyHero:AttacksEnabled(true)
+	PickedCard = false
+	elseif SXORB then
+	SxOrb:EnableAttacks()
+	PickedCard = false
+end
 end
 end
 end
@@ -281,6 +305,7 @@ end
 function OnRemoveBuff(unit, buff)
 	if unit.isMe and buff.name == "pickacard_tracker" then
 	PickingCard = false
+	PickedCard = true
 	end
 end
 	
