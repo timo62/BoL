@@ -1288,6 +1288,9 @@ function Update()
 		updated = true
 	end)
 end
+
+
+end
 	
 class "ScriptUpdate"
 function ScriptUpdate:__init(LocalVersion,UseHttps, Host, VersionPath, ScriptPath, SavePath, CallbackUpdate, CallbackNoUpdate, CallbackNewVersion,CallbackError)
