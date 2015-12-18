@@ -7,7 +7,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Qm = nil
 local Rm = nil
-local LocalVersion = "2.4"
+local LocalVersion = "2.5"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -48,6 +48,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("W Settings", "wSettings")
 	Menu.wSettings:addParam("WintoR", "W into R", SCRIPT_PARAM_ONOFF, true)
+	Menu.wSettings:addParam("wInterrupt", "W to interrupt spells", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("E Settings", "eSettings")
 	Menu.eSettings:addParam("UseEAfter", "Use E in units with Chilled", SCRIPT_PARAM_ONOFF, true)
@@ -484,16 +485,18 @@ end
 end
 
 function OnProcessSpell(unit, spell)
+		if Menu.wSettings.wInterrupt then
+        if isAChampToInterrupt[spell.name] and GetDistanceSqr(unit) <= 715*715 then
+                CastSpell(_W, unit.x, unit.z)
+        end
+end
 	if not Menu.qSettings.QingapCloser then return end
     if unit.team ~= myHero.team then
+	
         if isAGapcloserUnitTarget[spell.name] then
             if spell.target and spell.target.networkID == myHero.networkID then
                 CastQ(unit)
             end
-        end
-
-        if isAChampToInterrupt[spell.name] and GetDistanceSqr(unit) <= 715*715 then
-                CastQ(unit)
         end
 		
         if isAGapcloserUnitNoTarget[spell.name] and GetDistanceSqr(unit) <= 2000*2000 and (spell.target == nil or (spell.target and spell.target.isMe)) then
