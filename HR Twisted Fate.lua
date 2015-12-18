@@ -8,7 +8,7 @@ local ts
 local Ulting = false
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "1.9"
+local LocalVersion = "2.0"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -379,7 +379,7 @@ function Combo(unit)
 		CastQC(unit)
 		end	
 		
-		if Menu.combo.UseW then 
+		if Menu.combo.UseW and myHero:CanUseSpell(_W) == READY then 
 		
 		if Menu.combo.randomCard and Ehealth <= dmgW then
 		CastSpell(_W)
@@ -445,7 +445,7 @@ function LaneClear()
 				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 					CastQ(minion)
 				end
-				if Menu.laneclear.UseW and GetDistance(minion) <= 600 then
+				if Menu.laneclear.UseW and myHero:CanUseSpell(_W) == READY and GetDistance(minion) <= 600 then
 				if Menu.laneclear.card == 1 then
 				spellName = "bluecardlock"
 				if Name == "PickACard" then
@@ -493,7 +493,7 @@ function JungleClear()
 	for i, jungleMinion in pairs(jungleMinions.objects) do
 		if jungleMinion ~= nil then
 		if Menu.jungleclear.UseQ then CastQ(jungleMinion)end
-		if Menu.jungleclear.UseW then 				
+		if Menu.jungleclear.UseW and myHero:CanUseSpell(_W) == READY then 				
 				if Menu.jungleclear.card == 1 then
 				spellName = "bluecardlock"
 				if Name == "PickACard" then
@@ -646,8 +646,10 @@ end
 function OnProcessSpell(unit, spell)
     if unit.isMe and spell.name == "gate" then 
     	if Menu.combo.goldR then 
+		if myHero:CanUseSpell(_Q) == READY then
     		Ulting = true
-    	end 
+			end
+		end 
     end
 end
 
