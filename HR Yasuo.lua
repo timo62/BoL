@@ -396,7 +396,7 @@ end
 
 function Harass(unit)
 	ts:update()
-	if myHero:CanUseSpell(_Q) == READY and ts.target ~= nil and Menu.harass.UseQ  then 
+	if Menu.harass.UseQ and myHero:CanUseSpell(_Q) == READY and ts.target ~= nil then 
   CastQ(unit)
   CastQ3(unit)
 	end
