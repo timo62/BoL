@@ -6,9 +6,10 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local Ulting = false
+local eStacks = 0
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "2.0"
+local LocalVersion = "2.1"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -56,6 +57,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("DrawCards", "Draw Cards", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("DrawRRange", "Draw R Range (Minimap)", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("eStacks", "Draw E Stacks ", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Card Selector", "cardselector")
 	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("8"))
@@ -271,6 +273,20 @@ end
 end
 end
 
+function OnApplyBuff(unit, buff)
+	if unit == nil or buff == nil then return end 
+	if unit.isMe and buff.name == "cardmasterstackholder" then
+		eStacks = buff.stack
+	end
+end
+
+function OnUpdateBuff(unit, buff)
+	if unit == nil or buff == nil then return end 
+	if unit.isMe and buff.name == "cardmasterstackholder" and eStacks ~= "Stacked" then
+		eStacks = eStacks + 1
+	end
+end
+
 function OnCreateObj(obj)
  if obj and obj.name then
   if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
@@ -285,6 +301,9 @@ function OnCreateObj(obj)
 	PickingCard = true
 	GoldDraw = true
   end
+  if obj.name == "Cardmaster_stackready.troy" then
+	eStacks = "Stacked"
+  end
  end
 end
 
@@ -298,6 +317,9 @@ function OnDeleteObj(obj)
   end
   if obj.name == "TwistedFate_Base_W_GoldCard.troy" then
    GoldDraw = false
+  end
+  if obj.name == "Cardmaster_stackready.troy" then
+   eStacks = 0
   end
  end
 end
@@ -610,20 +632,24 @@ function OnDraw()
 		if Menu.drawing.DrawCards then
 		
 		if BlueDraw then
-		DrawCircle(myHero.x, myHero.y, myHero.z, 340, RGB(0, 9, 255))
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xffff0000)
 		end
 		
 		if RedDraw then
-		DrawCircle(myHero.x, myHero.y, myHero.z, 340, RGB(255, 0, 0))	
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xff0000ff)	
 		end
 		
 		if GoldDraw then
-		DrawCircle(myHero.x, myHero.y, myHero.z, 340, RGB(255, 255, 0))
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xFFFFFF00)
 		end
 		end
 		
 		if Menu.drawing.DrawRRange then
 		DrawCircleMinimap(myHero.x + 1000, myHero.y + 1000, myHero.z - 630, 4500)
+		end
+		
+		if Menu.drawing.eStacks then
+		DrawText3D("E Stacks: "..eStacks, myHero.x-100, myHero.y-50, myHero.z-30, 20, 0xff00ff00)
 		end
 end
 end
