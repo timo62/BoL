@@ -87,10 +87,13 @@ else
 end
 
     if _G.Reborn_Loaded or _G.AutoCarry then
-	SAC = true
-	SXORB = false
 	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
 	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")
+	DelayAction(function()  
+	SAC = true
+	SXORB = false
+	PrintChat("<font color=\"#ff0000\"><b>Sac loaded.</b></font>")	
+	end, 10)
 	else
     LoadOrb()
 	end
