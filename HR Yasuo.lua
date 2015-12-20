@@ -6,8 +6,11 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.7"
+local LocalVersion = "1.8"
 local autoupdate = true --Change to false if you don't wan't autoupdates
+local dmgQ = math.floor((myHero:GetSpellData(_Q).level - 1)*20 + 20 + myHero.damage * 1.0)
+local dmgE = math.floor((myHero:GetSpellData(_E).level - 1)*20 + 70 + myHero.ap * .6)
+local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + myHero.damage * 1.5)
 
 	function OnLoad()
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
@@ -64,6 +67,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("eDraw", "(E) Range", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("eColor", "(E) Color", SCRIPT_PARAM_COLOR, {255, 255, 40, 164})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("alert", "Draw Killable Target", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -74,6 +78,10 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addParam("pred", "Prediction Type", SCRIPT_PARAM_LIST, 1, { "VPrediction", "HPrediction"})
 	CustomLoad()
+	
+	print(""..dmgQ)
+	print(""..dmgE)
+	print(""..dmgR)
 	
 	if FileExist(LIB_PATH .. "/HPrediction.lua") then
 	require 'HPrediction'
@@ -178,8 +186,6 @@ end
 	function UseSpells()
 	for _, unit in pairs(GetEnemyHeroes()) do
 		local health = unit.health
-		local dmgQ = getDmg("Q", unit, myHero)
-		local dmgE = getDmg("E", unit, myHero)
 		if GetDistance(unit) <= 650 then
 		if not Menu.killsteal.KSOn then return end
 			if health <= dmgQ and Menu.killsteal.UseQ and ValidTarget(unit) then
@@ -248,6 +254,40 @@ end
 	
 	UseSpells()
 	end
+	
+function AllDamage(target)
+	local Qdamage = {20, 40, 60, 80, 100}
+	local Qscaling = 1.0
+	local Edamage = {70, 90, 110, 130, 150}
+	local Escaling = 0.6
+	local Rdamage = {200, 300, 400}
+	local Rscaling = 1.5
+	local damage = 0
+	local truedamage = 0
+	local phdamage = 0
+	
+	if (myHero:GetSpellData(_Q).level ~= 0)  and myHero:CanUseSpell(_Q) == READY  then
+		damage = damage + Qdamage[myHero:GetSpellData(_Q).level]  + Qscaling * myHero.damage
+	end
+	
+	if (myHero:GetSpellData(_E).level ~= 0)  then
+		damage = damage + Edamage[myHero:GetSpellData(_E).level]  + Escaling * myHero.damage
+	end
+	
+	if (myHero:GetSpellData(_R).level ~= 0) and myHero:CanUseSpell(_R) == READY then
+		damage = damage + Rdamage[myHero:GetSpellData(_R).level]  + Rscaling * myHero.damage + myHero.totalDamage
+	end
+	
+	phdamage = myHero.totalDamage
+	
+	if Ignite and myHero:CanUseSpell(Ignite) == READY then
+		truedamage = truedamage + 50 + 20 * myHero.level
+	end
+	
+	
+	
+	return myHero:CalcMagicDamage(target, damage) + myHero:CalcDamage(target, phdamage) + truedamage
+end
 
 function OnCreateObj(obj)
     if not obj then return end
@@ -405,8 +445,6 @@ end
 function LastHit()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
-		local dmgQ = getDmg("Q", minion, myHero)
-		local dmgE = getDmg("E", minion, myHero)
 		local health = minion.health
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.lasthit.UseQ and health <= dmgQ then
@@ -423,7 +461,6 @@ end
 function LaneClear()
 	enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
-		local dmgE = getDmg("E", minion, myHero)
 		local health = minion.health
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.laneclear.UseQ then
@@ -507,6 +544,16 @@ function OnDraw()
 				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
 			end
 			end
+			
+	if Menu.drawing.alert then
+		for i, enemy in ipairs(GetEnemyHeroes()) do
+			if ValidTarget(enemy) then
+				if (enemy.health < AllDamage(enemy))then
+				DrawText3D("Killable",enemy.x-100, enemy.y+100, enemy.z, 20, 0xFFFFFF00)
+				end
+			end
+		end
+	end
 end
 end
 
