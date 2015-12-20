@@ -3,11 +3,10 @@ if myHero.charName ~= "Draven" then return end
 assert(load(Base64Decode("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"), nil, "bt", _ENV))() ScriptStatus("WJMMQPMQJJP") 
 
 local ts
-local LocalVersion = "2.4"
+local LocalVersion = "2.5"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local movementHuman = true
-local qBuff = 0
 local qStacks = 0
 local SAC = false
 local SX = false
@@ -59,6 +58,7 @@ function OnLoad()
 	Menu.drawing:addParam("eColor", "Draw Stand Aside (E) Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tColor", "Draw Target Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("reticle", "Draw Reticles", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addParam("AutoCatch", "Auto Catch", SCRIPT_PARAM_ONOFF, true)
 	
@@ -67,8 +67,10 @@ function OnLoad()
 	elseif _G.Reborn_Loaded then
 	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
 	PrintChat("<font color=\"#ff0000\"><b>Loading Sac.</b></font>")	
+	DelayAction(function()  
 	SAC = true
 	SX = false
+	end, 5.0)
 	else
   orbwalkCheck()
   end
@@ -113,6 +115,13 @@ function OnDraw()
 	  DrawCircle(mousePos.x, mousePos.y, mousePos.z, 400, ARGB(255, 0, 0, 255))
 	end
 	
+	if Menu.drawing.reticle then
+	  if reticles ~= nil then
+	  for i, reticle in ipairs(reticles) do
+	  DrawCircle(reticle.x, reticle.y, reticle.z, 100, ARGB(210, 0, 0, 255))
+	  end
+	  end
+	end
 		if myHero:CanUseSpell(_E) == READY and Menu.drawing.eDraw then 
 			DrawCircle(myHero.x, myHero.y, myHero.z, 1050, RGB(Menu.drawing.eColor[2], Menu.drawing.eColor[3], Menu.drawing.eColor[4]))
 		end
@@ -126,6 +135,9 @@ function OnDraw()
 				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
 			end
 		end
+		
+				DrawText3D("Q STACKS: "..qStacks,myHero.x-100, myHero.y-50, myHero.z, 20, 0xFFFFFF00)
+		
 	end
 end
 
@@ -254,11 +266,13 @@ end
 
 function OnCreateObj(obj)
     if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
-    if obj.name == "Draven_Q_buf.troy" then
-        qBuff = qBuff + 1
+    if obj.name == "Draven_Base_Q_buf.troy" then
+    qStacks = qStacks + 1
     end
-             
-        if obj.name:find("reticle_self.troy") then
+   if obj.name == "Draven_Base_Q_ReticleCatchSucess" then
+    qStacks = qStacks + 1
+   end
+        if obj.name == "Draven_Base_Q_reticle_self.troy" then
             table.insert(reticles, obj)
         elseif obj.name == "draven_spinning_buff_end_sound.troy" then
             qStacks = 0
@@ -269,17 +283,15 @@ end
 
 function OnDeleteObj(obj)
     if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
-	if obj.name:find("reticle_self.troy") then
-        if GetDistance(obj) > 90 then
-            qStacks = qStacks - 1
-        end
+	if obj.name == "Draven_Base_Q_reticle_self.troy" then
         for i, reticle in ipairs(reticles) do
-            if obj and obj.valid and reticle.object and reticle.object.valid and obj.x == reticle.object.x and obj.z == reticle.object.z then
-                table.remove(reticles, i)
-            end
+		if obj.name == reticle.name then
+                table.remove(reticles, i)  
+				end
         end
-    elseif obj.name == "Draven_Q_buf.troy" then
-        qBuff = qBuff - 1            
+		end
+    if obj.name == "Draven_Base_Q_buf.troy" then
+    qStacks = qStacks - 1
     end
 end
 end
@@ -351,13 +363,6 @@ function arrangePrioritysTT()
 		SetPriority(priorityTable.Bruiser,  enemy, 2)
 		SetPriority(priorityTable.Tank,     enemy, 3)
         end
-end
-	
-	-- USE
-	function OnProcessSpell(unit, spell)
-	    if unit.isMe and spell.name == "dravenspinning" then
-        qStacks = qStacks + 1
-		end
 end
 	
 	
@@ -494,20 +499,20 @@ end
 
 function CatchAxes()
 	if Menu.AutoCatch then
-	if movementHuman then
+	
+	if tablelength(reticles) <= 0 then
+	ForcePointSx()
+end
+
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
       if (math.abs(mousePos.x - reticle.x) <= 400 and math.abs(mousePos.z - reticle.z) <= 400) and not (reticle.x <= 55 and reticle.y <= 55) then
-	  movementHuman = false
 	if SAC then
-	_G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle.x, reticle.z)
+	_G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
 	end
 	if SX then
 	SxOrb:ForcePoint(reticle.x, reticle.z)
 	end
-				DelayAction(ForcePointSx, 0.8)
-				movementHuman = true
-				end
 end
 end
 end
@@ -520,19 +525,6 @@ function ForcePointSx()
 	end
 	if SX then
 	SxOrb:ForcePoint(nil)
-	end
-end
-
-function CheckQstacks()
-	toreturnint = 0
-	for i = 1, myHero.buffCount, 1 do
-		local buff = myHero:getBuff(i)
-		if buff.valid then
-			if buff.name == "dravenspinning" then
-				toreturnint = buff.stack
-				return toreturnint
-			end
-		end
 	end
 end
 
