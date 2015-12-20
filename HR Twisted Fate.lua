@@ -92,7 +92,7 @@ end
 	DelayAction(function()  
 	SAC = true
 	SXORB = false
-	PrintChat("<font color=\"#ff0000\"><b>Sac loaded.</b></font>")	
+	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Sac Loaded.</b></font>")
 	end, 10)
 	else
     LoadOrb()
