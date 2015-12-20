@@ -9,7 +9,7 @@ local Ulting = false
 local eStacks = 0
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "2.1"
+local LocalVersion = "2.2"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -19,7 +19,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 2, { "Always", "Stuned"})
+	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 2, { "Always", "Stunned"})
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
@@ -43,6 +43,9 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.jungleclear:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.jungleclear:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 1, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.jungleclear:addParam("mManager", "JungleClear Mana",  SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
+	
+	Menu:addSubMenu("HitChance", "hitchance")
+	Menu.hitchance:addParam("QHitCH", "Q Hit Chance",  SCRIPT_PARAM_SLICE, 2, 1, 5, 1) 
 	
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
@@ -292,14 +295,17 @@ function OnCreateObj(obj)
   if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
 	PickingCard = true
 	BlueDraw = true
+	SelectedCard = "Blue"
   end
   if obj.name == "TwistedFate_Base_W_RedCard.troy" then
 	PickingCard = true
 	RedDraw = true
+	SelectedCard = "Red"
   end
   if obj.name == "TwistedFate_Base_W_GoldCard.troy" then
 	PickingCard = true
 	GoldDraw = true
+	SelectedCard = "Gold"
   end
   if obj.name == "Cardmaster_stackready.troy" then
 	eStacks = "Stacked"
@@ -311,12 +317,15 @@ function OnDeleteObj(obj)
  if obj and obj.name then
   if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
    BlueDraw = false
+   SelectedCard = "nil"
   end
   if obj.name == "TwistedFate_Base_W_RedCard.troy" then
    RedDraw = false
+   SelectedCard = "nil"
   end
   if obj.name == "TwistedFate_Base_W_GoldCard.troy" then
    GoldDraw = false
+   SelectedCard = "nil"
   end
   if obj.name == "Cardmaster_stackready.troy" then
    eStacks = 0
@@ -354,30 +363,22 @@ end
 end
 	
 function SelectorCards()
+	if not myHero:CanUseSpell(_W) == READY then 
+	Selector = "any"
+	SelectorCheck = false
+	return end
+	
 	if SelectorCheck then
-	
 	local Name = myHero:GetSpellData(_W).name
-	spellName = nil
-	
-	if Selector == "Gold" then
-	spellName = "goldcardlock"
-	
-	elseif Selector == "Blue" then
-	spellName = "bluecardlock"	
-	
-	elseif Selector == "Red" then
-	spellName = "redcardlock"
-	end
 	
 	if Name == "PickACard" then
 	CastSpell(_W)
 	end
 	
-	if Name == spellName then
+	if SelectedCard == Selector then
 	CastSpell(_W)
-	Selector = "any"
 	SelectorCheck = false
-	spellName = nil
+	Selector = "any"
 	end
 end
 end
@@ -410,24 +411,20 @@ function Combo(unit)
 		for _, unit in pairs(GetEnemyHeroes()) do
 		if GetDistance(unit) <= 680 then
 				if Menu.combo.card == 1 then
-				spellName = "bluecardlock"
-				if Name == "PickACard" then
-				CastSpell(_W)
-				end
+				CardSel = "Blue"
 				elseif Menu.combo.card == 2 then
-				spellName = "redcardlock"
-				if Name == "PickACard" then
-				CastSpell(_W)
-				end
+				CardSel = "Red"
 				elseif Menu.combo.card == 3 then
-				spellName = "goldcardlock"
+				CardSel = "Gold"
+				end	
+				
 				if Name == "PickACard" then
 				CastSpell(_W)
 				end
-			end	
-				if Name == spellName then
+				
+				if SelectedCard == CardSel then
 				CastSpell(_W)
-				end		
+				end			
 			end
 			end				
 		end	
@@ -460,31 +457,26 @@ end
 function LaneClear()
 	enemyMinions:update()
 	if not IsMyManaLowLaneClear() then
-		local Name = myHero:GetSpellData(_W).name
-		spellName = nil
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.laneclear.UseQ and GetDistance(minion) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 					CastQ(minion)
 				end
-				if Menu.laneclear.UseW and myHero:CanUseSpell(_W) == READY and GetDistance(minion) <= 600 then
+				local Name = myHero:GetSpellData(_W).name
+				if Menu.laneclear.UseW and myHero:CanUseSpell(_W) == READY and GetDistance(minion) <= 700 then
 				if Menu.laneclear.card == 1 then
-				spellName = "bluecardlock"
-				if Name == "PickACard" then
-				CastSpell(_W)
-				end
+				CardSel = "Blue"
 				elseif Menu.laneclear.card == 2 then
-				spellName = "redcardlock"
-				if Name == "PickACard" then
-				CastSpell(_W)
-				end
+				CardSel = "Red"
 				elseif Menu.laneclear.card == 3 then
-				spellName = "goldcardlock"
+				CardSel = "Gold"
+				end	
+				
 				if Name == "PickACard" then
 				CastSpell(_W)
 				end
-			end		
-				if Name == spellName then
+				
+				if SelectedCard == CardSel then
 				CastSpell(_W)
 				end		
 		end
@@ -492,15 +484,14 @@ function LaneClear()
 end
 elseif IsMyManaLowLaneClear then
 		for i, minion in pairs(enemyMinions.objects) do
-			if ValidTarget(minion) and minion ~= nil then
-				spellName = nil
+			if ValidTarget(minion) and minion ~= nil and GetDistance(minion) <= 600 then
 				local Name = myHero:GetSpellData(_W).name
-				spellName = "bluecardlock"
+				CardSel = "Blue"
 				if Name == "PickACard" then
 				CastSpell(_W)	
 				end
 				
-				if Name == spellName then
+				if SelectedCard == CardSel then
 				CastSpell(_W)
 				end		
 				end
@@ -511,28 +502,24 @@ end
 function JungleClear()
 	jungleMinions:update()
 	if not IsMyManaLowJungleClear() then
-	local Name = myHero:GetSpellData(_W).name
 	for i, jungleMinion in pairs(jungleMinions.objects) do
 		if jungleMinion ~= nil then
 		if Menu.jungleclear.UseQ then CastQ(jungleMinion)end
-		if Menu.jungleclear.UseW and myHero:CanUseSpell(_W) == READY then 				
+		local Name = myHero:GetSpellData(_W).name
+				if Menu.jungleclear.UseW and myHero:CanUseSpell(_W) == READY and GetDistance(jungleMinion) <= 600 then
 				if Menu.jungleclear.card == 1 then
-				spellName = "bluecardlock"
-				if Name == "PickACard" then
-				CastSpell(_W)
-				end
+				CardSel = "Blue"
 				elseif Menu.jungleclear.card == 2 then
-				spellName = "redcardlock"
-				if Name == "PickACard" then
-				CastSpell(_W)
-				end
+				CardSel = "Red"
 				elseif Menu.jungleclear.card == 3 then
-				spellName = "goldcardlock"
+				CardSel = "Gold"
+				end	
+				
 				if Name == "PickACard" then
 				CastSpell(_W)
 				end
-			end		 
-				if Name == spellName then
+				
+				if SelectedCard == CardSel then
 				CastSpell(_W)
 				end		
 		end
@@ -540,15 +527,14 @@ function JungleClear()
 end
 elseif IsMyManaLowJungleClear then
 		for i, minion in pairs(jungleMinions.objects) do
-			if ValidTarget(minion) and minion ~= nil then
-				spellName = nil
+			if ValidTarget(minion) and minion ~= nil and GetDistance(minion) <= 600 then
 				local Name = myHero:GetSpellData(_W).name
-				spellName = "bluecardlock"
+				CardSel = "Blue"
 				if Name == "PickACard" then
 				CastSpell(_W)	
 				end
 				
-				if Name == spellName then
+				if SelectedCard == CardSel then
 				CastSpell(_W)
 				end		
 				end
@@ -579,14 +565,14 @@ end
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
  
-		if HitChance >= 2 then
+		if HitChance >= Menu.hitchance.QHitCH then
 			CastSpell(_Q, CastPosition.x, CastPosition.z)
 		end
 	end
 	elseif Menu.pred == 2 then
   local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
   
-  if QHitChance > 0 then
+  if QHitChance > Menu.hitchance.QHitCH then
     CastSpell(_Q, QPos.x, QPos.z)
 end
 end
@@ -599,14 +585,14 @@ function CastQ(unit)
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
  
-		if HitChance >= 2 then
+		if HitChance >= Menu.hitchance.QHitCH then
 			CastSpell(_Q, CastPosition.x, CastPosition.z)
 		end
 	end
 	elseif Menu.pred == 2 then
   local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
   
-  if QHitChance > 0 then
+  if QHitChance > Menu.hitchance.QHitCH then
     CastSpell(_Q, QPos.x, QPos.z)
   end
   end
@@ -657,22 +643,23 @@ end
 function UltimateCard()
 	if Ulting then
 	local Name = myHero:GetSpellData(_W).name
-				spellName = "goldcardlock"
+				CardSel = "Gold"
+				
 				if Name == "PickACard" then
 				CastSpell(_W)
-				end	 
-				if Name == spellName then
+				end
+				
+				if SelectedCard == CardSel then
 				CastSpell(_W)
 				Ulting = false
-				spellName = nil
-				end	
+				end			
     end
 end
 
 function OnProcessSpell(unit, spell)
     if unit.isMe and spell.name == "gate" then 
     	if Menu.combo.goldR then 
-		if myHero:CanUseSpell(_Q) == READY then
+		if myHero:CanUseSpell(_W) == READY then
     		Ulting = true
 			end
 		end 
