@@ -6,11 +6,11 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.8"
+local LocalVersion = "1.9"
 local autoupdate = true --Change to false if you don't wan't autoupdates
-local dmgQ = math.floor((myHero:GetSpellData(_Q).level - 1)*20 + 20 + myHero.damage * 1.0)
+local dmgQ = math.floor((myHero:GetSpellData(_Q).level - 1)*20 + 20 + getDmg("AD", myHero, myHero) * 1.0)
 local dmgE = math.floor((myHero:GetSpellData(_E).level - 1)*20 + 70 + myHero.ap * .6)
-local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + myHero.damage * 1.5)
+local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + getDmg("AD", myHero, myHero) * 1.5)
 
 	function OnLoad()
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
@@ -39,6 +39,7 @@ local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + myHero.d
 	Menu:addSubMenu("LaneClear", "laneclear")
 	Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.laneclear:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+	Menu.laneclear:addParam("eKillable", "Use E only if minion Killable", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("JungleClear", "jungleclear")
 	Menu.jungleclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
@@ -78,10 +79,6 @@ local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + myHero.d
 	
 	Menu:addParam("pred", "Prediction Type", SCRIPT_PARAM_LIST, 1, { "VPrediction", "HPrediction"})
 	CustomLoad()
-	
-	print(""..dmgQ)
-	print(""..dmgE)
-	print(""..dmgR)
 	
 	if FileExist(LIB_PATH .. "/HPrediction.lua") then
 	require 'HPrediction'
@@ -467,8 +464,14 @@ function LaneClear()
 					CastQ(minion)
 					CastQ3(minion)
 				end
-				if Menu.laneclear.UseE and GetDistance(minion) <= SkillE.range and myHero:CanUseSpell(_E) == READY and health <= dmgE and not TargetDashed(unit) then
+				if Menu.laneclear.UseE and GetDistance(minion) <= SkillE.range and myHero:CanUseSpell(_E) == READY and not TargetDashed(unit) then
+					if Menu.laneclear.eKillable then
+					if health <= dmgE then
 					CastSpell(_E, minion)
+					end
+					else
+					CastSpell(_E, minion)
+					end
 				end
 		end
 	end
