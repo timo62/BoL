@@ -70,7 +70,8 @@ function OnLoad()
 	DelayAction(function()  
 	SAC = true
 	SX = false
-	end, 5.0)
+	PrintChat("<font color=\"#ff0000\"><b>Sac loaded.</b></font>")	
+	end, 10)
 	else
   orbwalkCheck()
   end
