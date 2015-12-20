@@ -137,8 +137,6 @@ function OnDraw()
 			end
 		end
 		
-				DrawText3D("Q STACKS: "..qStacks,myHero.x-100, myHero.y-50, myHero.z, 20, 0xFFFFFF00)
-		
 	end
 end
 
