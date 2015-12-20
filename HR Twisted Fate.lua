@@ -618,11 +618,11 @@ function OnDraw()
 		if Menu.drawing.DrawCards then
 		
 		if BlueDraw then
-		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xffff0000)
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xff0000ff)
 		end
 		
 		if RedDraw then
-		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xff0000ff)	
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xffff0000)	
 		end
 		
 		if GoldDraw then
