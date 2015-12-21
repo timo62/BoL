@@ -80,7 +80,7 @@ end
 	DelayAction(function()
 	SAC = true
 	SX = false
-	end, 6.0)
+	end, 11)
 	else
     LoadOrb()
 	end
