@@ -6,7 +6,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 local ts
 local knockedup = 0
-local LocalVersion = "1.9"
+local LocalVersion = "2.0"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local dmgQ = math.floor((myHero:GetSpellData(_Q).level - 1)*20 + 20 + getDmg("AD", myHero, myHero) * 1.0)
 local dmgE = math.floor((myHero:GetSpellData(_E).level - 1)*20 + 70 + myHero.ap * .6)
@@ -14,13 +14,15 @@ local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + getDmg("
 
 	function OnLoad()
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
-	
+	if myHero:GetSpellData(SUMMONER_1).name:find("summonerflash") then Flash = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerflash") then Flash = SUMMONER_2 end
+
 	Menu = scriptConfig("HR Yasuo", "menu")
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseQ3", "Use Q3", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+	if Flash then Menu.combo:addParam("UseQF", "Use E on minion + Q + Flash", SCRIPT_PARAM_ONOFF, true) end
 	Menu.combo:addParam("UseEGap", "Use E to GapClose", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("DistanceToE", "Min Distance for GapClose",SCRIPT_PARAM_SLICE, 300, 0, 475, 0)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
@@ -311,6 +313,25 @@ end
 
 function Combo(unit)
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
+	
+		if Menu.combo.UseQF and CountEnemyInRange(1000, unit) <= 1 and GetDistance(myHero, unit) >= 500 then
+		if UnderTurret(unit) then return end
+		enemyMinions:update()
+		for i, minion in pairs(enemyMinions.objects) do
+		if GetDistance(minion, unit) <= 600 and myHero:CanUseSpell(_Q) == READY and myHero:GetSpellData(_Q).name == "yasuoq3w" and Flash and myHero:CanUseSpell(_R) == READY then
+		if not TargetDashed(unit) then
+		CastSpell(_E, minion)
+		DelayAction(function()
+		CastQ3(unit)
+		end, 0.125)
+		DelayAction(function()
+		CastSpell(Flash, unit.x, unit.z)
+		end, 0.125)
+		end
+		end
+		end
+		end
+		
 		if Menu.combo.UseQ then 
 			CastQ(unit)
 		end	
@@ -362,7 +383,7 @@ end
 
 function UseEGap(unit)
     local TargetDistance = GetDistance(unit)
-    if TargetDistance > SkillE.range and Menu.combo.UseEGap then
+    if TargetDistance >= 500 and Menu.combo.UseEGap then
             mPos = getNearestMinion(unit)
             if myHero:CanUseSpell(_E) == READY and mPos then 
                 CastSpell(_E, mPos)
