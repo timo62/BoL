@@ -1,0 +1,4 @@
+	local BolUserList = {
+	["HiranN"] = "HiranN",
+	["Nome"] = "NomeDnv"
+	}
