@@ -369,7 +369,7 @@ function OnDraw()
 		for i, minion in pairs(enemyMinions.objects) do
 		for i, enemy in ipairs(GetEnemyHeroes()) do
 		if ValidTarget(minion) and minion ~= nil then
-		if GetDistance(minion, enemy) <= 150 and myHero:CanUseSpell(_Q) == READY then
+		if GetDistance(minion, enemy) <= 300 and myHero:CanUseSpell(_Q) == READY then
 		if UnderTurret(enemy) then return end
 		DrawLine3D(minion.x, minion.y, minion.z, enemy.x, enemy.y, enemy.z, 5, RGB(250, 6, 6))
 		CastSpell(_Q, minion)
