@@ -47,6 +47,10 @@ local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + getDmg("
 	Menu.jungleclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.jungleclear:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	
+	Menu:addSubMenu("HitChance", "hitchance")
+	Menu.hitchance:addParam("QHitCH", "Q Hit Chance",  SCRIPT_PARAM_SLICE, 2, 1, 5, 1) 
+	Menu.hitchance:addParam("QHitCH3", "Q3 Hit Chance",  SCRIPT_PARAM_SLICE, 2, 1, 5, 1) 
+	
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
@@ -87,7 +91,7 @@ local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + getDmg("
 	
 	HPred = HPrediction()
 	HP_Q = HPSkillshot({type = "DelayLine", delay = 0.25, range = 475, width = 40, speed = math.huge})
-	HP_Q3 = HPSkillshot({type = "DelayLine", delay = 0.25, range = 1000, width = 40, speed = math.huge})
+	HP_Q3 = HPSkillshot({type = "DelayLine", delay = 0.25, range = 1000, width = 100, speed = math.huge})
 	UseHP = true
 else
 	UseHP = false
@@ -513,7 +517,7 @@ function CastQ(unit)
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
  
-		if HitChance >= 2 then
+		if HitChance >= Menu.hitchance.QHitCH then
 			CastSpell(_Q, CastPosition.x, CastPosition.z)
 		end
 	end
@@ -529,9 +533,9 @@ function CastQ(unit)
 function CastQ3(unit)
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= 1000 and myHero:CanUseSpell(_Q) == READY and myHero:GetSpellData(_Q).name == "yasuoq3w" then
-		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, 1000, SkillQ.speed, myHero, false)
+		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, 100, 1000, SkillQ.speed, myHero, false)
  
-		if HitChance >= 2 then
+		if HitChance >= Menu.hitchance.QHitCH3 then
 			CastSpell(_Q, CastPosition.x, CastPosition.z)
 		end
 	end
