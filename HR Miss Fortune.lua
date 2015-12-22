@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.2"
+local LocalVersion = "1.3"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 
 	function OnLoad()
@@ -19,6 +19,7 @@ local autoupdate = true -- Change to false if you don't want autoupdates.
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("UseRK", "Use R if enemy killable", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("AutoR", "Auto R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("AutoRH", "Auto R in x enemies",  SCRIPT_PARAM_SLICE, 3, 1, 5, 0) 
 	
@@ -151,7 +152,6 @@ end
 		local health = unit.health
 		local dmgQ = getDmg("Q", unit, myHero)
 		local dmgE = getDmg("E", unit, myHero)
-		local dmgR = getDmg("R", unit, myHero)
 		if GetDistance(unit) <= 800 then
 		if not Menu.killsteal.KSOn then return end
 			if health <= dmgQ and Menu.killsteal.UseQ and myHero:CanUseSpell(_Q) == READY and ValidTarget(unit) then
@@ -167,20 +167,16 @@ end
 	end
 	
 function OnCreateObj(obj)
-    if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
-    if obj.name == "MissFortune_Base_R_Indicator" then
+    if obj.name == "MissFortune_Base_R_Indicator.troy" then
     Ulting = true
-    end
     end
 end
 
 
-function OnDeleteObj(obj)
-    if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
-    if obj.name == "MissFortune_Base_R_Indicator" then
-    Ulting = false
-    end
-    end
+function OnRemoveBuff(unit, buff)
+	if unit.isMe and buff.name == "missfortunebulletsound" then
+	Ulting = false
+	end
 end
 	
 	function OnTick()
@@ -235,6 +231,10 @@ end
 	
 	if Menu.combo.AutoR then
 	AutoR()
+	end
+	
+	if Menu.combo.UseRK then
+	KillWithR()
 	end
 	
 	UseSpells()
@@ -334,11 +334,33 @@ function CastE(unit)
  
 function AutoR()
   	for _, enemy in pairs(GetEnemyHeroes()) do
+		if GetDistance(enemy) <= 1400 then
            local AOECastPosition, MainTargetHitChance, nTargets = VP:GetConeAOECastPosition(enemy, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
            if MainTargetHitChance >= 2 and GetDistance(AOECastPosition) <= SkillR.range and nTargets >= Menu.combo.AutoRH and not enemy.dead and myHero:CanUseSpell(_R) == READY then
            CastSpell(_R, AOECastPosition.x, AOECastPosition.z)
+		   Ulting = true
 		   end
 		   end
+end
+end
+
+function KillWithR()
+  	for _, unit in pairs(GetEnemyHeroes()) do 
+	local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)* myHero.ap * .2 * 12 + myHero.damage * .35 * 12 + 530)
+	if GetDistance(unit, myHero) <= 1400 then
+	if unit ~= nil and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY then
+	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
+	if unit.health <= dmgR then
+		CastPosition,  HitChance,  Position = VP:GetConeAOECastPosition(unit, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
+		if HitChance >= Menu.hitchance.RHitCH then
+			CastSpell(_R, CastPosition.x, CastPosition.z)
+			Ulting = true
+		end
+	end
+end
+end
+end
+end
 end
 
 function OnDraw()
