@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.0"
+local LocalVersion = "1.1"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 
 	function OnLoad()
@@ -166,18 +166,21 @@ end
 	end
 	end
 	
-function OnApplyBuff(unit, buff)
-	if unit == nil or buff == nil then return end 
-	if unit.isMe and buff.name == "missfortunebulletsound" then
-		Ulting = true
-	end
+function OnCreateObj(obj)
+    if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
+    if obj.name == "MissFortune_Base_R_Indicator" then
+    Ulting = true
+    end
+    end
 end
 
-function OnRemoveBuff(unit, buff)
-	if unit == nil or buff == nil then return end 
-	if unit.isMe and buff.name == "missfortunebulletsound" then
-		Ulting = false
-	end
+
+function OnDeleteObj(obj)
+    if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
+    if obj.name == "MissFortune_Base_R_Indicator" then
+    Ulting = false
+    end
+    end
 end
 	
 	function OnTick()
