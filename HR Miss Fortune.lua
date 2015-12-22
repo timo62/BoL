@@ -317,7 +317,7 @@ end
 function CastE(unit)
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillE.range and myHero:CanUseSpell(_E) == READY then
-		CastPosition,  HitChance,  Position = VP:GetConeAOECastPosition(unit, SkillE.delay, SkillE.width, SkillE.range, SkillE.speed, myHero, false)
+		CastPosition,  HitChance,  Position = VP:GetCircularAOECastPosition(unit, SkillE.delay, SkillE.width, SkillE.range, SkillE.speed, myHero, false)
  
 		if HitChance >= Menu.hitchance.EHitCH then
 			CastSpell(_E, CastPosition.x, CastPosition.z)
@@ -334,7 +334,7 @@ function CastE(unit)
  
 function AutoR()
   	for _, enemy in pairs(GetEnemyHeroes()) do
-           local AOECastPosition, MainTargetHitChance, nTargets = VP:GetLineAOECastPosition(enemy, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
+           local AOECastPosition, MainTargetHitChance, nTargets = VP:GetConeAOECastPosition(enemy, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
            if MainTargetHitChance >= 2 and GetDistance(AOECastPosition) <= SkillR.range and nTargets >= Menu.combo.AutoRH and not enemy.dead and myHero:CanUseSpell(_R) == READY then
            CastSpell(_R, AOECastPosition.x, AOECastPosition.z)
 		   end
