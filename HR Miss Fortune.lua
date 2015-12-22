@@ -333,9 +333,10 @@ function CastE(unit)
  end
  
 function AutoR()
-	for i, enemy in ipairs(GetEnemyHeroes()) do
+	for i = 1, heroManager.iCount do
+	local enemy = heroManager:getHero(i)
            local AOECastPosition, MainTargetHitChance, nTargets = VP:GetLineAOECastPosition(enemy, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
-           if MainTargetHitChance >= 2 and GetDistance(AOECastPosition) <= SkillR.range and nTargets >= Menu.combo.AutoRH and not enemy.dead then
+           if MainTargetHitChance >= 2 and GetDistance(AOECastPosition) <= SkillR.range and nTargets >= Menu.combo.AutoRH and not enemy.dead and myHero:CanUseSpell(_R) == READY then
 		   Ulting = true
            DelayAction(function() CastSpell(_R, AOECastPosition.x, AOECastPosition.z) end, 0.125)
 		   end
@@ -370,10 +371,12 @@ function OnDraw()
 		if Menu.combo.AutoQ then
 		enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
-		for i, enemy in ipairs(GetEnemyHeroes()) do
+		for i = 1, heroManager.iCount do
+		local enemy = heroManager:getHero(i)
 		if ValidTarget(minion) and minion ~= nil then
 		if GetDistance(minion, enemy) <= 300 and myHero:CanUseSpell(_Q) == READY then
 		if UnderTurret(enemy) then return end
+		if enemy.dead then return end
 		DrawLine3D(minion.x, minion.y, minion.z, enemy.x, enemy.y, enemy.z, 5, RGB(250, 6, 6))
 		CastSpell(_Q, minion)
 		end
