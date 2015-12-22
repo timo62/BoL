@@ -337,8 +337,8 @@ function AutoR()
 		if GetDistance(enemy) <= 1150 then
            local AOECastPosition, MainTargetHitChance, nTargets = VP:GetConeAOECastPosition(enemy, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
            if MainTargetHitChance >= 2 and GetDistance(AOECastPosition) <= SkillR.range and nTargets >= Menu.combo.AutoRH and not enemy.dead and myHero:CanUseSpell(_R) == READY then
-           CastSpell(_R, AOECastPosition.x, AOECastPosition.z)
-		   Ulting = true
+		  Ulting = true
+		  DelayAction(function()CastSpell(_R, AOECastPosition.x, AOECastPosition.z)end, 0.125)
 		   end
 		   end
 end
@@ -353,8 +353,8 @@ function KillWithR()
 	if unit.health <= dmgR then
 		CastPosition,  HitChance,  Position = VP:GetConeAOECastPosition(unit, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
 		if HitChance >= Menu.hitchance.RHitCH then
-			CastSpell(_R, CastPosition.x, CastPosition.z)
 			Ulting = true
+			DelayAction(function()CastSpell(_R, CastPosition.x, CastPosition.z)end, 0.125)
 		end
 	end
 end
