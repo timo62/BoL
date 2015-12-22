@@ -333,12 +333,10 @@ function CastE(unit)
  end
  
 function AutoR()
-	for i = 1, heroManager.iCount do
-	local enemy = heroManager:getHero(i)
+  	for _, enemy in pairs(GetEnemyHeroes()) do
            local AOECastPosition, MainTargetHitChance, nTargets = VP:GetLineAOECastPosition(enemy, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
            if MainTargetHitChance >= 2 and GetDistance(AOECastPosition) <= SkillR.range and nTargets >= Menu.combo.AutoRH and not enemy.dead and myHero:CanUseSpell(_R) == READY then
-		   Ulting = true
-           DelayAction(function() CastSpell(_R, AOECastPosition.x, AOECastPosition.z) end, 0.125)
+           CastSpell(_R, AOECastPosition.x, AOECastPosition.z)
 		   end
 		   end
 end
@@ -371,9 +369,9 @@ function OnDraw()
 		if Menu.combo.AutoQ then
 		enemyMinions:update()
 		for i, minion in pairs(enemyMinions.objects) do
-		for i = 1, heroManager.iCount do
-		local enemy = heroManager:getHero(i)
+  		for _, enemy in pairs(GetEnemyHeroes()) do
 		if ValidTarget(minion) and minion ~= nil then
+		if ValidTarget(enemy) and enemy ~= nil then
 		if GetDistance(minion, enemy) <= 300 and myHero:CanUseSpell(_Q) == READY then
 		if UnderTurret(enemy) then return end
 		if enemy.dead then return end
