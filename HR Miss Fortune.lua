@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.1"
+local LocalVersion = "1.2"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 
 	function OnLoad()
@@ -372,8 +372,7 @@ function OnDraw()
   		for _, enemy in pairs(GetEnemyHeroes()) do
 		if ValidTarget(minion) and minion ~= nil then
 		if ValidTarget(enemy) and enemy ~= nil then
-		if GetDistance(minion, enemy) <= 300 and myHero:CanUseSpell(_Q) == READY then
-		if UnderTurret(enemy) then return end
+		if GetQ(minion, enemy) and myHero:CanUseSpell(_Q) == READY then
 		if enemy.dead then return end
 		DrawLine3D(minion.x, minion.y, minion.z, enemy.x, enemy.y, enemy.z, 5, RGB(250, 6, 6))
 		CastSpell(_Q, minion)
@@ -384,6 +383,43 @@ function OnDraw()
 		end
 end
 end
+end
+
+function GetQ(minion, unit)
+	if minion == nil or unit == nil or GetDistanceSqr(unit, triangle_target) > 700 * 700 or GetDistanceSqr(myHero, triangle_target) > 700 * 700 then return end
+
+	for i, secure_minion in pairs(enemyMinions.objects) do
+		if secure_minion == nil then return end
+
+		if GetTriangle(minion, 40, unit) and TargetHaveBuff("missfortunepassivestack", unit) then
+			return true
+		end
+		if GetTriangle(minion, 20, unit) and ((GetTriangle(minion, 20, secure_minion) and GetDistance(minion, secure_minion) > GetDistance(minion, unit)) or not GetTriangle(minion, 20, secure_minion)) and minion ~= secure_minion then
+			return true
+		end
+		if GetTriangle(minion, 40, unit) and ((GetTriangle(minion, 40, secure_minion) and GetDistance(minion, secure_minion) > GetDistance(minion, unit)) or not GetTriangle(minion, 40, secure_minion)) and minion ~= secure_minion then
+			return true
+		end
+		if GetTriangle(minion, 90, unit) and ((GetTriangle(minion, 90, secure_minion) and GetDistance(minion, secure_minion) > GetDistance(minion, unit)) or not GetTriangle(minion, 90, secure_minion)) and minion ~= secure_minion then
+			return true
+		end
+	end
+
+	return false
+end
+
+function GetTriangle(triangle_target, angle, unit)
+	if triangle_target == nil or unit == nil or GetDistanceSqr(unit, triangle_target) > 700 * 700 or GetDistanceSqr(myHero, triangle_target) > 700 * 700 then return end
+
+	v1 = (Vector(triangle_target) - Vector(myHero)):rotated(0, angle / (180 * math.pi), 0):normalized()
+	v2 = (Vector(triangle_target) - Vector(myHero)):rotated(0, -(angle / (180 * math.pi)), 0):normalized()
+	triangle = Polygon(Point(triangle_target.x, triangle_target.z), Point(triangle_target.x + 300 * v1.x, triangle_target.z + 300 * v1.z), Point(triangle_target.x + 300 * v2.x, triangle_target.z + 300 * v2.z))
+
+	if triangle:contains(Point(unit.x, unit.z)) then
+		return true
+	else
+		return false
+	end
 end
 
 function Skills()
