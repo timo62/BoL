@@ -15,7 +15,7 @@ local autoupdate = true -- Change to false if you don't want autoupdates.
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("AutoQ", "Auto Q in minion to hit enemies (BETA)", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("AutoQ", "Auto Q in minion to hit enemies", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
