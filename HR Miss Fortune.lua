@@ -384,6 +384,7 @@ function OnDraw()
 		end
 end
 end
+end
 
 function Skills()
 	SkillE = { name = "", range = 1000, delay = 0.25, speed = math.huge, width = 200, ready = false }
