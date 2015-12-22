@@ -334,7 +334,7 @@ function CastE(unit)
  
 function AutoR()
   	for _, enemy in pairs(GetEnemyHeroes()) do
-		if GetDistance(enemy) <= 1400 then
+		if GetDistance(enemy) <= 1150 then
            local AOECastPosition, MainTargetHitChance, nTargets = VP:GetConeAOECastPosition(enemy, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
            if MainTargetHitChance >= 2 and GetDistance(AOECastPosition) <= SkillR.range and nTargets >= Menu.combo.AutoRH and not enemy.dead and myHero:CanUseSpell(_R) == READY then
            CastSpell(_R, AOECastPosition.x, AOECastPosition.z)
