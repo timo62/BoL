@@ -347,7 +347,7 @@ end
 function KillWithR()
   	for _, unit in pairs(GetEnemyHeroes()) do 
 	local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)* myHero.ap * .2 * 12 + myHero.damage * .35 * 12 + 530)
-	if GetDistance(unit, myHero) <= 1400 then
+	if GetDistance(unit, myHero) <= 900 then
 	if unit ~= nil and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY then
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
 	if unit.health <= dmgR then
