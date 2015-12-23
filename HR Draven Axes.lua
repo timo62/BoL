@@ -290,7 +290,7 @@ function OnDeleteObj(obj)
         end
 		end
 	if obj.name == "Draven_Base_Q_reticle_self.troy" then
-	if GetDistance(obj, myHero) > 150 then
+	if GetDistance(obj, myHero) > 170 then
 	qStacks = qStacks - 1
 	end
 	end
