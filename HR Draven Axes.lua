@@ -137,7 +137,7 @@ function OnDraw()
 				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
 			end
 		end
-		if Menu.drawning.qStacks then
+		if Menu.drawing.qStacks then
 		DrawText3D("Q Stacks: "..qStacks,myHero.x-100, myHero.y-50, myHero.z, 20, 0xFFFFFF00)
 		end
 	end
