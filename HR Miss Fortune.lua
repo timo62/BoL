@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.3"
+local LocalVersion = "1.4"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 
 	function OnLoad()
@@ -19,6 +19,7 @@ local autoupdate = true -- Change to false if you don't want autoupdates.
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("BlockRMove", "Block Move (Orbwalk) when using R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseRK", "Use R if enemy killable", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("AutoR", "Auto R", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("AutoRH", "Auto R in x enemies",  SCRIPT_PARAM_SLICE, 3, 1, 5, 0) 
@@ -191,6 +192,7 @@ end
 	LaneClearKey = Menu.keys.LaneJungClear
 	JungleClearKey = Menu.keys.LaneJungClear
 	
+	if Menu.combo.BlockRMove then
 	if Ulting then
 	if SAC then
 	_G.AutoCarry.MyHero:MovementEnabled(false)
@@ -210,6 +212,7 @@ end
 	if SX then
 	SxOrb:EnableMove()
 	SxOrb:EnableAttacks()
+	end
 	end
 	end
 	
