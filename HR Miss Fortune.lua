@@ -271,8 +271,7 @@ function Combo(unit)
 end
 
 function Harass(unit)
-	ts:update()
-	if(myHero:CanUseSpell(_Q) == READY and (myHero.mana / myHero.maxMana > Menu.harass.mManager /100 ) and ts.target ~= nil and Menu.harass.UseQ ) then 
+	if myHero:CanUseSpell(_Q) == READY and not IsMyManaLowHarass() and ts.target ~= nil and Menu.harass.UseQ then 
 	CastSpell(_Q, unit)
 	end
 end
@@ -287,6 +286,14 @@ end
 
 function IsMyManaLowJungleClear()
     if myHero.mana < (myHero.maxMana * ( Menu.jungleclear.mManager / 100)) then
+        return true
+    else
+        return false
+    end
+end
+
+function IsMyManaLowHarass()
+    if myHero.mana < (myHero.maxMana * ( Menu.harass.mManager / 100)) then
         return true
     else
         return false
