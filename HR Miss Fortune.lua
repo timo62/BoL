@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.5"
+local LocalVersion = "1.6"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 
 	function OnLoad()
@@ -147,6 +147,14 @@ end
 		ScriptUpdate(ToUpdate.Version,ToUpdate.UseHttps, ToUpdate.Host, ToUpdate.VersionPath, ToUpdate.ScriptPath, ToUpdate.SavePath, ToUpdate.CallbackUpdate,ToUpdate.CallbackNoUpdate, ToUpdate.CallbackNewVersion,ToUpdate.CallbackError)
 	end
 	end
+	
+function OnWndMsg(msg,wParam) 
+	if myHero:CanUseSpell(_R) == READY then
+	if msg == KEY_DOWN and wParam == 0x52 then 
+	Ulting = true
+	end
+end
+end
 	
 	function UseSpells()
 	for _, unit in pairs(GetEnemyHeroes()) do
