@@ -543,7 +543,7 @@ end
 
 function Update()
 	DownloadFile("http://"..serveradress..scriptadress.."/HR Miss Fortune.lua",SCRIPT_PATH.."HR Miss Fortune.lua", function ()
-		PrintChat("<font color=\"#00ff00\"><b>HR Miss Fortune Updated, press 2xF9.</b></font>")	
+		PrintChat("<font color=\"#00ff00\"><b>HR Miss Fortune Updated, press 2x F9.</b></font>")	
 		updated = true
 	end)
 end
