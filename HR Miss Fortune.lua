@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.4"
+local LocalVersion = "1.5"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 
 	function OnLoad()
@@ -15,7 +15,6 @@ local autoupdate = true -- Change to false if you don't want autoupdates.
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("AutoQ", "Auto Q in minion to hit enemies", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
@@ -62,6 +61,7 @@ local autoupdate = true -- Change to false if you don't want autoupdates.
 	Menu.keys:addParam("LaneJungClear", "LaneClear / JungleClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
 	
 	Menu:addParam("pred", "Prediction Type", SCRIPT_PARAM_LIST, 1, { "VPrediction", "HPrediction"})
+	Menu:addParam("AutoQ", "Auto Q in minion to hit enemies", SCRIPT_PARAM_ONOFF, true)
 	CustomLoad()
 	
 	if FileExist(LIB_PATH .. "/HPrediction.lua") then
@@ -216,6 +216,8 @@ end
 	end
 	end
 	
+	if Ulting then return end
+	
 	if ComboKey then 
 	Combo(Target)
 	end
@@ -238,6 +240,10 @@ end
 	
 	if Menu.combo.UseRK then
 	KillWithR()
+	end
+	
+	if Menu.AutoQ then
+	AutoQ()
 	end
 	
 	UseSpells()
@@ -264,7 +270,7 @@ function Combo(unit)
 		CastSpell(_W)
 		end	
 		
-		if Menu.combo.UseE and GetDistance(unit, myHero) >= 750 then 
+		if Menu.combo.UseE and GetDistance(unit, myHero) >= 700 then 
 		CastE(unit)
 		end	
 	end
@@ -373,6 +379,23 @@ end
 end
 end
 
+function AutoQ()
+		enemyMinions:update()
+		for i, minion in pairs(enemyMinions.objects) do
+		for i = 1, heroManager.iCount do
+		local enemy = heroManager:getHero(i)
+		if ValidTarget(minion) and minion ~= nil then
+		if ValidTarget(enemy) and enemy ~= nil then
+		if GetQ(minion, enemy) and myHero:CanUseSpell(_Q) == READY then
+		if enemy.dead then return end
+		CastSpell(_Q, minion)
+		end
+		end
+		end
+		end
+		end
+end
+
 function OnDraw()
 	if not myHero.dead and not Menu.drawing.mDraw then
 	
@@ -397,23 +420,6 @@ function OnDraw()
 			DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
 		end
 		end
-		
-		if Menu.combo.AutoQ then
-		enemyMinions:update()
-		for i, minion in pairs(enemyMinions.objects) do
-  		for _, enemy in pairs(GetEnemyHeroes()) do
-		if ValidTarget(minion) and minion ~= nil then
-		if ValidTarget(enemy) and enemy ~= nil then
-		if GetQ(minion, enemy) and myHero:CanUseSpell(_Q) == READY then
-		if enemy.dead then return end
-		DrawLine3D(minion.x, minion.y, minion.z, enemy.x, enemy.y, enemy.z, 5, RGB(250, 6, 6))
-		CastSpell(_Q, minion)
-		end
-		end
-		end
-		end
-		end
-end
 end
 end
 
