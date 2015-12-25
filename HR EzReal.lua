@@ -7,7 +7,7 @@ local LocalVersion = "1.7"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 function OnLoad()	
-	Menu = scriptConfig("HR EzReal", "menu")
+	Menu = scriptConfig("HR EzReal", "HREzReal")
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
