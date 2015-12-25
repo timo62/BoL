@@ -16,7 +16,7 @@ local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*100 + 200 + getDmg("
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerflash") then Flash = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerflash") then Flash = SUMMONER_2 end
 
-	Menu = scriptConfig("HR Yasuo", "menu")
+	Menu = scriptConfig("HR Yasuo", "HRYasuo")
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
