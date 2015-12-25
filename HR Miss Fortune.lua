@@ -270,7 +270,7 @@ end
 function Combo(unit)
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
 
-		if Menu.combo.UseQ and myHero:CanUseSpell(_Q) == READY then 
+		if Menu.combo.UseQ and GetDistance(unit) <= 650 and myHero:CanUseSpell(_Q) == READY then 
 		CastSpell(_Q, unit)
 		end	
 		
