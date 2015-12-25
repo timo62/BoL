@@ -14,7 +14,7 @@ local BarrierMenu = false
 local HealMenu = false
 
 function OnLoad()
-  Menu = scriptConfig("HR Draven Axes", "Draven")
+  Menu = scriptConfig("HR Draven Axes", "HRDravenAxes")
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
