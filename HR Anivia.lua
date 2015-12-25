@@ -13,7 +13,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	function OnLoad()
 	
   if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
-	Menu = scriptConfig("HR Anivia", "menu")
+	Menu = scriptConfig("HR Anivia", "HRAnivia")
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
