@@ -70,7 +70,7 @@ end
 function GetDamageSpell()
 	local SpellDamage
 
-	if myHero.charName == "ChoGath" then
+	if myHero.charName == "Chogath" then
 	SpellDamage = 1000 + (0.7*myHero.ap)
 	end
 
@@ -96,7 +96,7 @@ end
 
 function Spell()
 	local Spell
-	if myHero.charName == "ChoGath" then Spell = _R end
+	if myHero.charName == "Chogath" then Spell = _R end
 	if myHero.charName == "Nunu" then Spell = _Q end
 	return Spell
 end
@@ -111,7 +111,7 @@ function CheckJungle()
 	for i, jungle in pairs(jungleMinions.objects) do
 	if jungle ~= nil then
 	if Menu.smitethat[jungle.charName:gsub("_", "")] then
-	if myHero.charName == "ChoGath" or myHero.charName == "Nunu" then
+	if myHero.charName == "Chogath" or myHero.charName == "Nunu" then
 	ComboMonster(jungle)
 	else
 	SmiteMonster(jungle)
