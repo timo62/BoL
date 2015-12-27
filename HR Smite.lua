@@ -1,4 +1,4 @@
-local LocalVersion = "1.0"
+local LocalVersion = "1.1"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 local RangeSmite = 560
 
@@ -102,6 +102,7 @@ function Spell()
 end
 
 function OnTick()
+	if myHero.dead then return end
 	jungleMinions:update()
 	CheckJungle()
 end
@@ -134,7 +135,6 @@ function ComboMonster(obj)
     if myHero:CanUseSpell(Smite) == READY and myHero:CanUseSpell(Spell()) == READY then
     if DistanceMonster <= RangeSmite and obj.health <= GetSmiteDamage() + GetDamageSpell() then
 	CastSpell(Spell(), obj)
-    DelayAction(function() CastSpell(Smite, obj) end, 0.125)
 	end
 	return
 	end
