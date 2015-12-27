@@ -200,16 +200,14 @@ local scriptadress = "/HiranN/BoL/master"
 			if ServerVersion > tonumber(LocalVersion) then
 			PrintChat("<font color=\"#415cf6\"><b>[HR Smite] </b></font>".."<font color=\"#01cc9c\"><b>Updating, don't press F9.</b></font>")
 			Update()
+			else
+			PrintChat("<font color=\"#415cf6\"><b>[HR Smite] </b></font>".."<font color=\"#01cc9c\"><b>You have the latest version.</b></font>")
 			end
 		else
 		PrintChat("<font color=\"#415cf6\"><b>[HR Smite] </b></font>".."<font color=\"#01cc9c\"><b>An error occured, while updating, please reload.</b></font>")
 		end
 	else
 	PrintChat("<font color=\"#415cf6\"><b>[HR Smite] </b></font>".."<font color=\"#01cc9c\"><b>Could not connect to update Server.</b></font>")
-	end
-
-	if ServerVersion == LocalVersion then
-	PrintChat("<font color=\"#415cf6\"><b>[HR Smite] </b></font>".."<font color=\"#01cc9c\"><b>You have the latest version.</b></font>")
 	end
 end
 
