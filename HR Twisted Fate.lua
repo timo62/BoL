@@ -9,7 +9,7 @@ local Ulting = false
 local eStacks = 0
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "2.2"
+local LocalVersion = "2.3"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -23,8 +23,6 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("goldCard", "Auto Select Gold Card if low life", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("goldCardLow", "Select Gold Card When x Life %",  SCRIPT_PARAM_SLICE, 25, 0, 100, 0)
 	Menu.combo:addParam("BlockAA", "Block AA in card selection", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("randomCard", "Random Card if enemy killable", SCRIPT_PARAM_ONOFF, true)
 	
@@ -83,16 +81,15 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	UseHP = true
 else
 	UseHP = false
-	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>If you want other Prediction download : HPrediction.</b></font>")
+	PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>If you want other Prediction download : HPrediction.</b></font>")	
 end
 
     if _G.Reborn_Loaded or _G.AutoCarry then
-	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
-	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")
+	PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>Loading SAC.</b></font>")	
 	DelayAction(function()  
 	SAC = true
 	SXORB = false
-	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Sac Loaded.</b></font>")
+	PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>SAC Loaded.</b></font>")	
 	end, 10)
 	else
     LoadOrb()
@@ -115,9 +112,9 @@ end
   
 	function LoadOrb()
 	if FileExist(LIB_PATH .. "/SxOrbWalk.lua") then
-	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")
-	PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Loading SxOrbWalk.</b></font>")	
+	PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>Loading SxOrbWalk.</b></font>")	
 	require("SxOrbWalk")
+	PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>SxOrbWalk Loaded.</b></font>")	
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
 	SAC = false
@@ -229,7 +226,6 @@ end
 	
 	SelectorCards()
 	UseSpells()
-	AutoCard()
 	BlockAA()
 	end
 	
@@ -341,28 +337,6 @@ function OnRemoveBuff(unit, buff)
 	PickingCard = false
 	PickedCard = true
 	end
-end
-	
-function AutoCard()
-	if Menu.combo.goldCard then
-	for _, unit in pairs(GetEnemyHeroes()) do
-	if GetDistance(unit) <= 750 then
-	if myHero.health > (myHero.maxHealth * (Menu.combo.goldCardLow / 100)) then return end
-	local Name = myHero:GetSpellData(_W).name
-	if not myHero:CanUseSpell(_W) == READY then return end
-	spellName = nil
-	spellName = "goldcardlock"
-	
-	if Name == "PickACard" then
-	CastSpell(_W)
-	end
-	
-	if Name == spellName then
-	CastSpell(_W)
-	end
-end
-end
-end
 end
 	
 function SelectorCards()
@@ -722,7 +696,7 @@ end
  
 function PriorityOnLoad()
         if heroManager.iCount < 10 then
-				PrintChat("<font color=\"#ccae00\"><b>HR Twisted Fate : </b></font>".."<font color=\"#00ae26\"><b>Too few champions to arrange priority.</b></font>")	
+				PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>Too few champions to arrange priority.</b></font>")	
         else
                 arrangePrioritys()
         end
@@ -737,22 +711,22 @@ local scriptadress = "/HiranN/BoL/master"
 		local ServerVersion = tonumber(ServerVersionDATA)
 		if ServerVersion then
 			if ServerVersion > tonumber(LocalVersion) then
-			PrintChat("<font color=\"#00ff00\"><b>Updating HR Twisted Fate, don't press F9.</b></font>")	
-				Update()
+			PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>Updating, don't press F9.</b></font>")
+			Update()
+			else
+			PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>You have the latest version.</b></font>")
 			end
 		else
-		PrintChat("<font color=\"#00ff00\"><b>An error occured, while updating, please reload.</b></font>")
-
+		PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>An error occured, while updating, please reload.</b></font>")
 		end
 	else
-		PrintChat("<font color=\"#00ff00\"><b>Could not connect to update Server.</b></font>")	
+	PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>Could not connect to update Server.</b></font>")
 	end
 end
 
 function Update()
 	DownloadFile("http://"..serveradress..scriptadress.."/HR Twisted Fate.lua",SCRIPT_PATH.."HR Twisted Fate.lua", function ()
-		PrintChat("<font color=\"#00ff00\"><b>HR Twisted Fate Updated, press 2xF9.</b></font>")	
-		updated = true
+	PrintChat("<font color=\"#415cf6\"><b>[HR Twisted Fate] </b></font>".."<font color=\"#01cc9c\"><b>Updated, press 2x F9.</b></font>")
 	end)
 end
 	
