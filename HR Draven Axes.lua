@@ -1,9 +1,11 @@
 if myHero.charName ~= "Draven" then return end
 
+-- SCRIPT STATUS -- 
 assert(load(Base64Decode("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"), nil, "bt", _ENV))() ScriptStatus("WJMMQPMQJJP") 
+-- SCRIPT STATUS -- 
 
 local ts
-local LocalVersion = "2.6"
+local LocalVersion = "2.7"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local movementHuman = true
@@ -14,6 +16,9 @@ local BarrierMenu = false
 local HealMenu = false
 
 function OnLoad()
+	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
+	if myHero:GetSpellData(SUMMONER_1).name:find("summonerheal") then Heal = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerheal") then Heal = SUMMONER_2 end
+	if myHero:GetSpellData(SUMMONER_1).name:find("summonerbar") then Barrier = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbar") then Barrier = SUMMONER_2 end
   Menu = scriptConfig("HR Draven Axes", "HRDravenAxes")
 	
 	Menu:addSubMenu("Combo", "combo")
@@ -25,7 +30,8 @@ function OnLoad()
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)	
-	Menu.killsteal:addParam("RangeR", "Range R",  SCRIPT_PARAM_SLICE, 2500, 2000, 10000, 0) 
+	if Ignite then Menu.killsteal:addParam("UseIgnite", "Use Ignite", SCRIPT_PARAM_ONOFF, true)	end
+	Menu.killsteal:addParam("RangeR", "Max Range to use R",  SCRIPT_PARAM_SLICE, 2000, 1500, 10000, 0) 
 	
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -48,8 +54,12 @@ function OnLoad()
     Menu.lasthit:addParam("manaUseQ", "Mana Q", SCRIPT_PARAM_SLICE, 50, 0, 100, 0)
 	-- Mana Managers
 	
-	Menu:addSubMenu("Auto", "misc")
-	
+	if Heal or Barrier then Menu:addSubMenu("Auto", "misc") end
+    if Heal then Menu.misc:addParam("AutoHeal", "Auto Heal", SCRIPT_PARAM_ONOFF, true) end
+	if Heal then Menu.misc:addParam("HealCc", "Heal",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0) end
+    if Barrier then Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true) end
+	if Barrier then Menu.misc:addParam("BarrierCc", "Barrier",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0) end
+
 	Menu:addSubMenu("Draw Settings", "drawing")	
 	Menu.drawing:addParam("mDraw", "Disable All Range Draws", SCRIPT_PARAM_ONOFF, false)
 	Menu.drawing:addParam("myHero", "Draw My Range", SCRIPT_PARAM_ONOFF, true)
@@ -66,12 +76,11 @@ function OnLoad()
 	CheckVPred()
 	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
-	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
-	PrintChat("<font color=\"#ff0000\"><b>Loading Sac.</b></font>")	
+	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Loading SAC.</b></font>")
 	DelayAction(function()  
 	SAC = true
 	SX = false
-	PrintChat("<font color=\"#ff0000\"><b>Sac loaded.</b></font>")	
+	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>SAC Loaded.</b></font>")	
 	end, 10)
 	else
   orbwalkCheck()
@@ -80,23 +89,20 @@ function OnLoad()
 	customLoad()
 	
 	enemyMinions = minionManager(MINION_ENEMY, 600, myHero, MINION_SORT_HEALTH_ASC)
-	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 600, DAMAGE_PHYSICAL)
+	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 900, DAMAGE_PHYSICAL)
 	ts.name = "Draven"
 	Menu:addTS(ts)
 	PriorityOnLoad()
 end
 
 function customLoad()
-	findupdates()
-	Skills()		
-	IgniteCheck()
-	HealCheck()
-	BarrierCheck()
+	FindUpdates()
+	Skills()	
 end
 
 function PriorityOnLoad()
 	if heroManager.iCount < 10 or (TwistedTreeline and heroManager.iCount < 6) then
-		print("</b><font color=\"#FFFFFF\">HR Draven Axes : Too few champions to arrange priority.</font>")
+		PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Too few champions to arrange priority.</b></font>")
 	elseif heroManager.iCount == 6 then
 		arrangePrioritysTT()
     else
@@ -165,26 +171,12 @@ function CheckVPred()
 	end
 end
 
- function AutoIgnite()
-  	for _, unit in pairs(GetEnemyHeroes()) do
-	if GetDistance(unit) <= 750 then
- if Ignite and ts.target ~= nil then
- if Menu.killsteal.UseIgnite and ts.target.health <= 40 + (20 * myHero.level) and myHero:CanUseSpell(Ignite) == READY then
-  CastSpell(Ignite, ts.target)
-  end
-  end
-  end
-  end
-end
-
  function AutoHeal()
  if Heal then
  	for _, unit in pairs(GetEnemyHeroes()) do
-		if GetDistance(unit) <= 750 then
+		if GetDistance(unit) <= 1000 then
 			if Menu.misc.AutoHeal and myHero:CanUseSpell(Heal) == READY then
-				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.HealCc/100 then
-					CastSpell(Heal)
-				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.HealCc/100)*.75 then
+				if myHero.health/myHero.maxHealth < Menu.misc.HealCc/100 then
 					CastSpell(Heal)
 end
 end
@@ -196,56 +188,22 @@ end
  function AutoBarrier()
  if Barrier then
  	for _, unit in pairs(GetEnemyHeroes()) do
-		if GetDistance(unit) <= 750 then
+		if GetDistance(unit) <= 1000 then
 			if Menu.misc.AutoBarrier and myHero:CanUseSpell(Barrier) == READY then
-				if myHero.level > 5 and myHero.health/myHero.maxHealth < Menu.misc.BarrierCc/100 then
-					CastSpell(Barrier)
-				elseif  myHero.level < 6 and myHero.health/myHero.maxHealth < (Menu.misc.BarrierCc/100)*.75 then
+				if myHero.health/myHero.maxHealth < Menu.misc.BarrierCc/100 then
 					CastSpell(Barrier)
 end
 end
 end
 end
 end
-end
-
- function HealCheck()
-if myHero:GetSpellData(SUMMONER_1).name:find("summonerheal") then Heal = SUMMONER_1
-  Menu.misc:addParam("AutoHeal", "Auto Heal", SCRIPT_PARAM_ONOFF, true)
-	Menu.misc:addParam("HealCc", "Heal",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0) 
-	HealMenu = true
-elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerheal") then Heal = SUMMONER_2
-  Menu.misc:addParam("AutoHeal", "Auto Heal", SCRIPT_PARAM_ONOFF, true)
-	Menu.misc:addParam("HealCc", "Heal",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0) 
-	HealMenu = true
- end
-end
-
- function BarrierCheck()
-if myHero:GetSpellData(SUMMONER_1).name:find("summonerbar") then Barrier = SUMMONER_1
-  Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true)
-	Menu.misc:addParam("BarrierCc", "Barrier",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
-	BarrierMenu = true
-elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbar") then Barrier = SUMMONER_2
-  Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true)
-	Menu.misc:addParam("BarrierCc", "Barrier",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
-	BarrierMenu = true
- end
-end
-
-function IgniteCheck()
-if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1
-  Menu.killsteal:addParam("UseIgnite", "Use Ignite", SCRIPT_PARAM_ONOFF, true)
-elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2
-  Menu.killsteal:addParam("UseIgnite", "Use Ignite", SCRIPT_PARAM_ONOFF, true)
- end
 end
 
 function orbwalkCheck()
 	if FileExist(LIB_PATH .. "/SxOrbWalk.lua") then
-	PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Loaded.</b></font>")	
-	PrintChat("<font color=\"#ff0000\"><b>Loading SxOrbWalk.</b></font>")	
+	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Loading SxOrbWalk.</b></font>")
 	require("SxOrbWalk")
+	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>SxOrbWalk Loaded.</b></font>")	
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
 	SAC = false
@@ -399,7 +357,6 @@ function OnTick()
 	
 	if Menu.killsteal.KSOn then
 	KillSteal()
-	AutoIgnite()
 	end 
 	
 	if Menu.misc.AutoHeal then
@@ -466,16 +423,20 @@ function LastHit()
 function KillSteal()
 	for _, unit in pairs(GetEnemyHeroes()) do
 		local health = unit.health
-		local dmgE = getDmg("E", unit, myHero)
-		local dmgR = getDmg("R", unit, myHero) * 2
-		
-			if health < dmgE and Menu.killsteal.UseE and myHero:CanUseSpell(_E) == READY and ValidTarget(unit) then
+		local dmgE = math.floor((myHero:GetSpellData(_E).level - 1)*70 + 35 + myHero.damage * 0.4)
+		local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*175 + 100 + myHero.damage * 1.1)
+			if health <= dmgE and Menu.killsteal.UseE and myHero:CanUseSpell(_E) == READY and ValidTarget(unit) then
 				CastE(unit)
-			if health < dmgR and Menu.killsteal.UseR and myHero:CanUseSpell(_R) == READY and ValidTarget(unit) and GetDistance(unit) <= Menu.killsteal.RangeR then
+			end
+			if health <= dmgR*1.75 and Menu.killsteal.UseR and myHero:CanUseSpell(_R) == READY and ValidTarget(unit) and GetDistance(unit) <= Menu.killsteal.RangeR then
 				CastR(unit)
 			end
+			if Ignite then
+			if health <= 40 + (20 * myHero.level) and Menu.killsteal.UseIgnite and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) and GetDistance(unit) <= 650 then
+				CastSpell(Ignite, unit)
+			end
+			end
 	 end
-end
 end
 
 function CastE(unit)
@@ -531,30 +492,29 @@ end
 
 local serveradress = "raw.githubusercontent.com"
 local scriptadress = "/HiranN/BoL/master"
-
-function findupdates()
+	function FindUpdates()
 	if not autoupdate then return end
 	local ServerVersionDATA = GetWebResult(serveradress , scriptadress.."/HR Draven Axes.version")
 	if ServerVersionDATA then
 		local ServerVersion = tonumber(ServerVersionDATA)
 		if ServerVersion then
 			if ServerVersion > tonumber(LocalVersion) then
-			PrintChat("<font color=\"#00ff00\"><b>Updating HR Draven Axes, don't press F9.</b></font>")	
-				update()
+			PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Updating, don't press F9.</b></font>")
+			Update()
+			else
+			PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>You have the latest version.</b></font>")
 			end
 		else
-		PrintChat("<font color=\"#00ff00\"><b>An error occured, while updating, please reload.</b></font>")
-
+		PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>An error occured, while updating, please reload.</b></font>")
 		end
 	else
-		PrintChat("<font color=\"#00ff00\"><b>Could not connect to update Server.</b></font>")	
+	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Could not connect to update Server.</b></font>")
 	end
 end
 
-function update()
+function Update()
 	DownloadFile("http://"..serveradress..scriptadress.."/HR Draven Axes.lua",SCRIPT_PATH.."HR Draven Axes.lua", function ()
-		PrintChat("<font color=\"#00ff00\"><b>HR Draven Axes Updated, press 2xF9.</b></font>")	
-		updated = true
+	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Updated, press 2x F9.</b></font>")
 	end)
 end
 
