@@ -227,6 +227,7 @@ end
 function OnCreateObj(obj)
     if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
    if obj.name == "Draven_Base_Q_activation.troy" then
+   if qStacks >= 2 then return end
     qStacks = qStacks + 1
    end
         if obj.name == "Draven_Base_Q_reticle_self.troy" then
@@ -248,7 +249,7 @@ function OnDeleteObj(obj)
         end
 		end
 	if obj.name == "Draven_Base_Q_reticle_self.troy" then
-	if GetDistance(obj, myHero) > 170 then
+	if GetDistance(obj, myHero) >= 175 then
 	qStacks = qStacks - 1
 	end
 	end
