@@ -54,7 +54,7 @@ function OnLoad()
     Menu.lasthit:addParam("manaUseQ", "Mana Q", SCRIPT_PARAM_SLICE, 50, 0, 100, 0)
 	-- Mana Managers
 	
-	if Heal or Barrier then Menu:addSubMenu("Auto", "misc") end
+	if Heal or Barrier then Menu:addSubMenu("Auto Heal/Barrier", "misc") end
     if Heal then Menu.misc:addParam("AutoHeal", "Auto Heal", SCRIPT_PARAM_ONOFF, true) end
 	if Heal then Menu.misc:addParam("HealCc", "Heal",  SCRIPT_PARAM_SLICE, 15, 0, 100, 0) end
     if Barrier then Menu.misc:addParam("AutoBarrier", "Auto Barrier", SCRIPT_PARAM_ONOFF, true) end
