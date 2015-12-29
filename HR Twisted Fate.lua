@@ -9,7 +9,7 @@ local Ulting = false
 local eStacks = 0
 local SelectorCheck = false
 local Selector = "any"
-local LocalVersion = "2.3"
+local LocalVersion = "2.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -210,18 +210,24 @@ end
 	end
 	
 	if GoldCardKey then
+	if myHero:CanUseSpell(_W) == READY then
 	Selector = "Gold"
 	SelectorCheck = true
 	end
+	end
 	
 	if BlueCardKey then
+	if myHero:CanUseSpell(_W) == READY then
 	Selector = "Blue"
 	SelectorCheck = true
 	end
-	
+	end
+
 	if RedCardKey then
+	if myHero:CanUseSpell(_W) == READY then 
 	Selector = "Red"
 	SelectorCheck = true
+	end
 	end
 	
 	SelectorCards()
@@ -246,31 +252,6 @@ function BlockAA()
 	elseif SXORB then
 	SxOrb:EnableAttacks()
 	end
-end
-end
-end
-	
-function BlockAA()
-	if Menu.combo.BlockAA then
-	
-	if PickingCard then
-	
-	if SAC then
-    _G.AutoCarry.MyHero:AttacksEnabled(false)
-	elseif SXORB then
-	SxOrb:DisableAttacks()
-	end
-	end
-	
-	if PickedCard then
-	
-	if SAC then
-    _G.AutoCarry.MyHero:AttacksEnabled(true)
-	PickedCard = false
-	elseif SXORB then
-	SxOrb:EnableAttacks()
-	PickedCard = false
-end
 end
 end
 end
@@ -340,7 +321,6 @@ function OnRemoveBuff(unit, buff)
 end
 	
 function SelectorCards()
-	if not myHero:CanUseSpell(_W) == READY then 
 	Selector = "any"
 	SelectorCheck = false
 	return end
@@ -357,7 +337,6 @@ function SelectorCards()
 	SelectorCheck = false
 	Selector = "any"
 	end
-end
 end
 	
 function GetCustomTarget()
