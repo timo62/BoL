@@ -8,8 +8,9 @@ local ts
 local Ulting = false
 local eStacks = 0
 local SelectorCheck = false
-local Selector = "any"
-local LocalVersion = "2.4"
+local Selector = nil
+local SelectedCard = nil
+local LocalVersion = "2.5"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -297,15 +298,15 @@ function OnDeleteObj(obj)
  if obj and obj.name then
   if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
    BlueDraw = false
-   SelectedCard = "nil"
+   SelectedCard = nil
   end
   if obj.name == "TwistedFate_Base_W_RedCard.troy" then
    RedDraw = false
-   SelectedCard = "nil"
+   SelectedCard = nil
   end
   if obj.name == "TwistedFate_Base_W_GoldCard.troy" then
    GoldDraw = false
-   SelectedCard = "nil"
+   SelectedCard = nil
   end
   if obj.name == "Cardmaster_stackready.troy" then
    eStacks = 0
@@ -321,10 +322,6 @@ function OnRemoveBuff(unit, buff)
 end
 	
 function SelectorCards()
-	Selector = "any"
-	SelectorCheck = false
-	return end
-	
 	if SelectorCheck then
 	local Name = myHero:GetSpellData(_W).name
 	
@@ -335,10 +332,11 @@ function SelectorCards()
 	if SelectedCard == Selector then
 	CastSpell(_W)
 	SelectorCheck = false
-	Selector = "any"
+	Selector = nil
 	end
 end
-	
+end
+
 function GetCustomTarget()
 	ts:update()	
 	if ValidTarget(ts.target) and ts.target.type == myHero.type then
