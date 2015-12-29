@@ -381,7 +381,7 @@ function Combo(unit)
 		
 		if Menu.combo.UseW and myHero:CanUseSpell(_W) == READY then 
 		
-		if Menu.combo.randomCard and Ehealth <= dmgW then
+		if Menu.combo.randomCard and Ehealth <= dmgW and GetDistance(unit) <= 680 then
 		CastSpell(_W)
 		end
 		
