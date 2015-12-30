@@ -10,7 +10,7 @@ local eStacks = 0
 local SelectorCheck = false
 local Selector = nil
 local SelectedCard = nil
-local LocalVersion = "2.5"
+local LocalVersion = "2.6"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -211,24 +211,21 @@ end
 	end
 	
 	if GoldCardKey then
-	if myHero:CanUseSpell(_W) == READY then
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 or PickingCard then return end
 	Selector = "Gold"
 	SelectorCheck = true
 	end
-	end
 	
 	if BlueCardKey then
-	if myHero:CanUseSpell(_W) == READY then
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 or PickingCard then return end
 	Selector = "Blue"
 	SelectorCheck = true
 	end
-	end
 
 	if RedCardKey then
-	if myHero:CanUseSpell(_W) == READY then 
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 or PickingCard then return end
 	Selector = "Red"
 	SelectorCheck = true
-	end
 	end
 	
 	SelectorCards()
