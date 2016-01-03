@@ -266,7 +266,7 @@ function KillSteal()
 		local dmgQ = getDmg("Q", myHero, unit) + ((myHero.damage)*1.1) + ((myHero.ap)*0.4)
 		local dmgW = getDmg("W", myHero, unit) + ((myHero.ap)*0.8)
 		local dmgR = getDmg("R", myHero, unit) + ((myHero.damage)*0.44) + ((myHero.ap)*0.9)
-	
+			if GetDistance(unit) >= 1000 then return end	
 			if health < dmgQ and Menu.killsteal.UseQ then
 			QSpell:Cast(unit)
 			end
