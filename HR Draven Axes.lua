@@ -360,12 +360,16 @@ function OnTick()
 	KillSteal()
 	end 
 	
+	if Heal then
 	if Menu.misc.AutoHeal then
 	AutoHeal()
 	end 
+	end
 	
+	if Barrier then
 	if Menu.misc.AutoBarrier then
 	AutoBarrier()
+	end
 	end
 CatchAxes()
 end
