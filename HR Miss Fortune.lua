@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local ts
-local LocalVersion = "1.6"
+local LocalVersion = "1.7"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 
 	function OnLoad()
@@ -73,18 +73,18 @@ local autoupdate = true -- Change to false if you don't want autoupdates.
 	UseHP = true
 else
 	UseHP = false
-	PrintChat("<font color=\"#ccae00\"><b>HR Miss Fortune : </b></font>".."<font color=\"#00ae26\"><b>If you want other Prediction download : HPrediction.</b></font>")
+	PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>If you want other Prediction download : HPrediction.</b></font>")
 end
 
     if _G.Reborn_Loaded or _G.AutoCarry then
-	PrintChat("<font color=\"#ccae00\"><b>HR Miss Fortune : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")	
-	PrintChat("<font color=\"#ccae00\"><b>HR Miss Fortune : </b></font>".."<font color=\"#00ae26\"><b>Loading Sac.</b></font>")
-	DelayAction(function()
+	PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>Loading SAC.</b></font>")
+	DelayAction(function()  
 	SAC = true
 	SX = false
-	end, 11)
+	PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>SAC Loaded.</b></font>")	
+	end, 10)
 	else
-    LoadOrb()
+  	LoadOrb()
 	end
 	
 	end
@@ -104,9 +104,9 @@ end
   
 	function LoadOrb()
 	if FileExist(LIB_PATH .. "/SxOrbWalk.lua") then
-	PrintChat("<font color=\"#ccae00\"><b>HR Miss Fortune : </b></font>".."<font color=\"#00ae26\"><b>Loaded.</b></font>")
-	PrintChat("<font color=\"#ccae00\"><b>HR Miss Fortune : </b></font>".."<font color=\"#00ae26\"><b>Loading SxOrbWalk.</b></font>")	
+	PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>Loading SxOrbWalk.</b></font>")
 	require("SxOrbWalk")
+	PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>SxOrbWalk Loaded.</b></font>")	
 	Menu:addSubMenu("SxOrbWalk", "SXMenu")
 	SxOrb:LoadToMenu(Menu.SXMenu)
 	SAC = false
@@ -156,11 +156,26 @@ function OnWndMsg(msg,wParam)
 end
 end
 	
+function DmgR()
+	local RDmg
+
+	RLevel = myHero:GetSpellData(_R).level
+	if RLevel == 1 then
+	RDmg = myHero.damage*12 + myHero.ap*10
+	elseif RLevel == 2 then
+	RDmg = myHero.damage*14 + myHero.ap*12
+	elseif RLevel == 3 then
+	RDmg = myHero.damage*16 + myHero.ap*14
+	end
+	return RDmg
+end
+
 	function UseSpells()
 	for _, unit in pairs(GetEnemyHeroes()) do
 		local health = unit.health
 		local dmgQ = getDmg("Q", unit, myHero)
 		local dmgE = getDmg("E", unit, myHero)
+
 		if GetDistance(unit) <= 800 then
 		if not Menu.killsteal.KSOn then return end
 			if health <= dmgQ and Menu.killsteal.UseQ and myHero:CanUseSpell(_Q) == READY and ValidTarget(unit) then
@@ -175,17 +190,17 @@ end
 	end
 	end
 	
-function OnCreateObj(obj)
-    if obj.name == "MissFortune_Base_R_Indicator.troy" then
-    Ulting = true
-    end
+
+function OnApplyBuff(source, unit, buff)
+	if unit and source and buff and unit.isMe and buff.name:lower():find("missfortunebulletsound") then
+	Ulting = true
+end
 end
 
-
 function OnRemoveBuff(unit, buff)
-	if unit.isMe and buff.name == "missfortunebulletsound" then
+	if unit and buff and unit.isMe and buff.name:lower():find("missfortunebulletsound") then
 	Ulting = false
-	end
+end
 end
 	
 	function OnTick()
@@ -320,9 +335,19 @@ function LaneClear()
 		for i, minion in pairs(enemyMinions.objects) do
 			if ValidTarget(minion) and minion ~= nil then
 				if Menu.laneclear.UseQ and GetDistance(minion) <= 650 and myHero:CanUseSpell(_Q) == READY then
+					if SAC then 
+					if not _G.AutoCarry.Orbwalker:CanShoot() then
 					CastSpell(_Q, minion)
-				end
-	end
+					end
+					end
+
+					if SX then 
+					if not _G.SxOrb:CanAttack() then
+					CastSpell(_Q, minion)
+					end
+					end	
+end
+end
 end
 end
 end
@@ -370,11 +395,10 @@ end
 
 function KillWithR()
   	for _, unit in pairs(GetEnemyHeroes()) do 
-	local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)* myHero.ap * .2 * 12 + myHero.damage * .35 * 12 + 530)
 	if GetDistance(unit, myHero) <= 900 then
 	if unit ~= nil and GetDistance(unit) <= SkillR.range and myHero:CanUseSpell(_R) == READY then
 	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
-	if unit.health <= dmgR then
+	if unit.health <= DmgR() and GetDistance(unit) <= 1000 then
 		CastPosition,  HitChance,  Position = VP:GetConeAOECastPosition(unit, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero, false)
 		if HitChance >= Menu.hitchance.RHitCH then
 			Ulting = true
@@ -406,9 +430,9 @@ end
 
 function OnDraw()
 	if not myHero.dead and not Menu.drawing.mDraw then
-	
+
 		if myHero:CanUseSpell(_Q) == READY and Menu.drawing.qDraw then 
-			DrawCircle(myHero.x, myHero.y, myHero.z, 650, RGB(Menu.drawing.qColor[2], Menu.drawing.qColor[3], Menu.drawing.qColor[4]))
+			DrawCircle(myHero.x, myHero.y, myHero.z, 700, RGB(Menu.drawing.qColor[2], Menu.drawing.qColor[3], Menu.drawing.qColor[4]))
 		end
 		
 		if myHero:CanUseSpell(_E) == READY and Menu.drawing.eDraw then 
@@ -522,7 +546,7 @@ end
  
 function PriorityOnLoad()
         if heroManager.iCount < 10 then
-				PrintChat("<font color=\"#ccae00\"><b>HR Miss Fortune : </b></font>".."<font color=\"#00ae26\"><b>Too few champions to arrange priority.</b></font>")	
+				PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>Too few champions to arrange priority.</b></font>")	
         else
                 arrangePrioritys()
         end
@@ -537,21 +561,21 @@ local scriptadress = "/HiranN/BoL/master"
 		local ServerVersion = tonumber(ServerVersionDATA)
 		if ServerVersion then
 			if ServerVersion > tonumber(LocalVersion) then
-			PrintChat("<font color=\"#00ff00\"><b>Updating HR Miss Fortune, don't press F9.</b></font>")	
-				Update()
+			PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>Updating, don't press F9.</b></font>")
+			Update()
+			else
+			PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>You have the latest version.</b></font>")
 			end
 		else
-		PrintChat("<font color=\"#00ff00\"><b>An error occured, while updating, please reload.</b></font>")
-
+		PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>An error occured, while updating, please reload.</b></font>")
 		end
 	else
-		PrintChat("<font color=\"#00ff00\"><b>Could not connect to update Server.</b></font>")	
+	PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>Could not connect to update Server.</b></font>")
 	end
 end
 
 function Update()
 	DownloadFile("http://"..serveradress..scriptadress.."/HR Miss Fortune.lua",SCRIPT_PATH.."HR Miss Fortune.lua", function ()
-		PrintChat("<font color=\"#00ff00\"><b>HR Miss Fortune Updated, press 2x F9.</b></font>")	
-		updated = true
+	PrintChat("<font color=\"#FF7B24\"><b>[HR Miss Fortune] </b></font>".."<font color=\"#0FCBB4\"><b>Updated, press 2x F9.</b></font>")
 	end)
 end
