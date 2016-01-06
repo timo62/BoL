@@ -1,4 +1,4 @@
-local LocalVersion = "1.1"
+local LocalVersion = "1.2"
 local autoupdate = true -- Change to false if you don't want autoupdates.
 local RangeSmite = 560
 
@@ -184,11 +184,33 @@ function MonsterDraw(minion)
         end
         local SmiteDistance = GetSmiteDamage() / minion.maxHealth * maxDistance
         local alphaSmite = (myHero:CanUseSpell(Smite) == READY and Menu.SmiteActive and GetDistance(minion) <= RangeSmite) and 255 or 100
+
         DrawRectangle(barPos.x + SmiteDistance - 8, barPos.y - 10, 20, 10, ARGB(alphaSmite,0,0,0))
         DrawText(tostring(GetSmiteDamage()), 11, barPos.x + SmiteDistance - 6, barPos.y - 11, ARGB(alphaSmite,0,252,255))
-        --if GetSmiteDamage() <= minion.health then
-        --DrawText("TEXT", 11, barPos.x - 25 , barPos.y - 11, ARGB(alphaSmite,0,252,255))
-        --end
+
+        if myHero.charName == "Nunu" then 
+		if myHero:CanUseSpell(_Q) == READY and myHero:CanUseSpell(Smite) == READY and minion.health <= GetSmiteDamage() + GetDamageSpell() then
+        DrawText("Use Q + Smite", 15, barPos.x - 50 , barPos.y - 30, ARGB(255,0,252,255))
+    	elseif myHero:CanUseSpell(_Q) == READY and minion.health <= GetDamageSpell() then
+        DrawText("Use Q", 15, barPos.x - 35 , barPos.y - 30, ARGB(255,0,252,255))
+    	elseif myHero:CanUseSpell(Smite) == READY and minion.health <= GetSmiteDamage() then
+        DrawText("Use Smite", 15, barPos.x - 35 , barPos.y - 30, ARGB(255,0,252,255))
+    	end
+
+    	elseif myHero.charName == "Chogath" then 
+		if myHero:CanUseSpell(_R) == READY and myHero:CanUseSpell(Smite) == READY and minion.health <= GetSmiteDamage() + GetDamageSpell() then
+        DrawText("Use R + Smite", 15, barPos.x - 50 , barPos.y - 30, ARGB(255,0,252,255))
+    	elseif myHero:CanUseSpell(_Q) == READY and minion.health <= GetDamageSpell() then
+        DrawText("Use R", 15, barPos.x - 35 , barPos.y - 30, ARGB(255,0,252,255))
+    	elseif myHero:CanUseSpell(Smite) == READY and minion.health <= GetSmiteDamage() then
+        DrawText("Use Smite", 15, barPos.x - 35 , barPos.y - 30, ARGB(255,0,252,255))
+    	end
+    	
+   	    else
+   	    if minion.health <= GetSmiteDamage() then
+        DrawText("Use Smite", 15, barPos.x - 35 , barPos.y - 30, ARGB(255,0,252,255))
+        end
+    end
 end
 
 local serveradress = "raw.githubusercontent.com"
