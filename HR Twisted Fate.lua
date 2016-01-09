@@ -337,6 +337,7 @@ function SelectorCards()
 	CastSpell(_W)
 	SelectorCheck = false
 	Selector = nil
+	Ulting = false
 	end
 end
 end
