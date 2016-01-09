@@ -10,7 +10,7 @@ local eStacks = 0
 local SelectorCheck = false
 local Selector = nil
 local SelectedCard = nil
-local LocalVersion = "2.6"
+local LocalVersion = "2.7"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -20,7 +20,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 2, { "Always", "Stunned"})
+	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 3, { "Always", "Stunned", "Q-W Logic"})
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
@@ -59,7 +59,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("DrawCards", "Draw Cards", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("DrawRRange", "Draw R Range (Minimap)", SCRIPT_PARAM_ONOFF, true)
-	Menu.drawing:addParam("eStacks", "Draw E Stacks ", SCRIPT_PARAM_ONOFF, true)
+	Menu.drawing:addParam("eStacks", "Draw E Stacks", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Card Selector", "cardselector")
 	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("8"))
@@ -166,7 +166,7 @@ end
 			if health <= dmgQ and Menu.killsteal.UseQ and myHero:CanUseSpell(_Q) == READY and ValidTarget(unit) then
 				CastQ(unit)
 				end
-				if Ignite then
+			if Ignite then
 			if health <= 40 + (20 * myHero.level) and Menu.killsteal.I and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) then
 				CastSpell(Ignite, unit)
 			end
@@ -269,7 +269,7 @@ function OnUpdateBuff(unit, buff)
 end
 
 function OnCreateObj(obj)
- if obj and obj.name then
+ if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
   if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
 	PickingCard = true
 	BlueDraw = true
@@ -288,11 +288,14 @@ function OnCreateObj(obj)
   if obj.name == "Cardmaster_stackready.troy" then
 	eStacks = "Stacked"
   end
+  if obj.name == "PickaCard_yellow_tar.troy" then
+  	YellowTARDraw = obj
+  end
  end
 end
 
 function OnDeleteObj(obj)
- if obj and obj.name then
+ if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
   if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
    BlueDraw = false
    SelectedCard = nil
@@ -307,6 +310,9 @@ function OnDeleteObj(obj)
   end
   if obj.name == "Cardmaster_stackready.troy" then
    eStacks = 0
+  end
+  if obj.name == "PickaCard_yellow_tar.troy" then
+  	YellowTARDraw = nil
   end
  end
 end
@@ -351,6 +357,7 @@ function Combo(unit)
 	spellName = nil
 		if Menu.combo.UseQ then 
 		CastQC(unit)
+		ComboQW(unit)
 		end	
 		
 		if Menu.combo.UseW and myHero:CanUseSpell(_W) == READY then 
@@ -493,7 +500,29 @@ elseif IsMyManaLowJungleClear then
 end
 end
 
+
+function ComboQW(unit)
+	if Menu.combo.qMode == 3 and YellowTARDraw ~= nil and unit.x == YellowTARDraw.x and unit.y == YellowTARDraw.y and unit.z == YellowTARDraw.z then
+	if Menu.pred == 1 then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
+ 
+	if HitChance >= 2 then
+	CastSpell(_Q, CastPosition.x, CastPosition.z)
+	end
+	end
+	elseif Menu.pred == 2 then
+	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+	if QHitChance > 0 then
+    CastSpell(_Q, QPos.x, QPos.z)
+end
+end
+end
+end
+
 function CastQC(unit)
+	if Menu.combo.qMode == 3 then return end
 	if Menu.combo.qMode == 1 then
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
@@ -526,6 +555,22 @@ end
   if QHitChance > Menu.hitchance.QHitCH then
     CastSpell(_Q, QPos.x, QPos.z)
 end
+end
+end
+	elseif Menu.combo.qMode == 3 and myHero:CanUseSpell(_W) == 32 and not PickingCard then
+	if Menu.pred == 1 then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
+ 
+		if HitChance >= Menu.hitchance.QHitCH then
+			CastSpell(_Q, CastPosition.x, CastPosition.z)
+		end
+	end
+	elseif Menu.pred == 2 then
+  local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+  if QHitChance > Menu.hitchance.QHitCH then
+    CastSpell(_Q, QPos.x, QPos.z)
 end
 end
 end
@@ -577,7 +622,7 @@ function OnDraw()
 		end
 		
 		if GoldDraw then
-		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xFFFFFF00)
+		DrawCircle(myHero.x, myHero.y, myHero.z, 340, 0xffffff00)
 		end
 		end
 		
