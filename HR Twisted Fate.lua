@@ -10,7 +10,7 @@ local eStacks = 0
 local SelectorCheck = false
 local Selector = nil
 local SelectedCard = nil
-local LocalVersion = "2.7"
+local LocalVersion = "2.8"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -22,6 +22,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 3, { "Always", "Stunned", "Q-W Logic"})
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("UseRedCard", "Pick Red Card if can hit > 2 enemies", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("BlockAA", "Block AA in card selection", SCRIPT_PARAM_ONOFF, true)
@@ -211,19 +212,19 @@ end
 	end
 	
 	if GoldCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 or PickingCard then return end
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
 	Selector = "Gold"
 	SelectorCheck = true
 	end
 	
 	if BlueCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 or PickingCard then return end
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
 	Selector = "Blue"
 	SelectorCheck = true
 	end
 
 	if RedCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 or PickingCard then return end
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
 	Selector = "Red"
 	SelectorCheck = true
 	end
@@ -368,11 +369,17 @@ function Combo(unit)
 		
 		for _, unit in pairs(GetEnemyHeroes()) do
 		if GetDistance(unit) <= 680 then
-				if Menu.combo.card == 1 then
-				CardSel = "Blue"
-				elseif Menu.combo.card == 2 then
+
+				local AOECastPosition, MainTargetHitChance, nTargets = VP:GetCircularAOECastPosition(Target, 0, 80, 600, 2000, myHero)
+				if Menu.combo.UseRedCard and nTargets >= 2 then
 				CardSel = "Red"
-				elseif Menu.combo.card == 3 then
+				end
+
+				if Menu.combo.card == 1 and nTargets <= 1 then
+				CardSel = "Blue"
+				elseif Menu.combo.card == 2 and nTargets <= 1 then
+				CardSel = "Red"
+				elseif Menu.combo.card == 3 and nTargets <= 1 then
 				CardSel = "Gold"
 				end	
 				
@@ -637,29 +644,21 @@ end
 end
 
 function UltimateCard()
-	if Ulting then
-	local Name = myHero:GetSpellData(_W).name
-				CardSel = "Gold"
-				
-				if Name == "PickACard" then
-				CastSpell(_W)
-				end
-				
-				if SelectedCard == CardSel then
-				CastSpell(_W)
-				Ulting = false
-				end			
-    end
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
+	if Ulting == true then
+	Selector = "Gold"
+	SelectorCheck = true
+end
 end
 
 function OnProcessSpell(unit, spell)
     if unit.isMe and spell.name == "gate" then 
     	if Menu.combo.goldR then 
-		if myHero:CanUseSpell(_W) == READY then
-    		Ulting = true
-			end
-		end 
-    end
+			if myHero:CanUseSpell(_W) == READY then
+    	Ulting = true
+end
+end 
+end
 end
 
 function Skills()
