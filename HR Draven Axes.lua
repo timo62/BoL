@@ -44,7 +44,7 @@ function OnLoad()
 	Menu.gapcloser:addParam("UseEGap", "Use E to GapCloser", SCRIPT_PARAM_ONOFF, true)
 
 	Menu:addSubMenu("Interrupt", "interrupt")
-	Menu.gapcloser:addParam("UseEInt", "Use E to Interrupt", SCRIPT_PARAM_ONOFF, true)
+	Menu.interrupt:addParam("UseEInt", "Use E to Interrupt", SCRIPT_PARAM_ONOFF, true)
 
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
