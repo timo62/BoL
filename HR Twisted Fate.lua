@@ -23,7 +23,8 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 3, { "Always", "Stunned", "Q-W Logic"})
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("RangeW", "Range to use W",  SCRIPT_PARAM_SLICE, 750, 700, 1000, 0) 
-	Menu.combo:addParam("UseRedCard", "Pick Red Card if can hit > 2 enemies", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("UseRedCard", "Pick Red Card if can hit x enemies", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("RedCardA", "Red Card x enemies",  SCRIPT_PARAM_SLICE, 3, 2, 5, 0) 
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("BlockAA", "Block AA in card selection", SCRIPT_PARAM_ONOFF, true)
@@ -64,9 +65,9 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("eStacks", "Draw E Stacks", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Card Selector", "cardselector")
-	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("8"))
-	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("9"))
-	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("0"))
+	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("8"))
+	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("9"))
+	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("0"))
 	
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -213,19 +214,25 @@ end
 	end
 	
 	if GoldCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then 
+	RemovePMenu()
+	return end
 	Selector = "Gold"
 	SelectorCheck = true
 	end
-	
+	RemovePMenu()
 	if BlueCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then 
+	RemovePMenu()
+	return end
 	Selector = "Blue"
 	SelectorCheck = true
 	end
 
 	if RedCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
+	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then 
+	RemovePMenu()
+	return end
 	Selector = "Red"
 	SelectorCheck = true
 	end
@@ -327,6 +334,7 @@ function OnRemoveBuff(unit, buff)
 end
 	
 function SelectorCards()
+
 	if SelectorCheck then
 	local Name = myHero:GetSpellData(_W).name
 	
@@ -339,8 +347,18 @@ function SelectorCards()
 	SelectorCheck = false
 	Selector = nil
 	Ulting = false
+	RemovePMenu()
 	end
 end
+end
+
+function RemovePMenu()
+	Menu.cardselector:removeParam("GoldCard")
+	Menu.cardselector:removeParam("BlueCard")
+	Menu.cardselector:removeParam("RedCard")
+	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("8"))
+	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("9"))
+	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("0"))
 end
 
 function GetCustomTarget()
@@ -373,7 +391,7 @@ function Combo(unit)
 		if GetDistance(unit) <= Menu.combo.RangeW then
 
 				local AOECastPosition, MainTargetHitChance, nTargets = VP:GetCircularAOECastPosition(Target, 0, 80, 600, 2000, myHero)
-				if Menu.combo.UseRedCard and nTargets >= 2 then
+				if Menu.combo.UseRedCard and nTargets >= Menu.combo.RedCardA then
 				CardSel = "Red"
 				end
 
