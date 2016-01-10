@@ -43,6 +43,9 @@ function OnLoad()
 	Menu:addSubMenu("GapCloser", "gapcloser")
 	Menu.gapcloser:addParam("UseEGap", "Use E to GapCloser", SCRIPT_PARAM_ONOFF, true)
 
+	Menu:addSubMenu("Interrupt", "interrupt")
+	Menu.gapcloser:addParam("UseEInt", "Use E to Interrupt", SCRIPT_PARAM_ONOFF, true)
+
 	Menu:addSubMenu("KillSteal", "killsteal")
 	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
 	Menu.killsteal:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
@@ -107,6 +110,7 @@ end
 function customLoad()
 	FindUpdates()
 	Skills()	
+	Tables()
 end
 
 function PriorityOnLoad()
@@ -650,58 +654,86 @@ function AwayMelee()
 end
 end
 
-function OnProcessSpell(unit, spell)
-if not Menu.gapcloser.UseEGap then return end
-
-    local jarvanAddition = unit.charName == "JarvanIV" and unit:CanUseSpell(_Q) ~= READY and _R or _Q 
-    local isAGapcloserUnit = {
---        ['Ahri']        = {true, spell = _R, range = 450,   projSpeed = 2200},
-        ['Aatrox']      = {true, spell = _Q,                  range = 1000,  projSpeed = 1200, },
-        ['Akali']       = {true, spell = _R,                  range = 800,   projSpeed = 2200, }, -- Targeted ability
-        ['Alistar']     = {true, spell = _W,                  range = 650,   projSpeed = 2000, }, -- Targeted ability
-        ['Diana']       = {true, spell = _R,                  range = 825,   projSpeed = 2000, }, -- Targeted ability
-        ['Gragas']      = {true, spell = _E,                  range = 600,   projSpeed = 2000, },
-        ['Graves']      = {true, spell = _E,                  range = 425,   projSpeed = 2000, exeption = true },
-        ['Hecarim']     = {true, spell = _R,                  range = 1000,  projSpeed = 1200, },
-        ['Irelia']      = {true, spell = _Q,                  range = 650,   projSpeed = 2200, }, -- Targeted ability
-        ['JarvanIV']    = {true, spell = jarvanAddition,      range = 770,   projSpeed = 2000, }, -- Skillshot/Targeted ability
-        ['Jax']         = {true, spell = _Q,                  range = 700,   projSpeed = 2000, }, -- Targeted ability
-        ['Jayce']       = {true, spell = 'JayceToTheSkies',   range = 600,   projSpeed = 2000, }, -- Targeted ability
-        ['Khazix']      = {true, spell = _E,                  range = 900,   projSpeed = 2000, },
-        ['Leblanc']     = {true, spell = _W,                  range = 600,   projSpeed = 2000, },
-        ['LeeSin']      = {true, spell = 'blindmonkqtwo',     range = 1300,  projSpeed = 1800, },
-        ['Leona']       = {true, spell = _E,                  range = 900,   projSpeed = 2000, },
-        ['Malphite']    = {true, spell = _R,                  range = 1000,  projSpeed = 1500 + unit.ms},
-        ['Maokai']      = {true, spell = _Q,                  range = 600,   projSpeed = 1200, }, -- Targeted ability
-        ['MonkeyKing']  = {true, spell = _E,                  range = 650,   projSpeed = 2200, }, -- Targeted ability
-        ['Pantheon']    = {true, spell = _W,                  range = 600,   projSpeed = 2000, }, -- Targeted ability
-        ['Poppy']       = {true, spell = _E,                  range = 525,   projSpeed = 2000, }, -- Targeted ability
-        --['Quinn']       = {true, spell = _E,                  range = 725,   projSpeed = 2000, }, -- Targeted ability
-        ['Renekton']    = {true, spell = _E,                  range = 450,   projSpeed = 2000, },
-        ['Sejuani']     = {true, spell = _Q,                  range = 650,   projSpeed = 2000, },
-        ['Shen']        = {true, spell = _E,                  range = 575,   projSpeed = 2000, },
-        ['Tristana']    = {true, spell = _W,                  range = 900,   projSpeed = 2000, },
-        ['Tryndamere']  = {true, spell = 'Slash',             range = 650,   projSpeed = 1450, },
-        ['XinZhao']     = {true, spell = _E,                  range = 650,   projSpeed = 2000, }, -- Targeted ability
+function Tables()
+    isAGapcloserUnitTarget = {
+        ['AkaliShadowDance']		= {true, Champ = 'Akali', 		spellKey = 'R'},
+        ['Headbutt']     			= {true, Champ = 'Alistar', 	spellKey = 'W'},
+        ['DianaTeleport']       	= {true, Champ = 'Diana', 		spellKey = 'R'},
+        ['IreliaGatotsu']     		= {true, Champ = 'Irelia',		spellKey = 'Q'},
+        ['JaxLeapStrike']         	= {true, Champ = 'Jax', 		spellKey = 'Q'},
+        ['JayceToTheSkies']       	= {true, Champ = 'Jayce',		spellKey = 'Q'},
+        ['MaokaiUnstableGrowth']    = {true, Champ = 'Maokai',		spellKey = 'W'},
+        ['MonkeyKingNimbus']  		= {true, Champ = 'MonkeyKing',	spellKey = 'E'},
+        ['Pantheon_LeapBash']   	= {true, Champ = 'Pantheon',	spellKey = 'W'},
+        ['PoppyHeroicCharge']       = {true, Champ = 'Poppy',		spellKey = 'E'},
+        ['QuinnE']       			= {true, Champ = 'Quinn',		spellKey = 'E'},
+        ['XenZhaoSweep']     		= {true, Champ = 'XinZhao',		spellKey = 'E'},
+        ['blindmonkqtwo']	    	= {true, Champ = 'LeeSin',		spellKey = 'Q'},
+        ['FizzPiercingStrike']	    = {true, Champ = 'Fizz',		spellKey = 'Q'},
+        ['RengarLeap']	    		= {true, Champ = 'Rengar',		spellKey = 'Q/R'},
+        ['YasuoDashWrapper']	    = {true, Champ = 'Yasuo',		spellKey = 'E'},
     }
-    if unit.type == 'obj_AI_Hero' and unit.team == TEAM_ENEMY and isAGapcloserUnit[unit.charName] and GetDistance(unit) < 2000 and spell ~= nil then
-        if spell.name == (type(isAGapcloserUnit[unit.charName].spell) == 'number' and unit:GetSpellData(isAGapcloserUnit[unit.charName].spell).name or isAGapcloserUnit[unit.charName].spell) then
-            if spell.target ~= nil and spell.target.name == myHero.name or isAGapcloserUnit[unit.charName].spell == 'blindmonkqtwo' then
-        CastSpell(_E, unit.x, unit.z)
-            else
-                spellExpired = false
-                informationTable = {
-                    spellSource = unit,
-                    spellCastedTick = GetTickCount(),
-                    spellStartPos = Point(spell.startPos.x, spell.startPos.z),
-                    spellEndPos = Point(spell.endPos.x, spell.endPos.z),
-                    spellRange = isAGapcloserUnit[unit.charName].range,
-                    spellSpeed = isAGapcloserUnit[unit.charName].projSpeed,
-                    spellIsAnExpetion = isAGapcloserUnit[unit.charName].exeption or false,
-                }
-            end
+	
+    isAGapcloserUnitNoTarget = {
+        ['AatroxQ']					= {true, Champ = 'Aatrox', 		range = 1000,  	projSpeed = 1200, spellKey = 'Q'},
+        ['GragasE']					= {true, Champ = 'Gragas', 		range = 600,   	projSpeed = 2000, spellKey = 'E'},
+        ['GravesMove']				= {true, Champ = 'Graves', 		range = 425,   	projSpeed = 2000, spellKey = 'E'},
+        ['HecarimUlt']				= {true, Champ = 'Hecarim', 	range = 1000,   projSpeed = 1200, spellKey = 'R'},
+        ['JarvanIVDragonStrike']	= {true, Champ = 'JarvanIV',	range = 770,   	projSpeed = 2000, spellKey = 'Q'},
+        ['JarvanIVCataclysm']		= {true, Champ = 'JarvanIV', 	range = 650,   	projSpeed = 2000, spellKey = 'R'},
+        ['KhazixE']					= {true, Champ = 'Khazix', 		range = 900,   	projSpeed = 2000, spellKey = 'E'},
+        ['khazixelong']				= {true, Champ = 'Khazix', 		range = 900,   	projSpeed = 2000, spellKey = 'E'},
+        ['LeblancSlide']			= {true, Champ = 'Leblanc', 	range = 600,   	projSpeed = 2000, spellKey = 'W'},
+        ['LeblancSlideM']			= {true, Champ = 'Leblanc', 	range = 600,   	projSpeed = 2000, spellKey = 'WMimic'},
+        ['LeonaZenithBlade']		= {true, Champ = 'Leona', 		range = 900,  	projSpeed = 2000, spellKey = 'E'},
+        ['UFSlash']					= {true, Champ = 'Malphite', 	range = 1000,  	projSpeed = 1800, spellKey = 'R'},
+        ['RenektonSliceAndDice']	= {true, Champ = 'Renekton', 	range = 450,  	projSpeed = 2000, spellKey = 'E'},
+        ['SejuaniArcticAssault']	= {true, Champ = 'Sejuani', 	range = 650,  	projSpeed = 2000, spellKey = 'Q'},
+        ['ShenShadowDash']			= {true, Champ = 'Shen', 		range = 575,  	projSpeed = 2000, spellKey = 'E'},
+        ['RocketJump']				= {true, Champ = 'Tristana', 	range = 900,  	projSpeed = 2000, spellKey = 'W'},
+        ['slashCast']				= {true, Champ = 'Tryndamere', 	range = 650,  	projSpeed = 1450, spellKey = 'E'},
+    }
+	
+    isAChampToInterrupt = {
+        ['KatarinaR']					= {true, Champ = 'Katarina',	spellKey = 'R'},
+        ['GalioIdolOfDurand']			= {true, Champ = 'Galio',		spellKey = 'R'},
+        ['Crowstorm']					= {true, Champ = 'FiddleSticks',spellKey = 'R'},
+        ['Drain']						= {true, Champ = 'FiddleSticks',spellKey = 'W'},
+        ['AbsoluteZero']				= {true, Champ = 'Nunu',		spellKey = 'R'},
+        ['ShenStandUnited']				= {true, Champ = 'Shen',		spellKey = 'R'},
+        ['UrgotSwap2']					= {true, Champ = 'Urgot',		spellKey = 'R'},
+        ['AlZaharNetherGrasp']			= {true, Champ = 'Malzahar',	spellKey = 'R'},
+        ['FallenOne']					= {true, Champ = 'Karthus',		spellKey = 'R'},
+        ['Pantheon_GrandSkyfall_Jump']	= {true, Champ = 'Pantheon',	spellKey = 'R'},
+        ['VarusQ']						= {true, Champ = 'Varus',		spellKey = 'Q'},
+        ['CaitlynAceintheHole']			= {true, Champ = 'Caitlyn',		spellKey = 'R'},
+        ['MissFortuneBulletTime']		= {true, Champ = 'MissFortune',	spellKey = 'R'},
+        ['InfiniteDuress']				= {true, Champ = 'Warwick',		spellKey = 'R'},
+        ['LucianR']						= {true, Champ = 'Lucian',		spellKey = 'R'}
+    }
+end
+
+function OnProcessSpell(unit, spell)
+	if Menu.interrupt.UseEInt then
+    if isAChampToInterrupt[spell.name] and GetDistanceSqr(unit) <= 715*715 then
+        CastE(unit)
+    end
+    end
+
+	if Menu.gapcloser.UseEGap then 
+    if unit.team ~= myHero.team then
+	
+        if isAGapcloserUnitTarget[spell.name] then
+        if spell.target and spell.target.networkID == myHero.networkID then
+            CastE(unit)
+        end
+        end
+		
+        if isAGapcloserUnitNoTarget[spell.name] and GetDistanceSqr(unit) <= 2000*2000 and (spell.target == nil or (spell.target and spell.target.isMe)) then
+            CastE(unit)
         end
     end
+end
 end
 
 local serveradress = "raw.githubusercontent.com"
