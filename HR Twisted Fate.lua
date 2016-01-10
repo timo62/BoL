@@ -318,7 +318,7 @@ function SelectorCards()
 	WREADY = (myHero:CanUseSpell(_W) == READY)
 	if WREADY and GetTickCount()-lastUse <= 2300 then
 		if myHero:GetSpellData(_W).name == selected then 
-		selected = nil
+		DelayAction(function() selected = nil end,1.0)
 		CastSpell(_W) 
 	end
 	end
@@ -640,7 +640,7 @@ function UltimateCard()
 	WREADY = (myHero:CanUseSpell(_W) == READY)
 	if WREADY and GetTickCount()-lastUse <= 2300 then
 	if myHero:GetSpellData(_W).name == selected then 
-	selected = nil
+	DelayAction(function() selected = nil end,1.0)
 	CastSpell(_W) 
 	end
 	end
