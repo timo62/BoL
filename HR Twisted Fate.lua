@@ -317,7 +317,10 @@ end
 function SelectorCards()
 	WREADY = (myHero:CanUseSpell(_W) == READY)
 	if WREADY and GetTickCount()-lastUse <= 2300 then
-		if myHero:GetSpellData(_W).name == selected then CastSpell(_W) selected = nil end
+		if myHero:GetSpellData(_W).name == selected then 
+		selected = nil
+		CastSpell(_W) 
+	end
 	end
 	if WREADY and myHero:GetSpellData(_W).name == "PickACard" and GetTickCount()-lastUse2 >= 2400 and GetTickCount()-lastUse >= 500 then 
 		if Menu.cardselector.GoldCard then selected = "goldcardlock"
@@ -497,25 +500,6 @@ end
 
 
 function ComboQW(unit)
-	WRE = myHero:CanUseSpell(_W)
-	if Menu.combo.qMode == 3 and WRE == 32 or WRE == 12 or WRE == 64 or WRE == 96 and PickingCard2 == false then
-	if Menu.pred == 1 then
-	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
-	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
- 
-	if HitChance >= 2 then
-	CastSpell(_Q, CastPosition.x, CastPosition.z)
-	end
-	end
-	elseif Menu.pred == 2 then
-	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
-  
-	if QHitChance > 0 then
-    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
-	end
-	end
-	else
-
 	if Menu.combo.qMode == 3 and YellowTARDraw ~= nil and unit.x == YellowTARDraw.x and unit.y == YellowTARDraw.y and unit.z == YellowTARDraw.z then
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
@@ -530,7 +514,6 @@ function ComboQW(unit)
   
 	if QHitChance > 0 then
     DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
-end
 end
 end
 end
@@ -656,7 +639,10 @@ function UltimateCard()
 	if Ulting then
 	WREADY = (myHero:CanUseSpell(_W) == READY)
 	if WREADY and GetTickCount()-lastUse <= 2300 then
-		if myHero:GetSpellData(_W).name == selected then CastSpell(_W) end
+	if myHero:GetSpellData(_W).name == selected then 
+	selected = nil
+	CastSpell(_W) 
+	end
 	end
 	if WREADY and myHero:GetSpellData(_W).name == "PickACard" and GetTickCount()-lastUse2 >= 2400 and GetTickCount()-lastUse >= 500 then 
 		selected = "goldcardlock"
