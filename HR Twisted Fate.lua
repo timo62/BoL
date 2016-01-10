@@ -7,10 +7,11 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 local ts
 local Ulting = false
 local eStacks = 0
-local SelectorCheck = false
-local Selector = nil
+local selected = nil
+local lastUse,lastUse2 = 0,0
+local WREADY = false
 local SelectedCard = nil
-local LocalVersion = "2.9"
+local LocalVersion = "3.0"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -65,9 +66,9 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.drawing:addParam("eStacks", "Draw E Stacks", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("Card Selector", "cardselector")
-	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("8"))
-	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("9"))
-	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("0"))
+	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("8"))
+	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("9"))
+	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("0"))
 	
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -213,30 +214,6 @@ end
 	UltimateCard()
 	end
 	
-	if GoldCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then 
-	RemovePMenu()
-	return end
-	Selector = "Gold"
-	SelectorCheck = true
-	end
-	RemovePMenu()
-	if BlueCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then 
-	RemovePMenu()
-	return end
-	Selector = "Blue"
-	SelectorCheck = true
-	end
-
-	if RedCardKey then
-	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then 
-	RemovePMenu()
-	return end
-	Selector = "Red"
-	SelectorCheck = true
-	end
-	
 	SelectorCards()
 	UseSpells()
 	BlockAA()
@@ -281,16 +258,19 @@ function OnCreateObj(obj)
  if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
   if obj.name == "TwistedFate_Base_W_BlueCard.troy" then
 	PickingCard = true
+	PickingCard2 = true
 	BlueDraw = true
 	SelectedCard = "Blue"
   end
   if obj.name == "TwistedFate_Base_W_RedCard.troy" then
 	PickingCard = true
+	PickingCard2 = true
 	RedDraw = true
 	SelectedCard = "Red"
   end
   if obj.name == "TwistedFate_Base_W_GoldCard.troy" then
 	PickingCard = true
+	PickingCard2 = true
 	GoldDraw = true
 	SelectedCard = "Gold"
   end
@@ -329,36 +309,24 @@ end
 function OnRemoveBuff(unit, buff)
 	if unit.isMe and buff.name == "pickacard_tracker" then
 	PickingCard = false
+	DelayAction(function() PickingCard2 = false end,1.0)
 	PickedCard = true
 	end
 end
 	
 function SelectorCards()
-
-	if SelectorCheck then
-	local Name = myHero:GetSpellData(_W).name
-	
-	if Name == "PickACard" then
-	CastSpell(_W)
+	WREADY = (myHero:CanUseSpell(_W) == READY)
+	if WREADY and GetTickCount()-lastUse <= 2300 then
+		if myHero:GetSpellData(_W).name == selected then CastSpell(_W) end
 	end
-	
-	if SelectedCard == Selector then
-	CastSpell(_W)
-	SelectorCheck = false
-	Selector = nil
-	Ulting = false
-	RemovePMenu()
+	if WREADY and myHero:GetSpellData(_W).name == "PickACard" and GetTickCount()-lastUse2 >= 2400 and GetTickCount()-lastUse >= 500 then 
+		if Menu.cardselector.GoldCard then selected = "goldcardlock"
+		elseif Menu.cardselector.BlueCard then selected = "bluecardlock"
+		elseif Menu.cardselector.RedCard then selected = "redcardlock"
+		else return end	
+		CastSpell(_W)
+		lastUse = GetTickCount()
 	end
-end
-end
-
-function RemovePMenu()
-	Menu.cardselector:removeParam("GoldCard")
-	Menu.cardselector:removeParam("BlueCard")
-	Menu.cardselector:removeParam("RedCard")
-	Menu.cardselector:addParam("GoldCard", "Gold Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("8"))
-	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("9"))
-	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("0"))
 end
 
 function GetCustomTarget()
@@ -529,6 +497,25 @@ end
 
 
 function ComboQW(unit)
+	WRE = myHero:CanUseSpell(_W)
+	if Menu.combo.qMode == 3 and WRE == 32 or WRE == 12 or WRE == 64 or WRE == 96 and PickingCard2 == false then
+	if Menu.pred == 1 then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
+ 
+	if HitChance >= 2 then
+	CastSpell(_Q, CastPosition.x, CastPosition.z)
+	end
+	end
+	elseif Menu.pred == 2 then
+	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+	if QHitChance > 0 then
+    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
+	end
+	end
+	else
+
 	if Menu.combo.qMode == 3 and YellowTARDraw ~= nil and unit.x == YellowTARDraw.x and unit.y == YellowTARDraw.y and unit.z == YellowTARDraw.z then
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
@@ -543,6 +530,7 @@ function ComboQW(unit)
   
 	if QHitChance > 0 then
     DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
+end
 end
 end
 end
@@ -665,16 +653,25 @@ end
 
 function UltimateCard()
 	if myHero:CanUseSpell(_W) == 8 or myHero:CanUseSpell(_W) == 32 or myHero:CanUseSpell(_W) == 64 or myHero:CanUseSpell(_W) == 96 then return end
-	if Ulting == true then
-	Selector = "Gold"
-	SelectorCheck = true
-end
+	if Ulting then
+	WREADY = (myHero:CanUseSpell(_W) == READY)
+	if WREADY and GetTickCount()-lastUse <= 2300 then
+		if myHero:GetSpellData(_W).name == selected then CastSpell(_W) end
+	end
+	if WREADY and myHero:GetSpellData(_W).name == "PickACard" and GetTickCount()-lastUse2 >= 2400 and GetTickCount()-lastUse >= 500 then 
+		selected = "goldcardlock"
+		else return end	
+		CastSpell(_W)
+		lastUse = GetTickCount()
+	end
 end
 
+
 function OnProcessSpell(unit, spell)
+	if unit.isMe and spell.name == "PickACard" then lastUse2 = GetTickCount() end
     if unit.isMe and spell.name == "gate" then 
     	if Menu.combo.goldR then 
-			if myHero:CanUseSpell(_W) == READY then
+		if myHero:CanUseSpell(_W) == READY then
     	Ulting = true
 end
 end 
