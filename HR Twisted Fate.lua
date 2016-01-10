@@ -317,7 +317,7 @@ end
 function SelectorCards()
 	WREADY = (myHero:CanUseSpell(_W) == READY)
 	if WREADY and GetTickCount()-lastUse <= 2300 then
-		if myHero:GetSpellData(_W).name == selected then CastSpell(_W) end
+		if myHero:GetSpellData(_W).name == selected then CastSpell(_W) selected = nil end
 	end
 	if WREADY and myHero:GetSpellData(_W).name == "PickACard" and GetTickCount()-lastUse2 >= 2400 and GetTickCount()-lastUse >= 500 then 
 		if Menu.cardselector.GoldCard then selected = "goldcardlock"
