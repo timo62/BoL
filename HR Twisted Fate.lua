@@ -642,7 +642,7 @@ function UltimateCard()
 	if myHero:GetSpellData(_W).name == selected then 
 	DelayAction(function() selected = nil end,1.0)
 	CastSpell(_W) 
-	DelayAction(function() Ulting = false end,1.0)
+	DelayAction(function() Ulting = false end,0.5)
 	end
 	end
 	if WREADY and myHero:GetSpellData(_W).name == "PickACard" and GetTickCount()-lastUse2 >= 2400 and GetTickCount()-lastUse >= 500 then 
