@@ -22,6 +22,7 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("qMode", "Q Mode", SCRIPT_PARAM_LIST, 3, { "Always", "Stunned", "Q-W Logic"})
 	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("RangeW", "Range to use W",  SCRIPT_PARAM_SLICE, 750, 700, 1000, 0) 
 	Menu.combo:addParam("UseRedCard", "Pick Red Card if can hit > 2 enemies", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("card", "Card Type", SCRIPT_PARAM_LIST, 3, { "Blue Card", "Red Card", "Yellow Card"})
 	Menu.combo:addParam("goldR", "Select Gold Card When Using Ultimate", SCRIPT_PARAM_ONOFF, true)
@@ -364,7 +365,7 @@ function Combo(unit)
 		
 		if Menu.combo.UseW and myHero:CanUseSpell(_W) == READY then 
 		
-		if Menu.combo.randomCard and Ehealth <= dmgW and GetDistance(unit) <= 680 then
+		if Menu.combo.randomCard and Ehealth <= dmgW and GetDistance(unit) <= Menu.combo.RangeW then
 		CastSpell(_W)
 		end
 		
@@ -523,7 +524,7 @@ function ComboQW(unit)
 	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
   
 	if QHitChance > 0 then
-    CastSpell(_Q, QPos.x, QPos.z)
+    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
 end
 end
 end
