@@ -370,7 +370,7 @@ function Combo(unit)
 		end
 		
 		for _, unit in pairs(GetEnemyHeroes()) do
-		if GetDistance(unit) <= 680 then
+		if GetDistance(unit) <= Menu.combo.RangeW then
 
 				local AOECastPosition, MainTargetHitChance, nTargets = VP:GetCircularAOECastPosition(Target, 0, 80, 600, 2000, myHero)
 				if Menu.combo.UseRedCard and nTargets >= 2 then
