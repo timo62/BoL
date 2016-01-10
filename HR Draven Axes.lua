@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- SCRIPT STATUS -- 
 
 local ts
-local LocalVersion = "2.7"
+local LocalVersion = "2.8"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local movementHuman = true
@@ -14,30 +14,22 @@ local SAC = false
 local SX = false
 local BarrierMenu = false
 local HealMenu = false
+local Ulting = nil
 
 function OnLoad()
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerheal") then Heal = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerheal") then Heal = SUMMONER_2 end
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerbar") then Barrier = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbar") then Barrier = SUMMONER_2 end
-  Menu = scriptConfig("HR Draven Axes", "HRDravenAxes")
+  	Menu = scriptConfig("HR Draven Axes", "HRDravenAxes")
 	
 	Menu:addSubMenu("Combo", "combo")
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("UseW", "Use W After Catch Axe", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
-	
-	Menu:addSubMenu("KillSteal", "killsteal")
-	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
-	Menu.killsteal:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
-	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)	
-	if Ignite then Menu.killsteal:addParam("UseIgnite", "Use Ignite", SCRIPT_PARAM_ONOFF, true)	end
-	Menu.killsteal:addParam("RangeR", "Max Range to use R",  SCRIPT_PARAM_SLICE, 2000, 1500, 10000, 0) 
-	
-	Menu:addSubMenu("Keys", "keys")
-	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
-	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
-	Menu.keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
-	Menu.keys:addParam("LastHit", "LastHit", SCRIPT_PARAM_ONKEYDOWN, false, 88)
+	Menu.combo:addParam("TripleQ", "Use Triple Q", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("WSlow", "Use W if slowed", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("UseEAway", "Use E to away melee enemies", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("RangeEA", "Max Range to use E",  SCRIPT_PARAM_SLICE, 200, 175, 500, 0) 
+	--[[Menu.combo:addParam("REnemies", "Use R if can hit x (1 disable)", SCRIPT_PARAM_SLICE, 3, 1, 5, 0)
+	Menu.combo:addParam("RangeRA", "Max Range to use R",  SCRIPT_PARAM_SLICE, 2000, 1500, 10000, 0)--]]
 	
 	Menu:addSubMenu("Harass", "harass")
 	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
@@ -47,6 +39,23 @@ function OnLoad()
 	
 	Menu:addSubMenu("LastHit", "lasthit")
 	Menu.lasthit:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+
+	Menu:addSubMenu("GapCloser", "gapcloser")
+	Menu.gapcloser:addParam("UseEGap", "Use E to GapCloser", SCRIPT_PARAM_ONOFF, true)
+
+	Menu:addSubMenu("KillSteal", "killsteal")
+	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
+	Menu.killsteal:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)	
+	Menu.killsteal:addParam("RMode", "R Mode", SCRIPT_PARAM_LIST, 1, { "With CC", "Without CC"})
+	Menu.killsteal:addParam("RangeR", "Max Range to use R",  SCRIPT_PARAM_SLICE, 2000, 1500, 10000, 0) 
+	if Ignite then Menu.killsteal:addParam("UseIgnite", "Use Ignite", SCRIPT_PARAM_ONOFF, true)	end
+	
+	Menu:addSubMenu("Keys", "keys")
+	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
+	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
+	Menu.keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	Menu.keys:addParam("LastHit", "LastHit", SCRIPT_PARAM_ONKEYDOWN, false, 88)
 	
 	-- Mana Managers
 	Menu.harass:addParam("manaUseQ", "Mana Q", SCRIPT_PARAM_SLICE, 50, 0, 100, 0)
@@ -225,7 +234,10 @@ function orbwalkCheck()
 end
 
 function OnCreateObj(obj)
-    if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
+   if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
+   if obj.name == "draven_r_missile_end_sound.troy" and obj.team ~= TEAM_ENEMY then
+   Ulting = nil
+   end
    if obj.name == "Draven_Base_Q_activation.troy" then
    if qStacks >= 2 then return end
     qStacks = qStacks + 1
@@ -241,6 +253,9 @@ end
 
 function OnDeleteObj(obj)
     if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
+    if obj.name == "Draven_R_cas.troy" and obj.team ~= TEAM_ENEMY then
+    Ulting = obj
+    end
 	if obj.name == "Draven_Base_Q_reticle_self.troy" then
         for i, reticle in ipairs(reticles) do
 		if obj.name == reticle.name then
@@ -256,6 +271,10 @@ function OnDeleteObj(obj)
 end
 end
   
+function AutoR()
+
+end
+
 function DebugPrint(to_print)
 	if Menu.Debug then
 		print(to_print)
@@ -371,7 +390,27 @@ function OnTick()
 	AutoBarrier()
 	end
 	end
+
+	--[[if Menu.combo.REnemies == 1 then
+	return 
+	else
+	AutoR()
+	end--]]
+
+	if SX then
+	SxOrb:RegisterAfterAttackCallback(QTriple)
+	elseif SAC then
+	_G.AutoCarry.Plugins:RegisterOnAttacked(QTriple)
+	end
+
 CatchAxes()
+AwayMelee()
+end
+
+function QTriple()
+if qStacks == 2 and Menu.combo.TripleQ and ComboKey then
+CastSpell(_Q)
+end
 end
 
 function GetCustomTarget()
@@ -384,13 +423,17 @@ function GetCustomTarget()
 end
 
 function Combo(unit)
-	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then
+	if ValidTarget(unit) and unit ~= nil and unit.type == myHero.type then 
 		if qStacks < 2 and Menu.combo.UseQ then 
 			CastSpell(_Q)
 		end	
-		if Menu.combo.UseW then 
+		if Menu.combo.WSlow then
+
+		if HaveBuffs(myHero, 10) then
 			CastSpell(_W)
+		end
 		end	
+
 		if Menu.combo.UseE then 
 			CastE(unit)
 		end	
@@ -398,7 +441,7 @@ function Combo(unit)
 end
 
 function Harass(unit)
-	if (myHero:CanUseSpell(_Q) == READY  and ts.target~=nil and Menu.harass.UseQ and qStacks < 1 ) and Menu.harass.manaUseQ <= 100*myHero.mana/myHero.maxMana then 
+	if (myHero:CanUseSpell(_Q) == READY and ts.target~=nil and Menu.harass.UseQ and qStacks < 1 ) and Menu.harass.manaUseQ <= 100*myHero.mana/myHero.maxMana then 
   CastSpell(_Q)
 	end
 end
@@ -429,12 +472,19 @@ function KillSteal()
 	for _, unit in pairs(GetEnemyHeroes()) do
 		local health = unit.health
 		local dmgE = math.floor((myHero:GetSpellData(_E).level - 1)*70 + 35 + myHero.damage * 0.4)
-		local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*175 + 100 + myHero.damage * 1.1)
+		local dmgR = math.floor((myHero:GetSpellData(_R).level - 1)*175 + 100 + myHero.damage * 1.1) 
+		local buffsList = 6, 8, 11, 20, 21, 23, 29
 			if health <= dmgE and Menu.killsteal.UseE and myHero:CanUseSpell(_E) == READY and ValidTarget(unit) then
 				CastE(unit)
 			end
-			if health <= dmgR*1.75 and Menu.killsteal.UseR and myHero:CanUseSpell(_R) == READY and ValidTarget(unit) and GetDistance(unit) <= Menu.killsteal.RangeR then
+			if Menu.killsteal.RMode == 1 then
+			if health <= dmgR*2 and Menu.killsteal.UseR and myHero:CanUseSpell(_R) == READY and ValidTarget(unit) and GetDistance(unit) <= Menu.killsteal.RangeR and HaveBuffs(unit, buffsList) then
 				CastR(unit)
+			end
+			elseif Menu.killsteal.RMode == 2 then
+			if health <= dmgR and Menu.killsteal.UseR and myHero:CanUseSpell(_R) == READY and ValidTarget(unit) and GetDistance(unit) <= Menu.killsteal.RangeR then
+				CastR(unit)
+			end
 			end
 			if Ignite then
 			if health <= 40 + (20 * myHero.level) and Menu.killsteal.UseIgnite and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) and GetDistance(unit) <= 650 then
@@ -442,6 +492,15 @@ function KillSteal()
 			end
 			end
 	 end
+end
+
+function HaveBuffs(unit, buffs)
+        for i = 1, unit.buffCount, 1 do      
+            local buff = unit:getBuff(i) 
+            if buff.valid and buff.type == buffs then
+                return true            
+            end                    
+        end
 end
 
 function CastE(unit)
@@ -455,6 +514,7 @@ function CastE(unit)
 end
 
 function CastR(unit)
+	if Ulting ~= nil then return end
 	if unit ~= nil and myHero:CanUseSpell(_R) == READY then
 		CastPosition,  HitChance,  Position = VP:GetLineAOECastPosition(unit, SkillR.delay, SkillR.width, SkillR.range, SkillR.speed, myHero)
 				
@@ -464,12 +524,23 @@ function CastR(unit)
 	end
 end
 
+function GetAADmg(unit)
+	local RawDMG = myHero.totalDamage
+	return RawDMG
+end
+
 function CatchAxes()
 	if Menu.AutoCatch then
-	
+
+	for _, unit in pairs(GetEnemyHeroes()) do
+	if ValidTarget(unit) and GetDistance(unit) <= 900 then
+	local health = unit.health
+	if unit.health <= GetAADmg(unit)*2 then ForcePointSx() return end
+	end
+
 	if tablelength(reticles) <= 0 then
 	ForcePointSx()
-end
+	end
 
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
@@ -485,6 +556,7 @@ end
 end
 end
 end
+end
 
 function ForcePointSx()
 	if SAC then
@@ -493,6 +565,143 @@ function ForcePointSx()
 	if SX then
 	SxOrb:ForcePoint(nil)
 	end
+end
+
+function AwayMelee()
+	if not Menu.combo.UseEAway then return end
+	if ComboKey then
+	local ChampsMelee = {
+        ['Aatrox']      = {true,},
+        ['Akali']       = {true,},
+        ['Alitar']      = {true,},
+        ['Amumu']       = {true,},
+        ['Blitzcrank']  = {true,},
+        ['Braum']       = {true,},
+        ['Chogath']     = {true,},
+        ['Darius']      = {true,},
+        ['Diana']       = {true,},
+        ['DrMundo']     = {true,},
+        ['Ekko']        = {true,},
+        ['Blitzcrank']  = {true,},
+        ['Elise']       = {true,},
+        ['Evelynn']     = {true,},
+        ['Fiora']       = {true,},
+        ['Fizz']        = {true,},
+        ['Garen']       = {true,},
+        ['Gragas']      = {true,},
+        ['Hecarim']     = {true,},
+        ['Illaoi']      = {true,},
+        ['Irelia']      = {true,},
+        ['JarvanIV']    = {true,},
+        ['Jax']         = {true,},
+        ['Jayce']       = {true,},
+        ['Kassadin']    = {true,},
+        ['Katarina']    = {true,},
+        ['Kayle']       = {true,},
+        ['Khazix']      = {true,},
+        ['LeeSin']      = {true,},
+        ['Leona']       = {true,},
+        ['Malphite']    = {true,},
+        ['Maokai']      = {true,},
+        ['MasterYi']    = {true,},
+        ['Mordekaiser'] = {true,},
+        ['Nasus']       = {true,},
+        ['Nautilus']    = {true,},
+        ['Nidalee']     = {true,},
+        ['Nocturne']    = {true,},
+        ['Nunu']        = {true,},
+        ['Olaf']        = {true,},
+        ['Pantheon']    = {true,},
+        ['Poppy']       = {true,},
+        ['Rammus']      = {true,},
+        ['Rek']         = {true,},
+        ['Rengar']      = {true,},
+        ['Riven']       = {true,},
+        ['Rumble']      = {true,},
+        ['Sejuani']     = {true,},
+        ['Shaco']       = {true,},
+        ['Shen']        = {true,},
+        ['Shyvana']     = {true,},
+        ['Singed']      = {true,},
+        ['Sion']        = {true,},
+        ['Skarner']     = {true,},
+        ['TahmKench']   = {true,},
+        ['Talon']       = {true,},
+        ['Taric']       = {true,},
+        ['Thresh']      = {true,},
+        ['Trundle']     = {true,},
+        ['Tryndamere']  = {true,},
+        ['Udyr']        = {true,},
+        ['Vi']          = {true,},
+        ['Volibear']    = {true,},
+        ['Warwick']     = {true,},
+        ['MonkeyKing']  = {true,},
+        ['XinZhao']     = {true,},
+        ['Yasuo']       = {true,},
+        ['Yorick']      = {true,},
+        ['Zac']         = {true,},
+        ['Zed']         = {true,},
+    }
+	for _, enemy in pairs(GetEnemyHeroes()) do
+    if ChampsMelee[enemy.charName] and GetDistance(enemy) <= Menu.combo.RangeEA and ValidTarget(enemy) and not enemy.dead then
+    CastE(enemy)
+	end
+	end
+end
+end
+
+function OnProcessSpell(unit, spell)
+if not Menu.gapcloser.UseEGap then return end
+
+    local jarvanAddition = unit.charName == "JarvanIV" and unit:CanUseSpell(_Q) ~= READY and _R or _Q 
+    local isAGapcloserUnit = {
+--        ['Ahri']        = {true, spell = _R, range = 450,   projSpeed = 2200},
+        ['Aatrox']      = {true, spell = _Q,                  range = 1000,  projSpeed = 1200, },
+        ['Akali']       = {true, spell = _R,                  range = 800,   projSpeed = 2200, }, -- Targeted ability
+        ['Alistar']     = {true, spell = _W,                  range = 650,   projSpeed = 2000, }, -- Targeted ability
+        ['Diana']       = {true, spell = _R,                  range = 825,   projSpeed = 2000, }, -- Targeted ability
+        ['Gragas']      = {true, spell = _E,                  range = 600,   projSpeed = 2000, },
+        ['Graves']      = {true, spell = _E,                  range = 425,   projSpeed = 2000, exeption = true },
+        ['Hecarim']     = {true, spell = _R,                  range = 1000,  projSpeed = 1200, },
+        ['Irelia']      = {true, spell = _Q,                  range = 650,   projSpeed = 2200, }, -- Targeted ability
+        ['JarvanIV']    = {true, spell = jarvanAddition,      range = 770,   projSpeed = 2000, }, -- Skillshot/Targeted ability
+        ['Jax']         = {true, spell = _Q,                  range = 700,   projSpeed = 2000, }, -- Targeted ability
+        ['Jayce']       = {true, spell = 'JayceToTheSkies',   range = 600,   projSpeed = 2000, }, -- Targeted ability
+        ['Khazix']      = {true, spell = _E,                  range = 900,   projSpeed = 2000, },
+        ['Leblanc']     = {true, spell = _W,                  range = 600,   projSpeed = 2000, },
+        ['LeeSin']      = {true, spell = 'blindmonkqtwo',     range = 1300,  projSpeed = 1800, },
+        ['Leona']       = {true, spell = _E,                  range = 900,   projSpeed = 2000, },
+        ['Malphite']    = {true, spell = _R,                  range = 1000,  projSpeed = 1500 + unit.ms},
+        ['Maokai']      = {true, spell = _Q,                  range = 600,   projSpeed = 1200, }, -- Targeted ability
+        ['MonkeyKing']  = {true, spell = _E,                  range = 650,   projSpeed = 2200, }, -- Targeted ability
+        ['Pantheon']    = {true, spell = _W,                  range = 600,   projSpeed = 2000, }, -- Targeted ability
+        ['Poppy']       = {true, spell = _E,                  range = 525,   projSpeed = 2000, }, -- Targeted ability
+        --['Quinn']       = {true, spell = _E,                  range = 725,   projSpeed = 2000, }, -- Targeted ability
+        ['Renekton']    = {true, spell = _E,                  range = 450,   projSpeed = 2000, },
+        ['Sejuani']     = {true, spell = _Q,                  range = 650,   projSpeed = 2000, },
+        ['Shen']        = {true, spell = _E,                  range = 575,   projSpeed = 2000, },
+        ['Tristana']    = {true, spell = _W,                  range = 900,   projSpeed = 2000, },
+        ['Tryndamere']  = {true, spell = 'Slash',             range = 650,   projSpeed = 1450, },
+        ['XinZhao']     = {true, spell = _E,                  range = 650,   projSpeed = 2000, }, -- Targeted ability
+    }
+    if unit.type == 'obj_AI_Hero' and unit.team == TEAM_ENEMY and isAGapcloserUnit[unit.charName] and GetDistance(unit) < 2000 and spell ~= nil then
+        if spell.name == (type(isAGapcloserUnit[unit.charName].spell) == 'number' and unit:GetSpellData(isAGapcloserUnit[unit.charName].spell).name or isAGapcloserUnit[unit.charName].spell) then
+            if spell.target ~= nil and spell.target.name == myHero.name or isAGapcloserUnit[unit.charName].spell == 'blindmonkqtwo' then
+        CastSpell(_E, unit.x, unit.z)
+            else
+                spellExpired = false
+                informationTable = {
+                    spellSource = unit,
+                    spellCastedTick = GetTickCount(),
+                    spellStartPos = Point(spell.startPos.x, spell.startPos.z),
+                    spellEndPos = Point(spell.endPos.x, spell.endPos.z),
+                    spellRange = isAGapcloserUnit[unit.charName].range,
+                    spellSpeed = isAGapcloserUnit[unit.charName].projSpeed,
+                    spellIsAnExpetion = isAGapcloserUnit[unit.charName].exeption or false,
+                }
+            end
+        end
+    end
 end
 
 local serveradress = "raw.githubusercontent.com"
