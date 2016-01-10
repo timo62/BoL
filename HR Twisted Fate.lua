@@ -10,7 +10,7 @@ local eStacks = 0
 local SelectorCheck = false
 local Selector = nil
 local SelectedCard = nil
-local LocalVersion = "2.8"
+local LocalVersion = "2.9"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
