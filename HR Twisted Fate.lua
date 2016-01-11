@@ -11,7 +11,7 @@ local selected = nil
 local lastUse,lastUse2 = 0,0
 local WREADY = false
 local SelectedCard = nil
-local LocalVersion = "3.0"
+local LocalVersion = "3.1"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -498,9 +498,21 @@ elseif IsMyManaLowJungleClear then
 end
 end
 
+function HaveBuffs(unit, buffs)
+        for i = 1, unit.buffCount, 1 do      
+            local buff = unit:getBuff(i) 
+            if buff.valid and buff.type == buffs then
+                return true            
+            end                    
+        end
+end
 
 function ComboQW(unit)
-	if Menu.combo.qMode == 3 and YellowTARDraw ~= nil and unit.x == YellowTARDraw.x and unit.y == YellowTARDraw.y and unit.z == YellowTARDraw.z then
+	local TargetGoldCard = YellowTARDraw ~= nil and GetDistance(YellowTARDraw, unit) <= 20 
+	local buffsList = 6, 8, 11, 20, 21, 23, 29
+
+	if Menu.combo.qMode == 3 then
+	if TargetGoldCard then
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
@@ -516,8 +528,41 @@ function ComboQW(unit)
     DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
 end
 end
+	elseif HaveBuffs(unit, buffsList) then
+	if Menu.pred == 1 then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
+ 
+	if HitChance >= 2 then
+	CastSpell(_Q, CastPosition.x, CastPosition.z)
+	end
+	end
+	elseif Menu.pred == 2 then
+	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+	if QHitChance > 0 then
+    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
 end
 end
+	elseif myHero:GetSpellData(_W).currentCd >= 1.5 then
+	if Menu.pred == 1 then
+	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
+	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
+ 
+	if HitChance >= 2 then
+	CastSpell(_Q, CastPosition.x, CastPosition.z)
+	end
+	end
+	elseif Menu.pred == 2 then
+	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
+  
+	if QHitChance > 0 then
+    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
+end
+end
+	end
+	end
+	end
 
 function CastQC(unit)
 	if Menu.combo.qMode == 3 then return end
@@ -553,22 +598,6 @@ end
   if QHitChance > Menu.hitchance.QHitCH then
     CastSpell(_Q, QPos.x, QPos.z)
 end
-end
-end
-	elseif Menu.combo.qMode == 3 and myHero:CanUseSpell(_W) == 32 and not PickingCard then
-	if Menu.pred == 1 then
-	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
-		CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
- 
-		if HitChance >= Menu.hitchance.QHitCH then
-			CastSpell(_Q, CastPosition.x, CastPosition.z)
-		end
-	end
-	elseif Menu.pred == 2 then
-  local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
-  
-  if QHitChance > Menu.hitchance.QHitCH then
-    CastSpell(_Q, QPos.x, QPos.z)
 end
 end
 end
