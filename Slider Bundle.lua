@@ -1,12 +1,8 @@
-local LocalVersion = "0.8"
+local LocalVersion = "0.9"
 local AutoUpdate = true
 
 	local ChampSupportedList = {
-	["Ezreal"] = true,
-  ["TwistedFate"] = true,
-  ["Kayle"] = true,
-  ["Bard"] = true,
-	["Ryze"] = true
+	["Ezreal"] = true, ["TwistedFate"] = true, ["Kayle"] = true, ["Bard"] = true, ["Ryze"] = true, ["Vayne"] = true,
 	}
 	
 	ChampName = myHero.charName
@@ -16,6 +12,12 @@ local AutoUpdate = true
 	"<font color=\"#01cc9c\"><b> Champion not supported.</b></font>")
 	return 
 	end
+
+  if not FileExist(LIB_PATH .. "/SimpleLib.lua") then
+  PrintChat("<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"..
+  "<font color=\"#01cc9c\"><b> Missing the Lib : SimpleLib.</b></font>")
+  return 
+  end
 
 -- Script Status --
 
@@ -36,17 +38,17 @@ local AutoUpdate = true
 	end
 
 	function BaseMenu()
-  BlockLast = {
-  ["Bard"] = true,
-  ["TwistedFate"] = true,}
-  BlockLane = {
-  ["Bard"] = true,}
+  BlockLast = {["Bard"] = true, ["TwistedFate"] = true, ["Vayne"] = true}
+  BlockLane = {["Bard"] = true,}
+  BlockHarass = {["Vayne"] = true,}
 
 	Menu = scriptConfig("Slider Bundle: "..ChampName, "SliderBundle"..ChampName)
 	
 	Menu:addSubMenu("Combo", "combo")
-	
+
+  if not BlockHarass[ChampName] then
 	Menu:addSubMenu("Harass", "harass")
+  end
 
   if not BlockLast[ChampName] then
 	Menu:addSubMenu("LastHit", "lasthit")
@@ -91,6 +93,8 @@ local AutoUpdate = true
   elseif ChampName == "Bard" then
   QSpell = _Spell({Slot = _Q, DamageName = "Q",  Range = 850 , Width = 108, Delay = 0.25, Speed = 1100, Collision = true, Aoe = false, Type = SPELL_TYPE.LINEAR}):AddDraw()
   Bard()
+  elseif ChampName == "Vayne" then
+  Vayne()
 	end
 	end
 
@@ -100,6 +104,7 @@ local AutoUpdate = true
   elseif ChampName == "TwistedFate" then Sequence = {2,1,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
   elseif ChampName == "Kayle" then Sequence = {3,2,1,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
   elseif ChampName == "Bard" then Sequence = {1,2,3,1,1,4,2,1,1,2,4,2,2,3,3,4,3,3}
+  elseif ChampName == "Vayne" then Sequence = {2,1,3,2,2,4,1,2,2,1,4,1,1,3,3,4,3,3}
   end
 
   function OnTick()
@@ -152,6 +157,7 @@ local AutoUpdate = true
   class 'TwistedFate'
   class 'Bard'
   class 'Kayle' 
+  class 'Vayne'
   
   --{Ezreal
 	function Ezreal:__init()
@@ -1434,6 +1440,141 @@ function Bard:Cast(unit)
   end
   end
   --Kayle}
+
+  --{Vayne
+  function Vayne:__init()
+  AddTickCallback(function() self:Tick() end)
+  AddRemoveBuffCallback(function(unit, buff) self:RemoveBuff(unit, buff) end)
+  AddUpdateBuffCallback(function(unit, buff, stacks) self:UpdateBuff(unit, buff, stacks) end)
+  self:Menu()
+  VP = VPrediction()
+  WStacks = {}
+  end 
+
+  function Vayne:Menu()
+  Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+  Menu.combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+  Menu.combo:addParam("UseRA", "Use R >= targets", SCRIPT_PARAM_SLICE, 3, 2, 5, 0) 
+  
+  Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.laneclear:addParam("mManager", "LaneClear Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
+  
+  Menu.jungleclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.jungleclear:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true)
+  Menu.jungleclear:addParam("mManager", "JungleClear Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
+  
+  if Ignite then Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
+  Menu.killsteal:addParam("I", "Use Ignite", SCRIPT_PARAM_ONOFF, true) 
+  else 
+  Menu.killsteal:addParam("info", "Ignite not found", SCRIPT_PARAM_INFO, "")
+  end
+  end
+
+  function Vayne:Tick()
+  if myHero.dead then return end
+  ts:update()
+  Target = ts.target
+  if Target and Target ~= nil and ValidTarget(Target) then
+
+  if OrbwalkManager:IsCombo() then 
+  self:Combo(Target)
+  end
+  end
+
+  if OrbwalkManager:IsClear() then
+  self:LaneClear()
+  self:JungleClear()
+  end
+
+  self:KillSteal()
+  end
+
+  function Vayne:UpdateBuff(unit, buff, stacks)
+  if unit == nil or buff == nil then return end
+  if buff.name == "vaynesilvereddebuff"then
+  if stacks >= 2 then
+  table.insert(WStacks, unit)
+  end
+  end
+  end
+
+  function Vayne:RemoveBuff(unit, buff)
+  if unit == nil or buff == nil then return end
+  if buff.name == "vaynesilvereddebuff" then
+  table.remove(WStacks)
+  end
+  end
+
+  function Vayne:QLogic(unit)
+  if unit then
+  if myHero:CanUseSpell(_Q) == READY and GetDistance(unit) <= 1000 and OrbwalkManager:WindUpTime() >= 0.05 then
+  if WStacks ~= nil then
+  for i, Stacks in ipairs(WStacks) do
+  if unit.charName == Stacks.charName then CastSpell(_Q, mousePos.x, mousePos.z)
+  end
+  end
+  end
+  end
+  end
+  end
+
+  function Vayne:CastE(unit)
+  if not unit or unit.dead or not unit.visible or not myHero:CanUseSpell(_E) == READY then return end
+  local x, y = VP:CalculateTargetPosition(unit, 0.25, 0, 2000, myHero)
+  local b = unit.boundingRadius
+  for _=0,(415)*100/100,b do
+  local dir = x+(Vector(x)-myHero):normalized()*_
+  if IsWall(D3DXVECTOR3(dir.x,dir.y,dir.z)) then
+  CastSpell(_E, unit)
+  end
+  end
+  end
+
+  function Vayne:Combo(unit)
+  if Menu.combo.UseQ then self:QLogic(unit) end
+  if Menu.combo.UseE then self:CastE(unit) end 
+  if CountEnemyHeroInRange(1050) >= Menu.combo.UseRA and myHero:CanUseSpell(_R) == READY then CastSpell(_R) end
+  end
+
+  function Vayne:LaneClear()
+  enemyMinions:update()
+  if not self:ManaLow("laneclear") then
+  for i, minion in pairs(enemyMinions.objects) do
+  if Menu.laneclear.UseQ then self:QLogic(minion) end
+  end
+  end
+  end
+
+  function Vayne:JungleClear()
+  jungleMinions:update()
+  if not self:ManaLow("jungleclear") then
+  for i, minion in pairs(jungleMinions.objects) do
+  if Menu.jungleclear.UseQ then self:QLogic(minion) end
+  if Menu.jungleclear.UseE then self:CastE(minion) end 
+  end
+  end
+  end
+
+  function Vayne:ManaLow(menu)
+  if menu == "harass" then if myHero.mana < (myHero.maxMana * ( Menu.harass.mManager / 100)) then return true else return false end end
+  if menu == "lasthit" then if myHero.mana < (myHero.maxMana * ( Menu.lasthit.mManager / 100)) then return true else return false end end
+  if menu == "laneclear" then if myHero.mana < (myHero.maxMana * ( Menu.laneclear.mManager / 100)) then return true else return false end end
+  if menu == "jungleclear" then if myHero.mana < (myHero.maxMana * ( Menu.jungleclear.mManager / 100)) then return true else return false end end
+  end
+
+  function Vayne:KillSteal()
+  for _, unit in pairs(GetEnemyHeroes()) do
+  local health = unit.health
+  if not Menu.killsteal.KSOn then return end
+  if Ignite then
+  if health <= 40 + (20 * myHero.level) and Menu.killsteal.Ignite and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) and GetDistance(unit) <= 875 then
+  CastSpell(Ignite, unit)
+  end
+  end
+  end
+  end
+  --Vayne}
 
 local serveradress = "raw.githubusercontent.com"
 local scriptadress = "/HiranN/BoL/master"
