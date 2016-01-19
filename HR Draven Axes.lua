@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- SCRIPT STATUS -- 
 
 local ts
-local LocalVersion = "2.8"
+local LocalVersion = "2.9"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local movementHuman = true
@@ -83,8 +83,8 @@ function OnLoad()
 	Menu.drawing:addParam("reticle", "Draw Reticles", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("qStacks", "Draw Q Stacks", SCRIPT_PARAM_ONOFF, true)
 	
-	Menu:addParam("AutoCatch", "Auto Catch", SCRIPT_PARAM_ONOFF, true)
-	
+	Menu:addParam("AutoCatch", "Auto Catch", SCRIPT_PARAM_ONKEYTOGGLE, true, string.byte("L"))
+	Menu:permaShow("AutoCatch")
 	CheckVPred()
 	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
@@ -548,13 +548,23 @@ function CatchAxes()
 
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
-      if (math.abs(mousePos.x - reticle.x) <= 400 and math.abs(mousePos.z - reticle.z) <= 400) and not (reticle.x <= 55 and reticle.y <= 55) then
+    if (math.abs(mousePos.x - reticle.x) <= 400 and math.abs(mousePos.z - reticle.z) <= 400) and not (reticle.x <= 55 and reticle.y <= 55) then
 	if SAC then
-	_G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
+	if GetDistance(reticle) <= 50 then 
+	--rr,rra = math.random(40,75),math.random(70,80)
+	ForcePointSx()
+	else _G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
+	end
 	end
 	if SX then
+	if GetDistance(reticle) <= 50 then 
+	--rr,rra = math.random(40,75),math.random(70,80)
+	ForcePointSx()
+	else
 	SxOrb:ForcePoint(reticle.x, reticle.z)
 	end
+	end
+	else ForcePointSx()
 end
 end
 end
