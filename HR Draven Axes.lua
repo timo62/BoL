@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- SCRIPT STATUS -- 
 
 local ts
-local LocalVersion = "2.9"
+local LocalVersion = "3.0"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local movementHuman = true
@@ -84,6 +84,7 @@ function OnLoad()
 	Menu.drawing:addParam("qStacks", "Draw Q Stacks", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addParam("AutoCatch", "Auto Catch", SCRIPT_PARAM_ONKEYTOGGLE, true, string.byte("L"))
+	Menu:addParam("CatchMode", "Catch Mode", SCRIPT_PARAM_LIST, 1, { "To Mouse", "To Hero"})
 	Menu:permaShow("AutoCatch")
 	CheckVPred()
 	if _G.Reborn_Initialised then
@@ -132,7 +133,7 @@ end
 function OnDraw()
 	if not myHero.dead and not Menu.drawing.mDraw then
 	
-	if Menu.AutoCatch then
+	if Menu.AutoCatch and Menu.CatchMode == 1 then
 	  DrawCircle(mousePos.x, mousePos.y, mousePos.z, 400, ARGB(255, 0, 0, 255))
 	end
 	
@@ -408,6 +409,7 @@ function OnTick()
 	end
 
 CatchAxes()
+CatchAxes1()
 AwayMelee()
 end
 
@@ -534,7 +536,7 @@ function GetAADmg(unit)
 end
 
 function CatchAxes()
-	if Menu.AutoCatch then
+	if Menu.AutoCatch and Menu.CatchMode == 1 then
 
 	for _, unit in pairs(GetEnemyHeroes()) do
 	if ValidTarget(unit) and GetDistance(unit) <= 900 then
@@ -549,6 +551,45 @@ function CatchAxes()
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
     if (math.abs(mousePos.x - reticle.x) <= 400 and math.abs(mousePos.z - reticle.z) <= 400) and not (reticle.x <= 55 and reticle.y <= 55) then
+	if SAC then
+	if GetDistance(reticle) <= 50 then 
+	--rr,rra = math.random(40,75),math.random(70,80)
+	ForcePointSx()
+	else _G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
+	end
+	end
+	if SX then
+	if GetDistance(reticle) <= 50 then 
+	--rr,rra = math.random(40,75),math.random(70,80)
+	ForcePointSx()
+	else
+	SxOrb:ForcePoint(reticle.x, reticle.z)
+	end
+	end
+	else ForcePointSx()
+end
+end
+end
+end
+end
+end
+
+function CatchAxes1()
+	if Menu.AutoCatch and Menu.CatchMode == 2 then
+
+	for _, unit in pairs(GetEnemyHeroes()) do
+	if ValidTarget(unit) and GetDistance(unit) <= 900 then
+	local health = unit.health
+	if unit.health <= GetAADmg(unit)*2 then ForcePointSx() return end
+	end
+
+	if tablelength(reticles) <= 0 then
+	ForcePointSx()
+	end
+
+	if tablelength(reticles) > 0 then
+    for i, reticle in ipairs(reticles) do
+    if (math.abs(myHero.x - reticle.x) <= 900 and math.abs(myHero.z - reticle.z) <= 900) and not (reticle.x <= 55 and reticle.y <= 55) then
 	if SAC then
 	if GetDistance(reticle) <= 50 then 
 	--rr,rra = math.random(40,75),math.random(70,80)
