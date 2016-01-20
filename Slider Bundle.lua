@@ -108,6 +108,7 @@ local AutoUpdate = true
   end
 
   function OnTick()
+  if not VIP_USER then return end
   if Menu.AutoLvL.On and os.clock() - LastSpell >= 0.5 then
   LastSpell = os.clock()  
   DelayAction(function() autoLevelSetSequence(Sequence) end,1.5)
