@@ -5,11 +5,12 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- SCRIPT STATUS -- 
 
 local ts
-local LocalVersion = "3.0"
+local LocalVersion = "3.01"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local movementHuman = true
 local qStacks = 0
+local LastAxe = 0
 local SAC = false
 local SX = false
 local BarrierMenu = false
@@ -26,6 +27,7 @@ function OnLoad()
 	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("TripleQ", "Use Triple Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("WSlow", "Use W if slowed", SCRIPT_PARAM_ONOFF, true)
+	Menu.combo:addParam("UseEDmg", "Use E to give damage", SCRIPT_PARAM_ONOFF, false)
 	Menu.combo:addParam("UseEAway", "Use E to away melee enemies", SCRIPT_PARAM_ONOFF, true)
 	Menu.combo:addParam("RangeEA", "Max Range to use E",  SCRIPT_PARAM_SLICE, 200, 175, 500, 0) 
 	--[[Menu.combo:addParam("REnemies", "Use R if can hit x (1 disable)", SCRIPT_PARAM_SLICE, 3, 1, 5, 0)
@@ -81,11 +83,13 @@ function OnLoad()
 	Menu.drawing:addParam("tColor", "Draw Target Color", SCRIPT_PARAM_COLOR, {255, 100, 44, 255})
 	Menu.drawing:addParam("tText", "Draw Current Target Text", SCRIPT_PARAM_ONOFF, true)
 	Menu.drawing:addParam("reticle", "Draw Reticles", SCRIPT_PARAM_ONOFF, true)
-	Menu.drawing:addParam("qStacks", "Draw Q Stacks", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addParam("AutoCatch", "Auto Catch", SCRIPT_PARAM_ONKEYTOGGLE, true, string.byte("L"))
-	Menu:addParam("CatchMode", "Catch Mode", SCRIPT_PARAM_LIST, 1, { "To Mouse", "To Hero"})
-	Menu:permaShow("AutoCatch")
+	Menu:addParam("CatchMode", "Catch Mode", SCRIPT_PARAM_LIST, 2, { "To Mouse", "To Hero"})
+	Menu:addParam("QMode", "Logic Mode", SCRIPT_PARAM_LIST, 1, {"Logic 1"--[[, "Logic 2"]]})
+	IDPerma = Menu:permaShow("AutoCatch")
+	Menu.permaShowEdit(IDPerma, "lText", "[HR Draven Axes] Catch Axes")
+	Menu.permaShowEdit(IDPerma, "lTextColor", 0xff00ff00)
 	CheckVPred()
 	if _G.Reborn_Initialised then
 	elseif _G.Reborn_Loaded then
@@ -145,20 +149,17 @@ function OnDraw()
 	  end
 	end
 		if myHero:CanUseSpell(_E) == READY and Menu.drawing.eDraw then 
-			DrawCircle(myHero.x, myHero.y, myHero.z, 1050, RGB(Menu.drawing.eColor[2], Menu.drawing.eColor[3], Menu.drawing.eColor[4]))
+		DrawCircle(myHero.x, myHero.y, myHero.z, 1050, RGB(Menu.drawing.eColor[2], Menu.drawing.eColor[3], Menu.drawing.eColor[4]))
 		end
 		
 		if Menu.drawing.myHero then
-			DrawCircle(myHero.x, myHero.y, myHero.z, 610, RGB(Menu.drawing.myColor[2], Menu.drawing.myColor[3], Menu.drawing.myColor[4]))
+		DrawCircle(myHero.x, myHero.y, myHero.z, 610, RGB(Menu.drawing.myColor[2], Menu.drawing.myColor[3], Menu.drawing.myColor[4]))
 		end
 
 		if Target ~= nil and ValidTarget(Target) then
-			if Menu.drawing.tText then
-				DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
-			end
+		if Menu.drawing.tText then
+		DrawText3D("Current Target",Target.x-100, Target.y-50, Target.z, 20, 0xFFFFFF00)
 		end
-		if Menu.drawing.qStacks then
-		DrawText3D("Q Stacks: "..qStacks,myHero.x-100, myHero.y-50, myHero.z, 20, 0xFFFFFF00)
 		end
 	end
 end
@@ -239,19 +240,25 @@ function orbwalkCheck()
 end
 
 function OnCreateObj(obj)
-   if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
-   if obj.name == "draven_r_missile_end_sound.troy" and obj.team ~= TEAM_ENEMY then
-   Ulting = nil
-   end
-   if obj.name == "Draven_Base_Q_activation.troy" then
-   if qStacks >= 2 then return end
+    if obj ~= nil and obj.name ~= nil and obj.x ~= nil and obj.z ~= nil then
+    if obj.name == "draven_r_missile_end_sound.troy" and obj.team ~= TEAM_ENEMY then
+    Ulting = nil
+    end
+    if obj.team == TEAM_ENEMY then return end
+    if obj.name == "Draven_Base_Q_ReticleCatchSuccess.troy" then
+    if qStacks > 3 then return end
+    LastAxe = os.clock()
+    DelayAction(function()qStacks = qStacks + 1 end,0.10)
+    end
+    if obj.name == "Draven_Base_Q_activation.troy" then
+    if qStacks >= 3 then return end
     qStacks = qStacks + 1
-   end
-        if obj.name == "Draven_Base_Q_reticle_self.troy" then
-            table.insert(reticles, obj)
-        elseif obj.name == "draven_spinning_buff_end_sound.troy" then
-            qStacks = 0
-        end
+    end
+    if obj.name == "Draven_Base_Q_reticle_self.troy" then
+    table.insert(reticles, obj)
+    elseif obj.name == "draven_spinning_buff_end_sound.troy" then
+    qStacks = 0
+    end
     end
 end
 
@@ -261,17 +268,18 @@ function OnDeleteObj(obj)
     if obj.name == "Draven_R_cas.troy" and obj.team ~= TEAM_ENEMY then
     Ulting = obj
     end
+ 	if obj.team == TEAM_ENEMY then return end
 	if obj.name == "Draven_Base_Q_reticle_self.troy" then
-        for i, reticle in ipairs(reticles) do
-		if obj.name == reticle.name then
-                table.remove(reticles, i)  
-				end
-        end
-		end
-	if obj.name == "Draven_Base_Q_reticle_self.troy" then
-	if GetDistance(obj, myHero) >= 175 then
-	qStacks = qStacks - 1
+	if qStacks ~= 1 then 
+	qStacks = qStacks - 1 
+	else
+	DelayAction(function()qStacks = qStacks - 1 end,0.3)
 	end
+    for i, reticle in ipairs(reticles) do
+	if obj.name == reticle.name then
+    table.remove(reticles, i)  
+	end
+    end
 	end
 end
 end
@@ -408,6 +416,10 @@ function OnTick()
 	_G.AutoCarry.Plugins:RegisterOnAttacked(QTriple)
 	end
 
+    if qStacks == 3 and os.clock() - LastAxe >= 1.5 then
+    qStacks = qStacks - 1
+    end
+
 CatchAxes()
 CatchAxes1()
 AwayMelee()
@@ -440,7 +452,7 @@ function Combo(unit)
 		end
 		end	
 
-		if Menu.combo.UseE then 
+		if Menu.combo.UseEDmg then 
 			CastE(unit)
 		end	
 	end
@@ -551,19 +563,26 @@ function CatchAxes()
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
     if (math.abs(mousePos.x - reticle.x) <= 400 and math.abs(mousePos.z - reticle.z) <= 400) and not (reticle.x <= 55 and reticle.y <= 55) then
+    if Menu.QMode == 1 then
 	if SAC then
 	if GetDistance(reticle) <= 50 then 
-	--rr,rra = math.random(40,75),math.random(70,80)
 	ForcePointSx()
 	else _G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
 	end
 	end
 	if SX then
 	if GetDistance(reticle) <= 50 then 
-	--rr,rra = math.random(40,75),math.random(70,80)
 	ForcePointSx()
 	else
 	SxOrb:ForcePoint(reticle.x, reticle.z)
+	end
+	end
+	elseif Menu.QMode == 2 then
+	if SAC then
+	
+	end
+	if SX then
+	
 	end
 	end
 	else ForcePointSx()
@@ -590,19 +609,26 @@ function CatchAxes1()
 	if tablelength(reticles) > 0 then
     for i, reticle in ipairs(reticles) do
     if (math.abs(myHero.x - reticle.x) <= 900 and math.abs(myHero.z - reticle.z) <= 900) and not (reticle.x <= 55 and reticle.y <= 55) then
+    if Menu.QMode == 1 then
 	if SAC then
 	if GetDistance(reticle) <= 50 then 
-	--rr,rra = math.random(40,75),math.random(70,80)
 	ForcePointSx()
 	else _G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
 	end
 	end
 	if SX then
 	if GetDistance(reticle) <= 50 then 
-	--rr,rra = math.random(40,75),math.random(70,80)
 	ForcePointSx()
 	else
 	SxOrb:ForcePoint(reticle.x, reticle.z)
+	end
+	end
+	elseif Menu.QMode == 2 then
+	if SAC then
+
+	end
+	if SX then
+
 	end
 	end
 	else ForcePointSx()
@@ -626,76 +652,76 @@ function AwayMelee()
 	if not Menu.combo.UseEAway then return end
 	if ComboKey then
 	local ChampsMelee = {
-        ['Aatrox']      = {true,},
-        ['Akali']       = {true,},
-        ['Alitar']      = {true,},
-        ['Amumu']       = {true,},
-        ['Blitzcrank']  = {true,},
-        ['Braum']       = {true,},
-        ['Chogath']     = {true,},
-        ['Darius']      = {true,},
-        ['Diana']       = {true,},
-        ['DrMundo']     = {true,},
-        ['Ekko']        = {true,},
-        ['Blitzcrank']  = {true,},
-        ['Elise']       = {true,},
-        ['Evelynn']     = {true,},
-        ['Fiora']       = {true,},
-        ['Fizz']        = {true,},
-        ['Garen']       = {true,},
-        ['Gragas']      = {true,},
-        ['Hecarim']     = {true,},
-        ['Illaoi']      = {true,},
-        ['Irelia']      = {true,},
-        ['JarvanIV']    = {true,},
-        ['Jax']         = {true,},
-        ['Jayce']       = {true,},
-        ['Kassadin']    = {true,},
-        ['Katarina']    = {true,},
-        ['Kayle']       = {true,},
-        ['Khazix']      = {true,},
-        ['LeeSin']      = {true,},
-        ['Leona']       = {true,},
-        ['Malphite']    = {true,},
-        ['Maokai']      = {true,},
-        ['MasterYi']    = {true,},
-        ['Mordekaiser'] = {true,},
-        ['Nasus']       = {true,},
-        ['Nautilus']    = {true,},
-        ['Nidalee']     = {true,},
-        ['Nocturne']    = {true,},
-        ['Nunu']        = {true,},
-        ['Olaf']        = {true,},
-        ['Pantheon']    = {true,},
-        ['Poppy']       = {true,},
-        ['Rammus']      = {true,},
-        ['Rek']         = {true,},
-        ['Rengar']      = {true,},
-        ['Riven']       = {true,},
-        ['Rumble']      = {true,},
-        ['Sejuani']     = {true,},
-        ['Shaco']       = {true,},
-        ['Shen']        = {true,},
-        ['Shyvana']     = {true,},
-        ['Singed']      = {true,},
-        ['Sion']        = {true,},
-        ['Skarner']     = {true,},
-        ['TahmKench']   = {true,},
-        ['Talon']       = {true,},
-        ['Taric']       = {true,},
-        ['Thresh']      = {true,},
-        ['Trundle']     = {true,},
-        ['Tryndamere']  = {true,},
-        ['Udyr']        = {true,},
-        ['Vi']          = {true,},
-        ['Volibear']    = {true,},
-        ['Warwick']     = {true,},
-        ['MonkeyKing']  = {true,},
-        ['XinZhao']     = {true,},
-        ['Yasuo']       = {true,},
-        ['Yorick']      = {true,},
-        ['Zac']         = {true,},
-        ['Zed']         = {true,},
+        ['Aatrox']      = {true},
+        ['Akali']       = {true},
+        ['Alitar']      = {true},
+        ['Amumu']       = {true},
+        ['Blitzcrank']  = {true},
+        ['Braum']       = {true},
+        ['Chogath']     = {true},
+        ['Darius']      = {true},
+        ['Diana']       = {true},
+        ['DrMundo']     = {true},
+        ['Ekko']        = {true},
+        ['Blitzcrank']  = {true},
+        ['Elise']       = {true},
+        ['Evelynn']     = {true},
+        ['Fiora']       = {true},
+        ['Fizz']        = {true},
+        ['Garen']       = {true},
+        ['Gragas']      = {true},
+        ['Hecarim']     = {true},
+        ['Illaoi']      = {true},
+        ['Irelia']      = {true},
+        ['JarvanIV']    = {true},
+        ['Jax']         = {true},
+        ['Jayce']       = {true},
+        ['Kassadin']    = {true},
+        ['Katarina']    = {true},
+        ['Kayle']       = {true},
+        ['Khazix']      = {true},
+        ['LeeSin']      = {true},
+        ['Leona']       = {true},
+        ['Malphite']    = {true},
+        ['Maokai']      = {true},
+        ['MasterYi']    = {true},
+        ['Mordekaiser'] = {true},
+        ['Nasus']       = {true},
+        ['Nautilus']    = {true},
+        ['Nidalee']     = {true},
+        ['Nocturne']    = {true},
+        ['Nunu']        = {true},
+        ['Olaf']        = {true},
+        ['Pantheon']    = {true},
+        ['Poppy']       = {true},
+        ['Rammus']      = {true},
+        ['Rek']         = {true},
+        ['Rengar']      = {true},
+        ['Riven']       = {true},
+        ['Rumble']      = {true},
+        ['Sejuani']     = {true},
+        ['Shaco']       = {true},
+        ['Shen']        = {true},
+        ['Shyvana']     = {true},
+        ['Singed']      = {true},
+        ['Sion']        = {true},
+        ['Skarner']     = {true},
+        ['TahmKench']   = {true},
+        ['Talon']       = {true},
+        ['Taric']       = {true},
+        ['Thresh']      = {true},
+        ['Trundle']     = {true},
+        ['Tryndamere']  = {true},
+        ['Udyr']        = {true},
+        ['Vi']          = {true},
+        ['Volibear']    = {true},
+        ['Warwick']     = {true},
+        ['MonkeyKing']  = {true},
+        ['XinZhao']     = {true},
+        ['Yasuo']       = {true},
+        ['Yorick']      = {true},
+        ['Zac']         = {true},
+        ['Zed']         = {true},
     }
 	for _, enemy in pairs(GetEnemyHeroes()) do
     if ChampsMelee[enemy.charName] and GetDistance(enemy) <= Menu.combo.RangeEA and ValidTarget(enemy) and not enemy.dead then
