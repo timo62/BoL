@@ -1676,7 +1676,6 @@ function Bard:Cast(unit)
   
   Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
   Menu.killsteal:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-  Menu.killsteal:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
   if Ignite then Menu.killsteal:addParam("I", "Use Ignite", SCRIPT_PARAM_ONOFF, true) end
 
   Menu:addParam("Insec", "Insec", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("K"))
