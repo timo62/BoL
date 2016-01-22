@@ -1,4 +1,4 @@
-local LocalVersion = "0.91"
+local LocalVersion = "0.92"
 local AutoUpdate = true
 
 	local ChampSupportedList = {
@@ -1602,7 +1602,7 @@ local scriptmsg = "<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</fo
 end
 
 function Update()
-  DownloadFile("http://"..serveradress , scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function()
+  DownloadFile("http://"..serveradress..scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function ()
   PrintChat(scriptmsg.."<font color=\"#01cc9c\"><b> Updated, press 2x F9.</b></font>")
   end)
 end
