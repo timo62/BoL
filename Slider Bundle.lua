@@ -1,8 +1,9 @@
-local LocalVersion = "0.92"
+local LocalVersion = "0.93" 
 local AutoUpdate = true
 
 	local ChampSupportedList = {
 	["Ezreal"] = true, ["TwistedFate"] = true, ["Kayle"] = true, ["Bard"] = true, ["Ryze"] = true, ["Vayne"] = true,
+  ["Azir"] = true, 
 	}
 	
 	ChampName = myHero.charName
@@ -19,9 +20,9 @@ local AutoUpdate = true
   return 
   end
 
--- Script Status --
-assert(load(Base64Decode("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"), nil, "bt", _ENV))() ScriptStatus("REHIGHEFHFK") 
--- Script Status --
+  -- Script Status --
+  assert(load(Base64Decode("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"), nil, "bt", _ENV))() ScriptStatus("REHIGHEFHFK") 
+  -- Script Status --
 
 	function OnLoad()
 	require 'SimpleLib'
@@ -36,11 +37,13 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   ts:AddToMenu(Menu)
 	enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
   jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
+  Mobs = MinionManager()
 	end
 
 	function BaseMenu()
-  BlockLast = {["Bard"] = true, ["TwistedFate"] = true, ["Vayne"] = true}
+  BlockLast = {["Bard"] = true, ["TwistedFate"] = true, ["Vayne"] = true, ["Azir"] = true}
   BlockLane = {["Bard"] = true,}
+  BlockJung = {["Azir"] = true,}
   BlockHarass = {["Vayne"] = true,}
 
 	Menu = scriptConfig("Slider Bundle: "..ChampName, "SliderBundle"..ChampName)
@@ -58,9 +61,9 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   if not BlockLane[ChampName] then
 	Menu:addSubMenu("LaneClear", "laneclear")
   end
-
+  if not BlockJung[ChampName] then
 	Menu:addSubMenu("JungleClear", "jungleclear")
-	
+	end
 	Menu:addSubMenu("KillSteal", "killsteal")
 	
   Menu:addSubMenu("Keys Settings", "Keys")
@@ -96,6 +99,8 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   Bard()
   elseif ChampName == "Vayne" then
   Vayne()
+  elseif ChampName == "Azir" then
+  Azir()
 	end
 	end
 
@@ -106,6 +111,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   elseif ChampName == "Kayle" then Sequence = {3,2,1,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
   elseif ChampName == "Bard" then Sequence = {1,2,3,1,1,4,2,1,1,2,4,2,2,3,3,4,3,3}
   elseif ChampName == "Vayne" then Sequence = {2,1,3,2,2,4,1,2,2,1,4,1,1,3,3,4,3,3}
+  elseif ChampName == "Azir" then Sequence = {2,1,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
   end
 
   function OnTick()
@@ -142,6 +148,37 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   end
   end
 
+  function GetClosestEnemy(pos)
+  local enemy = nil
+  pos = pos or myHero
+  for v,k in pairs(GetEnemyHeroes()) do
+  if not enemy then enemy = k end
+  if GetDistanceSqr(k, pos) < GetDistanceSqr(enemy, pos) then
+  enemy = k
+  end
+  end
+  return enemy
+  end
+
+  function GetLineFarmPosition(range, width, source)
+  local BestPos 
+  local BestHit = 0
+  source = source or myHero
+  local objects = Mobs.objects
+  for i, object in pairs(objects) do
+  local EndPos = Vector(source) + range * (Vector(object) - Vector(source)):normalized()
+  local hit = CountObjectsOnLineSegment(source, EndPos, width, objects)
+  if hit > BestHit and GetDistanceSqr(object) < range * range then
+  BestHit = hit
+  BestPos = Vector(object)
+  if BestHit == #objects then
+  break
+  end
+  end
+  end
+  return BestPos, BestHit
+  end
+
   function OnCreateObj(obj) 
   if obj and obj.name and obj.name:lower():find("teleport") and GetDistance(obj) < 30 then
   Recalling = true
@@ -154,13 +191,50 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   end
   end
 
+  class 'MinionManager'
 	class 'Ezreal'
 	class 'Ryze'
   class 'TwistedFate'
   class 'Bard'
   class 'Kayle' 
   class 'Vayne'
+  class 'Azir'
   
+  function MinionManager:__init()
+  self.objects = {}
+  self.maxObjects = 0
+  for k=1,objManager.maxObjects,1 do
+  local object = objManager:getObject(k)
+  if object and object.valid and object.type == "obj_AI_Minion" and object.team ~= myHero.team and object.name and (object.name:find('Minion_T') or object.name:find('Blue') or object.name:find('Red') or (object.team == TEAM_NEUTRAL and object.health < 100000 and not object.name:find("Guardian") and not object.name:find("Shield")) or object.name:find('Bilge') or object.name:find('BW')) then
+  self.maxObjects = self.maxObjects + 1
+  self.objects[self.maxObjects] = object
+  end
+  end
+  AddCreateObjCallback(function(o) self:CreateObj(o) end)
+  return self
+  end
+
+  function MinionManager:CreateObj(object)
+  if object and object.valid and object.type == "obj_AI_Minion" and object.team ~= myHero.team and object.name and (object.name:find('Minion_T') or object.name:find('Blue') or object.name:find('Red') or (object.team == TEAM_NEUTRAL and object.health < 100000 and not object.name:find("Guardian") and not object.name:find("Shield")) or object.name:find('Bilge') or object.name:find('BW')) then
+  local deadPlace = self:FindDeadPlace()
+  if deadPlace then
+  self.objects[deadPlace] = object
+  else
+  self.maxObjects = self.maxObjects + 1
+  self.objects[self.maxObjects] = object
+  end
+  end
+  end
+
+  function MinionManager:FindDeadPlace()
+  for i=1, self.maxObjects do
+  local object = self.objects[i]
+  if not object or not object.valid or object.dead then
+  return i
+  end
+  end
+  end
+
   --{Ezreal
 	function Ezreal:__init()
 	VP = VPrediction()
@@ -1577,6 +1651,246 @@ function Bard:Cast(unit)
   end
   end
   --Vayne}
+
+  --{Azir
+  function Azir:__init()
+  objHolder = {}
+  objTimeHolder = {}
+  self.soldierToDash = nil
+  AddTickCallback(function() self:Tick() end)
+  AddCreateObjCallback(function(object) self:CreateObj(object) end)
+  self:Menu()
+  end
+
+  function Azir:Menu()
+  Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+
+  Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.harass:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+  Menu.harass:addParam("mManager", "Harass Mana", SCRIPT_PARAM_SLICE, 30, 0, 100, 0) 
+  
+  Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.laneclear:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+  Menu.laneclear:addParam("mManager", "LaneClear Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
+  
+  Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
+  Menu.killsteal:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.killsteal:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+  if Ignite then Menu.killsteal:addParam("I", "Use Ignite", SCRIPT_PARAM_ONOFF, true) end
+
+  Menu:addParam("Insec", "Insec", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("K"))
+  Menu:addParam("Flee", "Flee", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("L"))
+  end
+
+  function Azir:GetDmg(spell, unit)
+  if unit then
+  if spell == _Q then
+  local Lvl = myHero:GetSpellData(spell).level
+  if Lvl < 1 then return 0 end
+  local BaseDamage = {65,85,105,125,145}
+  local ScaledDamage = {.1,.2,.3,.4,.5}
+  local TrueDamage = BaseDamage[Lvl] + ScaledDamage[Lvl]*myHero.ap
+  return myHero:CalcMagicDamage(unit, TrueDamage)
+  end
+  end
+  end
+
+  function Azir:Tick()
+  if myHero.dead then return end
+  ts:update()
+  Target = ts.target
+
+  if Target and Target ~= nil and ValidTarget(Target) then
+  if OrbwalkManager:IsCombo() then 
+  self:Combo(Target)
+  end
+
+  if OrbwalkManager:IsHarass() then
+  self:Harass(Target)
+  end
+  end
+
+  if OrbwalkManager:IsClear() then
+  self:LaneClear()
+  end
+
+  if Menu.Flee then
+  self:Flee()
+  end
+
+  if Menu.Insec then
+  self:Insec()
+  end
+
+  self:KillSteal()
+  end
+
+
+  function Azir:CreateObj(object) -- BY NEBELWOLFI
+  if object and object.valid and object.name then
+  if object.name == "AzirSoldier" then
+  objHolder[object.networkID] = object
+  objTimeHolder[object.networkID] = os.clock() + 9
+  end
+  end
+  end
+
+  function Azir:CountSoldiers(unit) -- BY NEBELWOLFI
+  soldiers = 0
+  for _,obj in pairs(objHolder) do
+  if objTimeHolder[obj.networkID] and objTimeHolder[obj.networkID] > os.clock() and (not unit or GetDistance(obj, unit) < 350) then 
+  soldiers = soldiers + 1
+  end
+  end
+  return soldiers
+  end
+
+  function Azir:GetSoldier(i) -- BY NEBELWOLFI
+  soldiers = 0
+  for _,obj in pairs(objHolder) do
+  if objTimeHolder[obj.networkID] and objTimeHolder[obj.networkID]>os.clock() then 
+  soldiers = soldiers + 1
+  if i == soldiers then return obj end
+  end
+  end
+  end
+
+  function Azir:GetSoldiers() -- BY NEBELWOLFI
+  soldiers = {}
+  for _,obj in pairs(objHolder) do
+  if objTimeHolder[obj.networkID] and objTimeHolder[obj.networkID]>os.clock() then 
+  table.insert(soldiers, obj)
+  end
+  end
+  return soldiers
+  end
+
+  function Azir:Flee() -- BY NEBELWOLFI
+  myHero:MoveTo(mousePos.x, mousePos.z)
+  if myHero:CanUseSpell(_W) == READY and myHero:CanUseSpell(_E) == READY and myHero:CanUseSpell(_Q) == READY and myHero.mana > 169 then
+  local movePos = myHero + (Vector(mousePos) - myHero):normalized() * 875
+  CastSpell(_W, movePos.x, movePos.z)
+  elseif self:CountSoldiers() > 0 and myHero:CanUseSpell(_E) == READY and myHero:CanUseSpell(_Q) == READY and myHero.mana > 129 then
+  CastSpell(_E)
+  CastSpell(_Q, mousePos.x, mousePos.z)
+  end
+  end
+
+  function Azir:Insec() -- BY NEBELWOLFI
+  local enemy = GetClosestEnemy(mousePos)
+  if not enemy or GetDistance(enemy) > 750 then
+  myHero:MoveTo(mousePos.x, mousePos.z)
+  return 
+  end
+  if myHero:CanUseSpell(_R) ~= READY then return end
+  if self:CountSoldiers() > 0 then
+  for _,k in pairs(self:GetSoldiers()) do
+  if not self.soldierToDash then
+  self.soldierToDash = k
+  elseif self.soldierToDash and GetDistanceSqr(k,enemy) < GetDistanceSqr(self.soldierToDash,enemy) then
+  self.soldierToDash = k
+  end
+  end
+  end
+  if not self.soldierToDash and myHero:CanUseSpell(_W) == READY then
+  CastSpell(_W, enemy.x, enemy.z)
+  end
+  if self:CountSoldiers() > 0 and self.soldierToDash then
+  local movePos = myHero + (Vector(enemy) - myHero):normalized() * 875
+  if movePos then
+  CastSpell(_Q, movePos.x, movePos.z)
+  CastSpell(_E, self.soldierToDash)
+  self:DoR(Vector(myHero), enemy)
+  DelayAction(function() self.soldierToDash = nil end, 2)
+  end
+  end
+  end
+
+  function Azir:DoR(pos, obj) -- BY NEBELWOLFI
+  if ValidTarget(obj) and GetDistance(obj) < 250 then
+  CastSpell(_R, pos.x, pos.z)
+  else
+  DelayAction(function() self:DoR(pos, obj) end, 0.03)
+  end
+  end
+
+  function Azir:Combo(unit)
+  if Menu.combo.UseQ and Menu.combo.UseW and myHero:GetSpellData(_Q).currentCd == 0 and myHero:CanUseSpell(_W) == READY and GetDistance(unit) < 875 then
+  CastSpell(_W, unit.x, unit.z)
+  DelayAction(function() CastSpell(_Q, unit.x, unit.z) end, 0.25)
+  end
+  if Menu.combo.UseW then
+  CastSpell(_W, unit.x, unit.z)
+  end
+  if Menu.combo.UseQ and self:CountSoldiers() > 0 then
+  for _,k in pairs(self:GetSoldiers()) do
+  CastSpell(_Q, unit.x, unit.z)
+  end
+  end
+  end
+
+  function Azir:Harass(unit)
+  if not self:ManaLow("harass") then
+  if Menu.harass.UseQ and Menu.harass.UseW and myHero:GetSpellData(_Q).currentCd == 0 and myHero:CanUseSpell(_W) == READY and GetDistance(unit) < 875 then
+  CastSpell(_W, unit.x, unit.z)
+  DelayAction(function() CastSpell(_Q, unit.x, unit.z) end, 0.25)
+  end
+  if Menu.harass.UseW then
+  CastSpell(_W, unit.x, unit.z)
+  end
+  if Menu.harass.UseQ and self:CountSoldiers() > 0 then
+  for _,k in pairs(self:GetSoldiers()) do
+  CastSpell(_Q, unit.x, unit.z)
+  end
+  end
+  end
+  end
+
+  function Azir:LaneClear()
+  if not self:ManaLow("laneclear") then
+  pos, hit = GetLineFarmPosition(875,80,k)
+  if pos and hit > 0 and self:CountSoldiers() < 2 and myHero:CanUseSpell(_W) == READY and Menu.laneclear.UseW then
+  CastSpell(_W, pos.x, pos.z)
+  end
+  if Menu.laneclear.UseQ and self:CountSoldiers() > 0 then
+  for _,k in pairs(self:GetSoldiers()) do
+  pos, hit = GetLineFarmPosition(875,80,k)
+  if pos and hit > 0 then
+  CastSpell(_Q, pos.x, pos.z)
+  end
+  end
+  end
+  end
+  end
+
+  function Azir:ManaLow(menu)
+  if menu == "harass" then if myHero.mana < (myHero.maxMana * ( Menu.harass.mManager / 100)) then return true else return false end end
+  if menu == "lasthit" then if myHero.mana < (myHero.maxMana * ( Menu.lasthit.mManager / 100)) then return true else return false end end
+  if menu == "laneclear" then if myHero.mana < (myHero.maxMana * ( Menu.laneclear.mManager / 100)) then return true else return false end end
+  if menu == "jungleclear" then if myHero.mana < (myHero.maxMana * ( Menu.jungleclear.mManager / 100)) then return true else return false end end
+  end
+
+  function Azir:KillSteal()
+  for _, unit in pairs(GetEnemyHeroes()) do
+  local health = unit.health
+  if not Menu.killsteal.KSOn then return end
+  if health <= self:GetDmg(_Q, unit) and Menu.killsteal.UseQ and GetDistance(unit) < 875 and ValidTarget(unit) then
+  if Menu.killsteal.UseQ and self:CountSoldiers() > 0 then
+  for _,k in pairs(self:GetSoldiers()) do
+  CastSpell(_Q, unit.x, unit.z)
+  end
+  end
+  end
+
+  if Ignite then
+  if health <= 40 + (20 * myHero.level) and Menu.killsteal.Ignite and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) and GetDistance(unit) <= 875 then
+  CastSpell(Ignite, unit)
+  end
+  end
+  end
+  end
+  --Azir}
 
 local serveradress = "raw.githubusercontent.com"
 local scriptadress = "/HiranN/BoL/master"
