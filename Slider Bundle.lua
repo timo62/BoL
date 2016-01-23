@@ -1,4 +1,4 @@
-local LocalVersion = "0.93" 
+local LocalVersion = "0.94" 
 local AutoUpdate = true
 
 	local ChampSupportedList = {
@@ -67,10 +67,27 @@ local AutoUpdate = true
 	Menu:addSubMenu("KillSteal", "killsteal")
 	
   Menu:addSubMenu("Keys Settings", "Keys")
+
+  Menu:addSubMenu("Items Settings", "items")
+  Menu.items:addParam("Use", "Use Items", SCRIPT_PARAM_ONOFF, true) 
+  Menu.items:addParam("UseBRK", "Use BRK", SCRIPT_PARAM_ONOFF, true) 
+  Menu.items:addParam("UseYoumu", "Use Youmuu", SCRIPT_PARAM_ONOFF, true) 
+  Menu.items:addParam("UseZhonya", "Use Zhonya", SCRIPT_PARAM_ONOFF, true)
+  Menu.items:addParam("ZhonyaAmount", "Zhonya %", SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
+
   if VIP_USER then
   Menu:addSubMenu("Auto Leveler", "AutoLvL")
   Menu.AutoLvL:addParam("On", "Use Auto Leveler", SCRIPT_PARAM_ONOFF, true)
   end
+  ___GetInventorySlotItem = rawget(_G, "GetInventorySlotItem")
+  _G.GetInventorySlotItem = GetSlotItem
+  _G.ITEM_1 = 06
+  _G.ITEM_2 = 07
+  _G.ITEM_3 = 08
+  _G.ITEM_4 = 09
+  _G.ITEM_5 = 10
+  _G.ITEM_6 = 11
+  _G.ITEM_7 = 12
 	end
 
 	function CheckSummoner()
@@ -114,7 +131,71 @@ local AutoUpdate = true
   elseif ChampName == "Azir" then Sequence = {2,1,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
   end
 
+  ItemNames       = {
+  [3144]        = "BilgewaterCutlass",
+  [3153]        = "ItemSwordOfFeastAndFamine",
+  [3405]        = "TrinketSweeperLvl1",
+  [3166]        = "TrinketTotemLvl1",
+  [3361]        = "TrinketTotemLvl3",
+  [3362]        = "TrinketTotemLvl4",
+  [2003]        = "RegenerationPotion",
+  [3146]        = "HextechGunblade",
+  [3187]        = "HextechSweeper",
+  [3364]        = "TrinketSweeperLvl3",
+  [3074]        = "ItemTiamatCleave",
+  [3077]        = "ItemTiamatCleave",
+  [3340]        = "TrinketTotemLvl1",
+  [3090]        = "ZhonyasHourglass",
+  [3142]        = "YoumusBlade",
+  [3157]        = "ZhonyasHourglass",
+  [3350]        = "TrinketTotemLvl2",
+  [3140]        = "QuicksilverSash",
+  }
+
+  function CastItems()
+  if Menu.items.UseBRK then
+  local slot = GetInventorySlotItem(3153)
+  if Target ~= nil and ValidTarget(Target) and not Target.dead and slot ~= nil and myHero:CanUseSpell(slot) == READY and GetDistance(Target) <= 450 then
+  CastSpell(slot, Target)
+  end
+  end
+
+  if Menu.items.UseYoumu then
+  local slot = GetInventorySlotItem(3142)
+  if Target ~= nil and ValidTarget(Target) and not Target.dead and slot ~= nil and myHero:CanUseSpell(slot) == READY then
+  CastSpell(slot)
+  end
+  end
+
+  if Menu.items.UseZhonya then
+  local slot = GetInventorySlotItem(3157)
+  if myHero.health <= (myHero.maxHealth * Menu.items.ZhonyaAmount / 100) and slot ~= nil and myHero:CanUseSpell(slot) == READY and CountEnemyHeroInRange(900) >= 1 then CastSpell(3157) end
+  end
+  end
+
+  function GetSlotItem(id, unit)
+  
+  unit = unit or myHero
+
+  if (not ItemNames[id]) then
+  return ___GetInventorySlotItem(id, unit)
+  end
+
+  local name  = ItemNames[id]
+  
+  for slot = ITEM_1, ITEM_7 do
+  local item = unit:GetSpellData(slot).name
+  if ((#item > 0) and (item:lower() == name:lower())) then
+  return slot
+  end
+  end
+  end
+
   function OnTick()
+  if not myHero.dead and Menu.items.Use then
+  CastItems()
+  end
+
   if not VIP_USER then return end
   if Menu.AutoLvL.On and os.clock() - LastSpell >= 0.5 then
   LastSpell = os.clock()  
