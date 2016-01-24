@@ -5,7 +5,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- SCRIPT STATUS -- 
 
 local ts
-local LocalVersion = "3.01"
+local LocalVersion = "3.02"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 local reticles = {}
 local movementHuman = true
@@ -91,17 +91,26 @@ function OnLoad()
 	Menu.permaShowEdit(IDPerma, "lText", "[HR Draven Axes] Catch Axes")
 	Menu.permaShowEdit(IDPerma, "lTextColor", 0xff00ff00)
 	CheckVPred()
-	if _G.Reborn_Initialised then
-	elseif _G.Reborn_Loaded then
+	if _G.Reborn_Initialised or _G.Reborn_Loaded then
 	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Loading SAC.</b></font>")
 	DelayAction(function()  
 	SAC = true
 	SX = false
+	PW = false
 	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>SAC Loaded.</b></font>")	
+	Menu:addSubMenu("Orbwalker", "OrbWalker")
+	Menu.OrbWalker:addParam("info", "SAC Detected", SCRIPT_PARAM_INFO, " ")
 	end, 10)
+	elseif _Pewalk then
+	Menu:addSubMenu("Orbwalker", "OrbWalker")
+	Menu.OrbWalker:addParam("info", "Pewalk Detected", SCRIPT_PARAM_INFO, " ")
+	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Pewalk Loaded.</b></font>")
+	SAC = false
+	SX = false
+	PW = true
 	else
-  orbwalkCheck()
-  end
+  	orbwalkCheck()
+  	end
 	
 	customLoad()
 	
@@ -219,10 +228,11 @@ function orbwalkCheck()
 	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>Loading SxOrbWalk.</b></font>")
 	require("SxOrbWalk")
 	PrintChat("<font color=\"#415cf6\"><b>[HR Draven Axes] </b></font>".."<font color=\"#01cc9c\"><b>SxOrbWalk Loaded.</b></font>")	
-	Menu:addSubMenu("SxOrbWalk", "SXMenu")
-	SxOrb:LoadToMenu(Menu.SXMenu)
+	Menu:addSubMenu("Orbwalker", "OrbWalker")
+	SxOrb:LoadToMenu(Menu.OrbWalker)
 	SAC = false
 	SX = true
+	PW = false
 	else
 	local ToUpdate = {}
     ToUpdate.Version = 1
@@ -414,6 +424,8 @@ function OnTick()
 	SxOrb:RegisterAfterAttackCallback(QTriple)
 	elseif SAC then
 	_G.AutoCarry.Plugins:RegisterOnAttacked(QTriple)
+	elseif PW then
+	_Pewalk.AddAfterAttackCallback(QTriple)
 	end
 
     if qStacks == 3 and os.clock() - LastAxe >= 1.5 then
@@ -570,6 +582,12 @@ function CatchAxes()
 	else _G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
 	end
 	end
+	if PW then
+	if GetDistance(reticle) <= 50 then 
+	ForcePointSx()
+	else _Pewalk.ForcePoint(reticle)
+	end
+	end
 	if SX then
 	if GetDistance(reticle) <= 50 then 
 	ForcePointSx()
@@ -580,6 +598,9 @@ function CatchAxes()
 	elseif Menu.QMode == 2 then
 	if SAC then
 	
+	end
+	if PW then
+
 	end
 	if SX then
 	
@@ -616,6 +637,12 @@ function CatchAxes1()
 	else _G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(reticle)
 	end
 	end
+	if PW then
+	if GetDistance(reticle) <= 50 then 
+	ForcePointSx()
+	else _Pewalk.ForcePoint(reticle)
+	end
+	end
 	if SX then
 	if GetDistance(reticle) <= 50 then 
 	ForcePointSx()
@@ -625,6 +652,9 @@ function CatchAxes1()
 	end
 	elseif Menu.QMode == 2 then
 	if SAC then
+
+	end
+	if PW then
 
 	end
 	if SX then
@@ -642,6 +672,9 @@ end
 function ForcePointSx()
 	if SAC then
 	_G.AutoCarry.Orbwalker:OverrideOrbwalkLocation(nil)
+	end
+	if PW then
+	_Pewalk.ForcePoint(nil)
 	end
 	if SX then
 	SxOrb:ForcePoint(nil)
