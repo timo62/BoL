@@ -1,18 +1,18 @@
-local LocalVersion = "0.94" 
+local LocalVersion = "0.95" 
 local AutoUpdate = true
 
-	local ChampSupportedList = {
-	["Ezreal"] = true, ["TwistedFate"] = true, ["Kayle"] = true, ["Bard"] = true, ["Ryze"] = true, ["Vayne"] = true,
+  local ChampSupportedList = {
+  ["Ezreal"] = true, ["TwistedFate"] = true, ["Kayle"] = true, ["Bard"] = true, ["Ryze"] = true, ["Vayne"] = true,
   ["Azir"] = true, 
-	}
-	
-	ChampName = myHero.charName
-	
-	if not ChampSupportedList[ChampName] then 
-	PrintChat("<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"..
-	"<font color=\"#01cc9c\"><b> Champion not supported.</b></font>")
-	return 
-	end
+  }
+  
+  ChampName = myHero.charName
+  
+  if not ChampSupportedList[ChampName] then 
+  PrintChat("<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"..
+  "<font color=\"#01cc9c\"><b> Champion not supported.</b></font>")
+  return 
+  end
 
   if not FileExist(LIB_PATH .. "/SimpleLib.lua") then
   PrintChat("<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"..
@@ -24,48 +24,48 @@ local AutoUpdate = true
 assert(load(Base64Decode("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"), nil, "bt", _ENV))() ScriptStatus("PCFGEFCDFDI")  
   -- Script Status --
 
-	function OnLoad()
-	require 'SimpleLib'
-	PrintChat("<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"..
-	"<font color=\"#01cc9c\"><b> Loaded: </b></font>".."<font color=\"#b71c1c\"><b>"..ChampName.."</b></font>")
-	BaseMenu()
-	CheckSummoner()
-	Skills()
+  function OnLoad()
+  require 'SimpleLib'
+  PrintChat("<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"..
+  "<font color=\"#01cc9c\"><b> Loaded: </b></font>".."<font color=\"#b71c1c\"><b>"..ChampName.."</b></font>")
+  BaseMenu()
+  CheckSummoner()
+  Skills()
   OrbwalkManager:LoadCommonKeys(Menu.Keys)
   DelayAction(function() FindUpdates() end,1.5)
-	ts = _SimpleTargetSelector(TARGET_LESS_CAST_PRIORITY, 1100, DAMAGE_MAGICAL)
+  ts = _SimpleTargetSelector(TARGET_LESS_CAST_PRIORITY, 1100, DAMAGE_MAGICAL)
   ts:AddToMenu(Menu)
-	enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
+  enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
   jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
   Mobs = MinionManager()
-	end
+  end
 
-	function BaseMenu()
+  function BaseMenu()
   BlockLast = {["Bard"] = true, ["TwistedFate"] = true, ["Vayne"] = true, ["Azir"] = true}
   BlockLane = {["Bard"] = true,}
   BlockJung = {["Azir"] = true,}
   BlockHarass = {["Vayne"] = true,}
 
-	Menu = scriptConfig("Slider Bundle: "..ChampName, "SliderBundle"..ChampName)
-	
-	Menu:addSubMenu("Combo", "combo")
+  Menu = scriptConfig("Slider Bundle: "..ChampName, "SliderBundle"..ChampName)
+  
+  Menu:addSubMenu("Combo", "combo")
 
   if not BlockHarass[ChampName] then
-	Menu:addSubMenu("Harass", "harass")
+  Menu:addSubMenu("Harass", "harass")
   end
 
   if not BlockLast[ChampName] then
-	Menu:addSubMenu("LastHit", "lasthit")
-	end
+  Menu:addSubMenu("LastHit", "lasthit")
+  end
 
   if not BlockLane[ChampName] then
-	Menu:addSubMenu("LaneClear", "laneclear")
+  Menu:addSubMenu("LaneClear", "laneclear")
   end
   if not BlockJung[ChampName] then
-	Menu:addSubMenu("JungleClear", "jungleclear")
-	end
-	Menu:addSubMenu("KillSteal", "killsteal")
-	
+  Menu:addSubMenu("JungleClear", "jungleclear")
+  end
+  Menu:addSubMenu("KillSteal", "killsteal")
+  
   Menu:addSubMenu("Keys Settings", "Keys")
 
   Menu:addSubMenu("Items Settings", "items")
@@ -88,22 +88,22 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   _G.ITEM_5 = 10
   _G.ITEM_6 = 11
   _G.ITEM_7 = 12
-	end
+  end
 
-	function CheckSummoner()
-	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
-	if myHero:GetSpellData(SUMMONER_1).name:find("summonerflash") then Flash = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerflash") then Flash = SUMMONER_2 end
-	if myHero:GetSpellData(SUMMONER_1).name:find("summonerbar") then Heal = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbar") then Heal = SUMMONER_2 end
-	if myHero:GetSpellData(SUMMONER_1).name:find("summonerheal") then Barrier = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerheal") then Barrier = SUMMONER_2 end
-	end
+  function CheckSummoner()
+  if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then Ignite = SUMMONER_2 end
+  if myHero:GetSpellData(SUMMONER_1).name:find("summonerflash") then Flash = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerflash") then Flash = SUMMONER_2 end
+  if myHero:GetSpellData(SUMMONER_1).name:find("summonerbar") then Heal = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerbar") then Heal = SUMMONER_2 end
+  if myHero:GetSpellData(SUMMONER_1).name:find("summonerheal") then Barrier = SUMMONER_1 elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerheal") then Barrier = SUMMONER_2 end
+  end
 
-	function Skills()
-	if ChampName == "Ezreal" then
+  function Skills()
+  if ChampName == "Ezreal" then
   QSpell = _Spell({Slot = _Q, DamageName = "Q",  Range = 1150 , Width = 80, Delay = 0.5, Speed = 1200, Collision = true, Aoe = false, Type = SPELL_TYPE.LINEAR}):AddDraw()
   WSpell = _Spell({Slot = _W, DamageName = "W",  Range = 950 , Width = 80, Delay = 0.5, Speed = 1200, Collision = false, Aoe = false, Type = SPELL_TYPE.LINEAR}):AddDraw()
   RSpell = _Spell({Slot = _R, DamageName = "R",  Range = 20000 , Width = 160, Delay = 1.0, Speed = 2000, Collision = false, Aoe = false, Type = SPELL_TYPE.LINEAR})
   Ezreal()
-	elseif ChampName == "Ryze" then
+  elseif ChampName == "Ryze" then
   QSpell = _Spell({Slot = _Q, DamageName = "Q",  Range = 900 , Width = 65, Delay = 0.5, Speed = 1700, Collision = true, Aoe = false, Type = SPELL_TYPE.LINEAR}):AddDraw()
   Ryze()
   elseif ChampName == "TwistedFate" then
@@ -118,8 +118,8 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   Vayne()
   elseif ChampName == "Azir" then
   Azir()
-	end
-	end
+  end
+  end
 
   LastSpell = 0
   if ChampName == "Ezreal" then Sequence = {1,2,3,1,1,4,2,2,1,3,4,1,2,2,3,4,3,3}
@@ -204,7 +204,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   end
 
   _G.LevelSpell = function(id)
-  if GetGameVersion():lower():find("6.1") then
+  if GetGameVersion():lower():find("6.1") and Menu.AutoLvL.On then
   msg = "<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"
   local offsets = { 
   [_Q] = 0x71,
@@ -273,8 +273,8 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   end
 
   class 'MinionManager'
-	class 'Ezreal'
-	class 'Ryze'
+  class 'Ezreal'
+  class 'Ryze'
   class 'TwistedFate'
   class 'Bard'
   class 'Kayle' 
@@ -317,40 +317,40 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   end
 
   --{Ezreal
-	function Ezreal:__init()
-	VP = VPrediction()
-	AddTickCallback(function() self:Tick() end)
-	self.SkillR = { name = "Trueshot Barrage", range = math.huge, delay = 1.0, speed = 2000, width = 160, ready = false }
+  function Ezreal:__init()
+  VP = VPrediction()
+  AddTickCallback(function() self:Tick() end)
+  self.SkillR = { name = "Trueshot Barrage", range = math.huge, delay = 1.0, speed = 2000, width = 160, ready = false }
   self:Menu()
-	end
+  end
 
-	function Ezreal:Menu()
-	Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
-	Menu.combo:addParam("AutoRA", "Auto R in x enemies (1 to disable)", SCRIPT_PARAM_SLICE, 3, 1, 5, 0) 
-	Menu.combo:addParam("MaxRRange", "Max R Range", SCRIPT_PARAM_SLICE, 2000, 1000, 20000, 0)
+  function Ezreal:Menu()
+  Menu.combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+  Menu.combo:addParam("AutoRA", "Auto R in x enemies (1 to disable)", SCRIPT_PARAM_SLICE, 3, 1, 5, 0) 
+  Menu.combo:addParam("MaxRRange", "Max R Range", SCRIPT_PARAM_SLICE, 2000, 1000, 20000, 0)
 
-	Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.harass:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
-	Menu.harass:addParam("mManager", "Harass Mana", SCRIPT_PARAM_SLICE, 30, 0, 100, 0) 
+  Menu.harass:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.harass:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+  Menu.harass:addParam("mManager", "Harass Mana", SCRIPT_PARAM_SLICE, 30, 0, 100, 0) 
 
-	Menu.lasthit:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.lasthit:addParam("mManager", "LastHit Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
-	
-	Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.laneclear:addParam("mManager", "LaneClear Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
-	
-	Menu.jungleclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.jungleclear:addParam("mManager", "JungleClear Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
-	
-	Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
-	Menu.killsteal:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.killsteal:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
-	Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
-	Menu.killsteal:addParam("MinRRange", "Min R Range", SCRIPT_PARAM_SLICE, 975, 600, 3000, 0)
-	Menu.killsteal:addParam("MaxRRange", "Max R Range", SCRIPT_PARAM_SLICE, 2000, 1000, 20000, 0)
-	if Ignite then Menu.killsteal:addParam("I", "Use Ignite", SCRIPT_PARAM_ONOFF, true) end
-	end
+  Menu.lasthit:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.lasthit:addParam("mManager", "LastHit Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
+  
+  Menu.laneclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.laneclear:addParam("mManager", "LaneClear Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
+  
+  Menu.jungleclear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.jungleclear:addParam("mManager", "JungleClear Mana", SCRIPT_PARAM_SLICE, 25, 0, 100, 0) 
+  
+  Menu.killsteal:addParam("KSOn", "KillSteal", SCRIPT_PARAM_ONOFF, true)
+  Menu.killsteal:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+  Menu.killsteal:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true)
+  Menu.killsteal:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
+  Menu.killsteal:addParam("MinRRange", "Min R Range", SCRIPT_PARAM_SLICE, 975, 600, 3000, 0)
+  Menu.killsteal:addParam("MaxRRange", "Max R Range", SCRIPT_PARAM_SLICE, 2000, 1000, 20000, 0)
+  if Ignite then Menu.killsteal:addParam("I", "Use Ignite", SCRIPT_PARAM_ONOFF, true) end
+  end
 
   function Ezreal:GetDmg(spell, unit)
   if unit then
@@ -384,121 +384,121 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
   end
   end
 
-	function Ezreal:Tick()
-	if myHero.dead then return end
-	ts:update()
-	Target = ts.target
+  function Ezreal:Tick()
+  if myHero.dead then return end
+  ts:update()
+  Target = ts.target
 
   if Target and Target ~= nil and ValidTarget(Target) then
-	if OrbwalkManager:IsCombo() then 
-	self:Combo(Target)
-	end
-
-	if OrbwalkManager:IsHarass() then
-	self:Harass(Target)
-	end
-
-	if OrbwalkManager:IsLastHit() then
-	self:LastHit(Target)
-	end
+  if OrbwalkManager:IsCombo() then 
+  self:Combo(Target)
   end
 
-	if OrbwalkManager:IsClear() then
-	self:LaneClear()
-	self:JungleClear()
-	end
+  if OrbwalkManager:IsHarass() then
+  self:Harass(Target)
+  end
 
-	if Menu.combo.AutoRA >= 2 then
-	self:AutoR()
-	end
+  if OrbwalkManager:IsLastHit() then
+  self:LastHit(Target)
+  end
+  end
 
-	self:KillSteal()
-	end
+  if OrbwalkManager:IsClear() then
+  self:LaneClear()
+  self:JungleClear()
+  end
 
-	function Ezreal:AutoR()
-	if OrbwalkManager:IsCombo() then
-	for _, enemy in pairs(GetEnemyHeroes()) do
-	if GetDistance(enemy) <= Menu.combo.MaxRRange then
+  if Menu.combo.AutoRA >= 2 then
+  self:AutoR()
+  end
+
+  self:KillSteal()
+  end
+
+  function Ezreal:AutoR()
+  if OrbwalkManager:IsCombo() then
+  for _, enemy in pairs(GetEnemyHeroes()) do
+  if GetDistance(enemy) <= Menu.combo.MaxRRange then
   local CastPosition, WillHit, NumberOfHits = Prediction:GetPrediction(enemy, {Delay = 0.125, Width = 50, Speed = 1700, Range = 950, Source = myHero, Type = SPELL_TYPE.LINEAR, Collision = false, Aoe = true, TypeOfPrediction = "VPrediction", Accuracy = 50})
   if CastPosition and WillHit and NumberOfHits >= Menu.combo.AutoRA and RSpell:IsReady() then
   CastSpell(_R, CastPosition.x, CastPosition.z)
   end
-	end
-	end
-	end
-	end
+  end
+  end
+  end
+  end
 
-	function Ezreal:Combo(unit)
-	if Menu.combo.UseQ then QSpell:Cast(unit) end
-	if Menu.combo.UseW then WSpell:Cast(unit) end
-	end
+  function Ezreal:Combo(unit)
+  if Menu.combo.UseQ then QSpell:Cast(unit) end
+  if Menu.combo.UseW then WSpell:Cast(unit) end
+  end
 
-	function Ezreal:Harass(unit)
-	if not self:ManaLow("harass") then
-	if Menu.harass.UseQ then QSpell:Cast(unit) end
-	if Menu.harass.UseW then WSpell:Cast(unit) end
-	end
-	end
+  function Ezreal:Harass(unit)
+  if not self:ManaLow("harass") then
+  if Menu.harass.UseQ then QSpell:Cast(unit) end
+  if Menu.harass.UseW then WSpell:Cast(unit) end
+  end
+  end
 
-	function Ezreal:LastHit()
-	enemyMinions:update()
-	if not self:ManaLow("lasthit") then
-	for i, minion in pairs(enemyMinions.objects) do
-	local health = minion.health
-	if Menu.lasthit.UseQ and health <= self:GetDmg(_Q, minion) then
-	if not OrbwalkManager:CanAttack() then
-	if OrbwalkManager.AA.LastTarget and minion.networkID ~= OrbwalkManager.AA.LastTarget.networkID and not OrbwalkManager:IsAttacking() then
- 	QSpell:Cast(minion)
-	end
-	end
-	end
-	end
-	end
-	end
+  function Ezreal:LastHit()
+  enemyMinions:update()
+  if not self:ManaLow("lasthit") then
+  for i, minion in pairs(enemyMinions.objects) do
+  local health = minion.health
+  if Menu.lasthit.UseQ and health <= self:GetDmg(_Q, minion) then
+  if not OrbwalkManager:CanAttack() then
+  if OrbwalkManager.AA.LastTarget and minion.networkID ~= OrbwalkManager.AA.LastTarget.networkID and not OrbwalkManager:IsAttacking() then
+  QSpell:Cast(minion)
+  end
+  end
+  end
+  end
+  end
+  end
 
-	function Ezreal:LaneClear()
-	if not self:ManaLow("laneclear") then
-	if Menu.laneclear.UseQ then QSpell:LaneClear() end
-	end
-	end
+  function Ezreal:LaneClear()
+  if not self:ManaLow("laneclear") then
+  if Menu.laneclear.UseQ then QSpell:LaneClear() end
+  end
+  end
 
-	function Ezreal:JungleClear()
-	if not self:ManaLow("jungleclear") then
-	if Menu.jungleclear.UseQ then QSpell:JungleClear() end
-	end
-	end
+  function Ezreal:JungleClear()
+  if not self:ManaLow("jungleclear") then
+  if Menu.jungleclear.UseQ then QSpell:JungleClear() end
+  end
+  end
 
-	function Ezreal:ManaLow(menu)
+  function Ezreal:ManaLow(menu)
   if menu == "harass" then if myHero.mana < (myHero.maxMana * ( Menu.harass.mManager / 100)) then return true else return false end end
   if menu == "lasthit" then if myHero.mana < (myHero.maxMana * ( Menu.lasthit.mManager / 100)) then return true else return false end end
   if menu == "laneclear" then if myHero.mana < (myHero.maxMana * ( Menu.laneclear.mManager / 100)) then return true else return false end end
   if menu == "jungleclear" then if myHero.mana < (myHero.maxMana * ( Menu.jungleclear.mManager / 100)) then return true else return false end end
-	end
+  end
 
-	function Ezreal:KillSteal()
-	for _, unit in pairs(GetEnemyHeroes()) do
-	local health = unit.health
-	if not Menu.killsteal.KSOn then return end
-	if health <= self:GetDmg(_Q, unit) and GetDistance(unit) <= 1000 and Menu.killsteal.UseQ and QSpell:IsReady() then
-	QSpell:Cast(unit)
-	end
+  function Ezreal:KillSteal()
+  for _, unit in pairs(GetEnemyHeroes()) do
+  local health = unit.health
+  if not Menu.killsteal.KSOn then return end
+  if health <= self:GetDmg(_Q, unit) and GetDistance(unit) <= 1000 and Menu.killsteal.UseQ and QSpell:IsReady() then
+  QSpell:Cast(unit)
+  end
 
-	if health <= self:GetDmg(_W, unit) and Menu.killsteal.UseW and GetDistance(unit) <= 1150 and WSpell:IsReady() then
-	WSpell:Cast(unit)
-	end
+  if health <= self:GetDmg(_W, unit) and Menu.killsteal.UseW and GetDistance(unit) <= 1150 and WSpell:IsReady() then
+  WSpell:Cast(unit)
+  end
 
-	if health <= self:GetDmg(_R, unit) and Menu.killsteal.UseR and GetDistance(unit) <= Menu.killsteal.MaxRRange and GetDistance(unit) >= Menu.killsteal.MinRRange and RSpell:IsReady() then
-	RSpell:Cast(unit)
-	end
+  if health <= self:GetDmg(_R, unit) and Menu.killsteal.UseR and GetDistance(unit) <= Menu.killsteal.MaxRRange and GetDistance(unit) >= Menu.killsteal.MinRRange and RSpell:IsReady() then
+  RSpell:Cast(unit)
+  end
 
-	if Ignite then
-	if health <= 40 + (20 * myHero.level) and Menu.killsteal.Ignite and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) and GetDistance(unit) <= 875 then
-	CastSpell(Ignite, unit)
-	end
-	end
-	end
-	end
-	--Ezreal}
+  if Ignite then
+  if health <= 40 + (20 * myHero.level) and Menu.killsteal.Ignite and myHero:CanUseSpell(Ignite) == READY and ValidTarget(unit) and GetDistance(unit) <= 875 then
+  CastSpell(Ignite, unit)
+  end
+  end
+  end
+  end
+  --Ezreal}
 
   --{Ryze
   function Ryze:__init()
