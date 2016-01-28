@@ -204,7 +204,7 @@ local AutoUpdate = true
   end
 
   _G.LevelSpell = function(id)
-  if GetGameVersion():lower():find("6.1") and Menu.AutoLvL.On then
+  if GetGameVersion():lower():find("6.2") and Menu.AutoLvL.On then
   msg = "<font color=\"#ff0000\">[</font><font color=\"#a05b6b\">S</font><font color=\"#40b5d6\">l</font><font color=\"#40b5d6\">i</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">e</font><font color=\"#40b5d6\">r</font><font color=\"#40b5d6\"> </font><font color=\"#40b5d6\">B</font><font color=\"#40b5d6\">u</font><font color=\"#40b5d6\">n</font><font color=\"#40b5d6\">d</font><font color=\"#40b5d6\">l</font><font color=\"#a05b6b\">e</font><font color=\"#ff0000\">]</font>"
   local offsets = { 
   [_Q] = 0x41,
