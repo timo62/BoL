@@ -8,38 +8,54 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 class 'AutoLvl'
 function AutoLvl:__init()
-	self.Version = 0.3
+	self.Version = 0.4
 	self.LastSpell = 0
 	self:Menu()
 	self:CheckUpdate()
-  	AddTickCallback(function() self:Tick() end)
-  	self:SendMsg("[Loaded]")
+  AddTickCallback(function() self:Tick() end)
+  self:SendMsg("[Loaded]")
 end
 
 function AutoLvl:Menu()
-  	Menu = scriptConfig("Hr AutoLeveler", "HrAutoLvl")
-  	Menu:addParam("On", "Active AutoLeveler", SCRIPT_PARAM_ONOFF, true) 
+  Menu = scriptConfig("Hr AutoLeveler", "HrAutoLvl")
+  Menu:addParam("On", "Active AutoLeveler", SCRIPT_PARAM_ONOFF, true) 
 end
 
 function AutoLvl:SendMsg(msg)
 	PrintChat("<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>".."<font color=\"#00D2FF\"><b>"..msg.."</b></font>")
 end
 
+  ListBlock = {
+  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = true,
+  }
+
 function AutoLvl:Tick()
-  	if Menu.On and os.clock() - self.LastSpell >= 1.0 then
-  	self.LastSpell = os.clock()  
-  	DelayAction(function() autoLevelSetSequence(Sequence) end,0.5)
+  if ListBlock[myHero.charName] then return end
+  if Menu.On and os.clock() - self.LastSpell >= 1.0 then
+  self.LastSpell = os.clock()  
+  DelayAction(function() autoLevelSetSequence(Sequence) end,0.5)
 end
+end
+
+function OnRecvPacket(p)
+  if not ListBlock[myHero.charName] then return end
+  if p.header == 0x0023 then
+  p.pos = 2
+  local character = objManager:GetObjectByNetworkId(p:DecodeF())
+  if character.valid and character.charName == myHero.charName then
+  DelayAction(function()LevelSpell(Sequence[myHero.level]) end,0.5)
+  end
+  end
 end
 
 _G.LevelSpell = function(id)
 if GetGameVersion():lower():find("6.2") and Menu.On then
 local msg = "<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>"
 local offsets = { 
-[_Q] = 0x41,
-[_W] = 0xFC,
-[_E] = 0x64,
-[_R] = 0xAA,
+[_Q] = 0x41, [1] = 0x41,
+[_W] = 0xFC, [2] = 0xFC,
+[_E] = 0x64, [3] = 0x64,
+[_R] = 0xAA, [4] = 0xAA,
 }
 local p = CLoLPacket(0x0153)
 p.vTable = 0xFE9264
@@ -61,31 +77,31 @@ local serveradress = "raw.githubusercontent.com"
 local scriptadress = "/HiranN/BoL/master"
 local scriptname = "HR AutoLvl"
 function AutoLvl:CheckUpdate()
-  	local ServerVersionDATA = GetWebResult(serveradress , scriptadress.."/"..scriptname..".version")
-  	if ServerVersionDATA then
-    local ServerVersion = tonumber(ServerVersionDATA)
-    if ServerVersion then
-    if ServerVersion > tonumber(self.Version) then
-    self:SendMsg("<font color=\"#00D2FF\"><b>Updating, don't press F9.</b></font>")
-    self:DownloadUpdate()
-    else
-    self:SendMsg("<font color=\"#00D2FF\"><b>You have the latest version.</b></font>")
-    end
-    else
-    self:SendMsg("<font color=\"#00D2FF\"><b>An error occured, while updating, please reload.</b></font>")
-    end
-  	else
-  	self:SendMsg("<font color=\"#00D2FF\"><b>Could not connect to update Server.</b></font>")
+  local ServerVersionDATA = GetWebResult(serveradress , scriptadress.."/"..scriptname..".version")
+  if ServerVersionDATA then
+  local ServerVersion = tonumber(ServerVersionDATA)
+  if ServerVersion then
+  if ServerVersion > tonumber(self.Version) then
+  self:SendMsg("<font color=\"#00D2FF\"><b>Updating, don't press F9.</b></font>")
+  self:DownloadUpdate()
+  else
+  self:SendMsg("<font color=\"#00D2FF\"><b>You have the latest version.</b></font>")
+  end
+  else
+  self:SendMsg("<font color=\"#00D2FF\"><b>An error occured, while updating, please reload.</b></font>")
+  end
+  else
+  self:SendMsg("<font color=\"#00D2FF\"><b>Could not connect to update Server.</b></font>")
 end
 
 function AutoLvl:DownloadUpdate()
-  	DownloadFile("http://"..serveradress..scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function ()
-  	self:SendMsg("<font color=\"#00D2FF\"><b>Updated, press 2x F9.</b></font>")
-  	end)
+  DownloadFile("http://"..serveradress..scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function ()
+  self:SendMsg("<font color=\"#00D2FF\"><b>Updated, press 2x F9.</b></font>")
+  end)
 end
 end
 
-if myHero.charName == 'Shyvana' then
+  if myHero.charName == 'Shyvana' then
   Sequence = {2,1,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
 	elseif myHero.charName == 'Gragas' then
   Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
@@ -169,7 +185,7 @@ if myHero.charName == 'Shyvana' then
   Sequence = {2,1,3,2,2,4,1,2,2,1,4,1,1,3,3,4,3,3}
 	elseif myHero.charName == 'MissFortune' then
   Sequence = {1,2,3,1,2,4,1,1,2,1,4,2,2,3,3,4,3,3}
-  	elseif myHero.charName == 'Corki' then
+  elseif myHero.charName == 'Corki' then
   Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
 	elseif myHero.charName == 'Draven' then
   Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
@@ -241,7 +257,7 @@ if myHero.charName == 'Shyvana' then
   Sequence = {1,3,2,1,1,4,3,1,1,3,4,3,3,2,2,4,2,2}
 	elseif myHero.charName == 'Nocturne' then
   Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-  	elseif myHero.charName == 'Olaf' then
+  elseif myHero.charName == 'Olaf' then
   Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
 	elseif myHero.charName == 'Pantheon' then
   Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
@@ -285,9 +301,9 @@ if myHero.charName == 'Shyvana' then
   Sequence = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
 	elseif myHero.charName == 'Talon' then
   Sequence = {2,3,2,1,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-  	elseif myHero.charName == 'Taric' then
+  elseif myHero.charName == 'Taric' then
   Sequence = {3,1,2,3,3,4,3,2,3,2,4,2,2,1,1,4,1,1}
-  	elseif myHero.charName == 'Teemo' then
+  elseif myHero.charName == 'Teemo' then
   Sequence = {3,1,2,1,3,4,1,3,1,3,4,3,1,2,2,4,2,2}
 	elseif myHero.charName == 'Thresh' then
   Sequence = {3,1,2,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
@@ -317,7 +333,7 @@ if myHero.charName == 'Shyvana' then
   Sequence = {2,3,1,1,1,4,1,2,3,1,4,3,2,3,2,4,2,3}
 	elseif myHero.charName == 'Viktor' then
   Sequence = {1,3,3,2,3,4,3,1,3,1,4,1,2,1,2,4,2,2}
-  	elseif myHero.charName == 'Vladimir' then
+  elseif myHero.charName == 'Vladimir' then
   Sequence = {1,2,1,3,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
 	elseif myHero.charName == 'Volibear' then
   Sequence = {3,2,1,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1}
@@ -345,6 +361,6 @@ if myHero.charName == 'Shyvana' then
   Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
 	elseif myHero.charName == 'Illaoi' then
   Sequence = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-  	elseif myHero.charName == 'Jhin' then
+  elseif myHero.charName == 'Jhin' then
   Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
 end
