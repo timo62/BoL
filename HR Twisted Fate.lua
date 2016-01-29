@@ -11,7 +11,7 @@ local selected = nil
 local lastUse,lastUse2 = 0,0
 local WREADY = false
 local SelectedCard = nil
-local LocalVersion = "3.1"
+local LocalVersion = "3.2"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -181,7 +181,6 @@ end
 	
 	function OnTick()
 	if myHero.dead then return end
-	
 	ts:update()
 	
 	Target = GetCustomTarget()
@@ -518,14 +517,14 @@ function ComboQW(unit)
 	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
  
 	if HitChance >= 2 then
-	CastSpell(_Q, CastPosition.x, CastPosition.z)
+	DelayAction(function() CastSpell(_Q, CastPosition.x, CastPosition.z) end,0.2)
 	end
 	end
 	elseif Menu.pred == 2 then
 	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
   
 	if QHitChance > 0 then
-    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
+    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.2)
 end
 end
 	elseif HaveBuffs(unit, buffsList) then
@@ -534,30 +533,30 @@ end
 	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
  
 	if HitChance >= 2 then
-	CastSpell(_Q, CastPosition.x, CastPosition.z)
+	DelayAction(function() CastSpell(_Q, CastPosition.x, CastPosition.z) end,0.2)
 	end
 	end
 	elseif Menu.pred == 2 then
 	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
   
 	if QHitChance > 0 then
-    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
+    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.2)
 end
 end
-	elseif myHero:GetSpellData(_W).currentCd >= 1.5 then
+	elseif myHero:GetSpellData(_W).currentCd >= 0.5 and myHero:GetSpellData(_W).currentCd <= 4.5 then
 	if Menu.pred == 1 then
 	if unit ~= nil and GetDistance(unit) <= SkillQ.range and myHero:CanUseSpell(_Q) == READY then
 	CastPosition,  HitChance,  Position = VP:GetLineCastPosition(unit, SkillQ.delay, SkillQ.width, SkillQ.range, SkillQ.speed, myHero, false)
  
 	if HitChance >= 2 then
-	CastSpell(_Q, CastPosition.x, CastPosition.z)
+	DelayAction(function() CastSpell(_Q, CastPosition.x, CastPosition.z) end,0.2)
 	end
 	end
 	elseif Menu.pred == 2 then
 	local QPos, QHitChance = HPred:GetPredict(HP_Q, unit, myHero)
   
 	if QHitChance > 0 then
-    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.25)
+    DelayAction(function() CastSpell(_Q, QPos.x, QPos.z) end,0.2)
 end
 end
 	end
