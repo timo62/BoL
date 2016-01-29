@@ -4,7 +4,7 @@ function OnLoad() AutoLvl() end
 
 class 'AutoLvl'
 function AutoLvl:__init()
-	self.Version = 0.1
+	self.Version = 0.2
 	self.LastSpell = 0
 	self:Menu()
 	self:CheckUpdate()
@@ -341,4 +341,6 @@ if myHero.charName == 'Shyvana' then
   Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
 	elseif myHero.charName == 'Illaoi' then
   Sequence = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
+  	elseif myHero.charName == 'Jhin' then
+  Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
 end
