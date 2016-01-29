@@ -26,11 +26,18 @@ function AutoLvl:SendMsg(msg)
 end
 
   ListBlock = {
-  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = true,
+  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = true, ["Udyr"] = true,
   }
 
 function AutoLvl:Tick()
-  if ListBlock[myHero.charName] then return end
+  if ListBlock[myHero.charName] then 
+  if myHero.level == 1 and myHero:GetSpellData(_Q).level <= 0 and myHero:GetSpellData(_W).level <= 0 and myHero:GetSpellData(_E).level <= 0 and os.clock() - self.LastSpell >= 1.0 then
+  self.LastSpell = os.clock()  
+  DelayAction(function()LevelSpell(Sequence[myHero.level]) end,0.5)
+  end
+  return 
+  end
+  
   if Menu.On and os.clock() - self.LastSpell >= 1.0 then
   self.LastSpell = os.clock()  
   DelayAction(function() autoLevelSetSequence(Sequence) end,0.5)
