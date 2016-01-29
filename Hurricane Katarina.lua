@@ -347,10 +347,10 @@ function Katarina:Damage(spell, unit)
 
 end
 
+local serveradress = "raw.githubusercontent.com"
+local scriptadress = "/HiranN/BoL/master"
+local scriptname = "Hurricane Katarina"
 function Katarina:CheckUpdate()
-	local serveradress = "raw.githubusercontent.com"
-	local scriptadress = "/HiranN/BoL/master"
-	local scriptname = "Hurricane Katarina"
   	local ServerVersionDATA = GetWebResult(serveradress , scriptadress.."/"..scriptname..".version")
   	if ServerVersionDATA then
     local ServerVersion = tonumber(ServerVersionDATA)
