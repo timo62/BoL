@@ -26,7 +26,7 @@ function AutoLvl:SendMsg(msg)
 end
 
   ListBlock = {
-  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = true, ["Udyr"] = true,
+  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = true, ["Udyr"] = true, ["Elise"] = true,
   }
 
 function AutoLvl:Tick()
@@ -37,7 +37,7 @@ function AutoLvl:Tick()
   end
   return 
   end
-  
+
   if Menu.On and os.clock() - self.LastSpell >= 1.0 then
   self.LastSpell = os.clock()  
   DelayAction(function() autoLevelSetSequence(Sequence) end,0.5)
