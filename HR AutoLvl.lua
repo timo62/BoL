@@ -26,7 +26,7 @@ function AutoLvl:SendMsg(msg)
 end
 
   ListBlock = {
-  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = true, ["Elise"] = true,
+  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = false, ["Elise"] = true,
   }
 
 function AutoLvl:Tick()
@@ -166,7 +166,7 @@ end
 	elseif myHero.charName == 'Cassiopeia' then
   Sequence = {3,1,2,3,3,4,1,1,3,3,4,1,1,2,2,4,2,2}
 	elseif myHero.charName == 'Orianna' then
-  Sequence = {1,2,3,1,1,4,2,1,3,1,4,2,3,2,2,4,3,3}
+  Sequence = {3,1,2,1,1,4,2,1,3,1,4,2,3,2,2,4,3,3}
 	elseif myHero.charName == 'Lux' then
   Sequence = {3,1,2,3,3,4,1,2,3,1,4,2,3,1,1,4,2,2}
 	elseif myHero.charName == 'Diana' then
