@@ -12,7 +12,7 @@ class 'Katarina'
 function Katarina:__init()
 	require 'SimpleLib'
 	Ulting = false
-	self.Version = 0.13
+	self.Version = 0.14
 	self.LastSpell = 0
 	self.Sequence = {1,2,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3}
 	self:SendMsg("[Loaded Version: "..self.Version.."]")
@@ -371,10 +371,10 @@ function Katarina:CheckUpdate()
   	else
   	self:SendMsg("<font color=\"#00D2FF\"><b>Could not connect to update Server.</b></font>")
 end
+end
 
 function Katarina:DownloadUpdate()
   	DownloadFile("http://"..serveradress..scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function ()
   	self:SendMsg("<font color=\"#00D2FF\"><b>Updated, press 2x F9.</b></font>")
   	end)
-end
 end
