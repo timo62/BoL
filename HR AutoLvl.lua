@@ -26,7 +26,7 @@ function AutoLvl:SendMsg(msg)
 end
 
   ListBlock = {
-  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = false, ["Elise"] = true,
+  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = true, ["Elise"] = true,
   }
 
 function AutoLvl:Tick()
