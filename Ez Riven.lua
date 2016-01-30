@@ -18,7 +18,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 local serveradress = "raw.githubusercontent.com"
-local scriptadress = "/timo62/GetChallengerEz/master"
+local scriptadress = "/HiranN/BoL/master"
 local scriptname = "Ez Riven"
 local scriptmsg = "<font color=\"#06CD51\"><b>[Ez Riven]</b></font>"
     function FindUpdates()
