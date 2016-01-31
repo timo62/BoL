@@ -1,4 +1,4 @@
-local LocalVersion = "0.7"
+local LocalVersion = "0.8"
 local AutoUpdate = true
 
 if myHero.charName ~= "Riven" then return end
@@ -566,7 +566,7 @@ function OnAnimation(unit, animation)
 
 	if unit.isMe then
 	if animation == "Spell1a" or animation == "Spell1b" then
-  	DelayAction(function() DoEmote(1) end, 0.3-GetLatency()/1000)
+  	DelayAction(function() DoEmote(0) end, 0.3-GetLatency()/1000)
   	ResetAAs()
     LastQ = GetTickCount()
 	elseif animation == "Spell1c" then
