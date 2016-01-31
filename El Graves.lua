@@ -242,7 +242,6 @@ function Graves:Ready(spell)
 end
 
 function Graves:Draws()
-DrawText3D("Bullets: "..self.Bullets,myHero.x-100, myHero.y-50, myHero.z, 20, 0xFF631DB4)
 	if Menu.Draws.CD then self:DrawCooldown() end
 	if Menu.Draws.Q and self:Ready(_Q) then DrawCircle(myHero.x, myHero.y, myHero.z, self:SpellManager(_Q, range), ARGB(Menu.Draws.Colors.Q[1],Menu.Draws.Colors.Q[2],Menu.Draws.Colors.Q[3],Menu.Draws.Colors.Q[4])) end
 	if Menu.Draws.W and self:Ready(_W) then DrawCircle(myHero.x, myHero.y, myHero.z, self:SpellManager(_W, range), ARGB(Menu.Draws.Colors.W[1],Menu.Draws.Colors.W[2],Menu.Draws.Colors.W[3],Menu.Draws.Colors.W[4])) end
