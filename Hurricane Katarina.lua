@@ -12,7 +12,7 @@ class 'Katarina'
 function Katarina:__init()
 	require 'SimpleLib'
 	Ulting = false
-	self.Version = 0.14
+	self.Version = 0.15
 	self.LastSpell = 0
 	self.Sequence = {1,2,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3}
 	self:SendMsg("[Loaded Version: "..self.Version.."]")
@@ -97,14 +97,15 @@ function Katarina:Menu()
   	--Auto Leveler Menu--
   	Menu.AutoLeveler:addParam("Active", "Use AutoLeveler", SCRIPT_PARAM_ONOFF, true) 
   	--Auto Leveler Menu--
-
+	end
+	
 OrbwalkManager:LoadCommonKeys(Menu.Keys)
 ts = _SimpleTargetSelector(TARGET_LESS_CAST_PRIORITY, 775, DAMAGE_MAGICAL)
 ts:AddToMenu(Menu)
 enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
 jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
 end
-end
+
 
 function Katarina:SendMsg(msg)
 	PrintChat("<font color=\"#831928\"><b>[Hurricane Katarina]</b></font> ".."<font color=\"#00D2FF\"><b>"..msg.."</b></font>")
