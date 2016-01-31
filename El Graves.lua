@@ -14,7 +14,7 @@ function Graves:__init()
 	require 'SimpleLib'
 	require 'VPrediction'
 	VP = VPrediction()
-	self.Version = 0.12
+	self.Version = 0.13
 	self.LastSpell = 0
 	self.Bullets = 2
 	self.Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
@@ -76,6 +76,7 @@ function Graves:Menu()
 
   	--Manual Menu--
   	Menu.Manual:addParam("Use", "Key to use Manual R", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("T"))
+ 	Menu.Manual:addParam("Mode", "Mode", SCRIPT_PARAM_LIST, 3, {"Target", "Near Mouse", "Low HP"})
   	--Manual Menu--
 
   	--Draws Menu--
@@ -99,6 +100,8 @@ function Graves:Menu()
 
 OrbwalkManager:LoadCommonKeys(Menu.Keys)
 ts = _SimpleTargetSelector(TARGET_LESS_CAST_PRIORITY, 1600, DAMAGE_MAGICAL)
+ts2 = TargetSelector(TARGET_LOW_HP, 1600, DAMAGE_MAGICAL)
+ts3 = TargetSelector(TARGET_NEAR_MOUSE, 1600, DAMAGE_MAGICAL)
 ts:AddToMenu(Menu)
 enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
 jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
@@ -245,7 +248,19 @@ function Graves:CastE(unit)
 end
 
 function Graves:CastManual()
+	if Menu.Manual.Mode == 1 then
 	self:CastR(Target)
+	elseif Menu.Manual.Mode == 2 then
+	ts3:update()
+	if ts3.target ~= nil then
+	self:CastR(ts3.target)
+	end
+	elseif Menu.Manual.Mode == 3 then
+	ts2:update()
+	if ts2.target ~= nil then
+	self:CastR(ts2.target)
+	end
+	end
 end
 
 function Graves:CastR(unit)
