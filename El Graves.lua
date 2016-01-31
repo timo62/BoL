@@ -14,7 +14,7 @@ function Graves:__init()
 	require 'SimpleLib'
 	require 'VPrediction'
 	VP = VPrediction()
-	self.Version = 0.2
+	self.Version = 0.12
 	self.LastSpell = 0
 	self.Bullets = 2
 	self.Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
