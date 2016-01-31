@@ -14,7 +14,7 @@ function Graves:__init()
 	require 'SimpleLib'
 	require 'VPrediction'
 	VP = VPrediction()
-	self.Version = 0.1
+	self.Version = 0.2
 	self.LastSpell = 0
 	self.Bullets = 2
 	self.Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
@@ -65,7 +65,6 @@ function Graves:Menu()
 
   	--LaneClear Menu--
 	Menu.LaneClear:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-	Menu.LaneClear:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true) 
   	--LaneClear Menu--
 
   	--KillSteal Menu--
@@ -157,12 +156,10 @@ function Graves:LaneClear()
   	enemyMinions:update()
   	jungleMinions:update()
  	for i, minion in pairs(enemyMinions.objects) do
-	if Menu.LaneClear.UseQ then self:CastQ(minion) end
-	if Menu.LaneClear.UseE then self:CastE(minion) end
+	if Menu.LaneClear.UseQ then self:FarmQ(minion) end
 	end
  	for i, minion in pairs(jungleMinions.objects) do
 	if Menu.LaneClear.UseQ then self:CastQ(minion) end
-	if Menu.LaneClear.UseE then self:CastE(minion) end
 end
 end
 
@@ -199,9 +196,35 @@ if id == _R then PrintChat(msg.."<font color=\"#695B45\"><b> Auto Leveler: </b><
 end
 end
 
+function Graves:FarmQ(unit)
+	if ValidTarget(unit) and self:Ready(_Q) then 
+    local CastPosition, NumHit = self:GetBestLineFarmPosition(self:SpellManager(_Q, range), 125, enemyMinions.objects)
+    if CastPosition then
+    CastSpell(_Q, CastPosition.x, CastPosition.z)
+end
+end
+end
+
+function Graves:GetBestLineFarmPosition(range, width, objects)
+ 	local BestPos 
+ 	local BestHit = 0
+  	for i, object in ipairs(objects) do
+  	local EndPos = Vector(myHero.pos) + range * (Vector(object) - Vector(myHero.pos)):normalized()
+  	local hit = CountObjectsOnLineSegment(myHero.pos, EndPos, width, objects)
+    if hit > BestHit then
+    BestHit = hit
+    BestPos = Vector(object)
+    if BestHit == #objects then
+    break
+    end
+    end
+  	end
+  	return BestPos, BestHit
+end
+
 function Graves:CastQ(unit)
 	if ValidTarget(unit) and self:Ready(_Q) then 
-    local CastPosition, HitChance, Position = VP:GetLineCastPosition(unit, 0.25, 100, self:SpellManager(_Q, range), 1800, myHero, false)
+    local CastPosition, HitChance, Position = VP:GetLineCastPosition(unit, 0.25, 125, self:SpellManager(_Q, range), 1800, myHero, false)
     if CastPosition and HitChance >= 2 and GetDistance(CastPosition) < self:SpellManager(_Q, range) then
     CastSpell(_Q, CastPosition.x, CastPosition.z)
     end
