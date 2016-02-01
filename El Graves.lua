@@ -175,7 +175,7 @@ end
 end
 
 _G.LevelSpell = function(id)
-if GetGameVersion():lower():find("6.2") and Menu.AutoLeveler.Active then
+if (string.find(GetGameVersion(), 'Releases/6.2') ~= nil) and Menu.AutoLeveler.Active then
 msg = "<font color=\"#5E9C19\"><b>[El Graves]</b></font>"
 local offsets = { 
 [_Q] = 0x41,
