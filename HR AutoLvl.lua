@@ -57,7 +57,7 @@ function OnRecvPacket(p)
 end
 
 _G.LevelSpell = function(id)
-if GetGameVersion():lower():find("6.2") and Menu.On then
+if (string.find(GetGameVersion(), 'Releases/6.2') ~= nil) and Menu.On then
 local msg = "<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>"
 local offsets = { 
 [_Q] = 0x41, [1] = 0x41,
