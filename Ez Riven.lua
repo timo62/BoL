@@ -245,7 +245,7 @@ function OnTick()
 end
 
   _G.LevelSpell = function(id)
-  if GetGameVersion():lower():find("6.2") and Menu.AutoLvL.On then
+  if (string.find(GetGameVersion(), 'Releases/6.2') ~= nil) and Menu.AutoLvL.On then
   msg = "<font color=\"#06CD51\"><b>[Ez Riven]</b></font>"
   local offsets = { 
   [_Q] = 0x41,
