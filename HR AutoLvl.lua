@@ -10,17 +10,49 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 class 'AutoLvl'
 function AutoLvl:__init()
-  self.Version = 0.6
+  self.Version = 0.7
   self.LastSpell = 0
   self:Menu()
   self:CheckUpdate()
   AddTickCallback(function() self:Tick() end)
   self:SendMsg("[Loaded]")
+  self:SendMsg("[Turned to OFF. Turn ON in Menu]")
+  Sequence = {}
 end
 
 function AutoLvl:Menu()
-  Menu = scriptConfig("Hr AutoLeveler", "HrAutoLvl")
+  Menu = scriptConfig("Hr AutoLeveler", "HrAutoLvl"..myHero.charName)
   Menu:addParam("On", "Active AutoLeveler", SCRIPT_PARAM_ONOFF, true) 
+  Menu:addSubMenu("Setup levels", "Levels")
+  Menu.Levels:addSubMenu("Levels", "ll")
+  Menu.Levels:addParam("Changer", "Setup level skills", SCRIPT_PARAM_LIST, 1, {"Automatic", "Manual"}) 
+
+  if Menu.Levels.Changer == 1 then
+  Menu.Levels.ll:addParam("info", "Automatic", SCRIPT_PARAM_INFO, "")
+  elseif Menu.Levels.Changer == 2 then
+  for i = 1, 18 do
+  self.MenuPP = tostring(i)
+  Menu.Levels.ll:addParam("A"..self.MenuPP, "Up level "..i..": ", SCRIPT_PARAM_LIST, 0, {"Q", "W", "E", "R"}) 
+  end
+  end
+
+  Menu.Levels:setCallback("Changer", function(Value) 
+  if Value == 1 then
+  Menu.Levels.ll:addParam("info", "Automatic", SCRIPT_PARAM_INFO, "")
+  for i = 1, 18 do
+  self.MenuPP = tostring(i)
+  Menu.Levels.ll:removeParam("A"..self.MenuPP)
+  end 
+  elseif Value == 2 then 
+  Menu.Levels.ll:removeParam("info")
+  for i = 1, 18 do
+  self.MenuPP = tostring(i)
+  Menu.Levels.ll:addParam("A"..self.MenuPP, "Up level "..i..": ", SCRIPT_PARAM_LIST, 0, {"Q", "W", "E", "R"}) 
+  end
+  end
+  end)
+
+  Menu.On = false
 end
 
 function AutoLvl:SendMsg(msg)
@@ -28,13 +60,23 @@ function AutoLvl:SendMsg(msg)
 end
 
 ListBlock = {
-  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = false, ["Elise"] = true,
+  ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Elise"] = true,
 }
 
 function AutoLvl:Tick()
   if Menu.On and os.clock() - self.LastSpell >= 1.0 then
   self.LastSpell = os.clock()  
   DelayAction(function() autoLevelSetSequence(Sequence[myHero.charName]) end,0.5)
+end
+
+  if Menu.Levels.Changer == 1 then
+  self:Sequence()
+  elseif Menu.Levels.Changer == 2 then
+  Mf = Menu.Levels.ll
+  Sequence = {
+  [myHero.charName] = 
+  {Mf.A1,Mf.A2,Mf.A3,Mf.A4,Mf.A5,Mf.A6,Mf.A7,Mf.A8,Mf.A9,Mf.A10,Mf.A11,Mf.A12,Mf.A13,Mf.A14,Mf.A15,Mf.A16,Mf.A17,Mf.A18},
+  }
 end
 end
 
@@ -97,6 +139,8 @@ function AutoLvl:DownloadUpdate()
 end
 end
 
+
+function AutoLvl:Sequence()
   Sequence = {
   ["Shyvana"] = {2,1,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
   ["Gragas"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
@@ -230,3 +274,4 @@ end
   ["Illaoi"] = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
   ["Jhin"] = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
 }
+end
