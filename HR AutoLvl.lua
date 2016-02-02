@@ -1,4 +1,6 @@
-if not VIP_USER then return end
+if not VIP_USER then 
+PrintChat("<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>".."<font color=\"#00D2FF\"><b>You need to be VIP to use this script.</b></font>")
+return end
 
 function OnLoad() AutoLvl() end
 
@@ -8,7 +10,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 class 'AutoLvl'
 function AutoLvl:__init()
-  self.Version = 0.5
+  self.Version = 0.6
   self.LastSpell = 0
   self:Menu()
   self:CheckUpdate()
@@ -25,35 +27,21 @@ function AutoLvl:SendMsg(msg)
   PrintChat("<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>".."<font color=\"#00D2FF\"><b>"..msg.."</b></font>")
 end
 
-  ListBlock = {
+ListBlock = {
   ["Nidalee"] = true, ["Jayce"] = true, ["Karma"] = true, ["Orianna"] = false, ["Elise"] = true,
-  }
+}
 
 function AutoLvl:Tick()
-  if ListBlock[myHero.charName] then
-  local Block = true 
-  if myHero.level == 1 and myHero:GetSpellData(_Q).level <= 0 and myHero:GetSpellData(_W).level <= 0 and myHero:GetSpellData(_E).level <= 0 and Block then
-  Block = false
-  DelayAction(function()LevelSpell(Sequence[myHero.charName][myHero.level]) end,0.5)
-  end
-  return 
-  end
-
   if Menu.On and os.clock() - self.LastSpell >= 1.0 then
   self.LastSpell = os.clock()  
   DelayAction(function() autoLevelSetSequence(Sequence[myHero.charName]) end,0.5)
 end
 end
 
-function OnRecvPacket(p)
-  if not ListBlock[myHero.charName] then return end
-  if p.header == 0x0023 then
-  p.pos = 2
-  local character = objManager:GetObjectByNetworkId(p:DecodeF())
-  if character.valid and character.charName == myHero.charName then
-  DelayAction(function()LevelSpell(Sequence[myHero.charName][myHero.level]) end,0.5)
-  end
-  end
+if ListBlock[myHero.charName] then
+_G.GetHeroLeveled = function()
+return player:GetSpellData(SPELL_1).level + player:GetSpellData(SPELL_2).level + player:GetSpellData(SPELL_3).level + player:GetSpellData(SPELL_4).level-1
+end
 end
 
 _G.LevelSpell = function(id)
