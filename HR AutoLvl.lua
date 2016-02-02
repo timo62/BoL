@@ -10,8 +10,8 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 class 'AutoLvl'
 function AutoLvl:__init()
-  self.Version = 0.7
-  self.LastSpell = 0
+  self.Version = 0.8
+  LastSpell = 0
   self:Menu()
   self:CheckUpdate()
   AddTickCallback(function() self:Tick() end)
@@ -23,6 +23,7 @@ end
 function AutoLvl:Menu()
   Menu = scriptConfig("Hr AutoLeveler", "HrAutoLvl"..myHero.charName)
   Menu:addParam("On", "Active AutoLeveler", SCRIPT_PARAM_ONOFF, false) 
+  Menu:addParam("Humanizer", "Humanizer in MS", SCRIPT_PARAM_SLICE, 400, 0, 1000, 0)
   Menu:addSubMenu("Setup levels", "Levels")
   Menu.Levels:addSubMenu("Levels", "ll")
   Menu.Levels:addParam("Changer", "Setup level skills", SCRIPT_PARAM_LIST, 1, {"Automatic", "Manual"}) 
@@ -64,9 +65,8 @@ ListBlock = {
 }
 
 function AutoLvl:Tick()
-  if Menu.On and os.clock() - self.LastSpell >= 1.0 then
-  self.LastSpell = os.clock()  
-  DelayAction(function() autoLevelSetSequence(Sequence[myHero.charName]) end,0.5)
+  if Menu.On then
+  autoLevelSetSequence(Sequence[myHero.charName])
 end
 
   if Menu.Levels.Changer == 1 then
@@ -87,7 +87,9 @@ end
 end
 
 _G.LevelSpell = function(id)
-if (string.find(GetGameVersion(), 'Releases/6.2') ~= nil) and Menu.On then
+if (string.find(GetGameVersion(), 'Releases/6.2') ~= nil) and Menu.On and os.clock() - LastSpell >= 2 then
+LastSpell = os.clock()  
+DelayAction(function()
 local msg = "<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>"
 local offsets = { 
 [_Q] = 0x41, [1] = 0x41,
@@ -108,6 +110,7 @@ if id == _Q then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></
 if id == _W then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>W</b></font>") end
 if id == _E then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>E</b></font>") end
 if id == _R then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>R</b></font>") end
+end,Menu.Humanizer/1000)
 end
 end
 
