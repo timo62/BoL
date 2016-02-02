@@ -267,10 +267,10 @@ function AutoLvl:CheckUpdate()
   else
   self:SendMsg("<font color=\"#00D2FF\"><b>Could not connect to update Server.</b></font>")
 end
+end
 
 function AutoLvl:DownloadUpdate()
   DownloadFile("http://"..serveradress..scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function ()
   self:SendMsg("<font color=\"#00D2FF\"><b>Updated, press 2x F9.</b></font>")
   end)
-end
 end
