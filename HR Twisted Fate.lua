@@ -11,7 +11,7 @@ local selected = nil
 local lastUse,lastUse2 = 0,0
 local WREADY = false
 local SelectedCard = nil
-local LocalVersion = "3.2"
+local LocalVersion = "3.3"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -70,6 +70,11 @@ local autoupdate = true --Change to false if you don't wan't autoupdates
 	Menu.cardselector:addParam("BlueCard", "Blue Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("9"))
 	Menu.cardselector:addParam("RedCard", "Red Card Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("0"))
 	
+
+	Menu:addSubMenu("Flee", "flee")
+	Menu.flee:addParam("Fleekey", "Flee Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("T"))
+
+
 	Menu:addSubMenu("Keys", "keys")
 	Menu.keys:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
 	Menu.keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
@@ -209,6 +214,10 @@ end
 	JungleClear()
 	end
 	
+	if Menu.flee.Fleekey then
+	Flee()
+	end
+
 	if Ulting then
 	UltimateCard()
 	end
@@ -218,6 +227,29 @@ end
 	BlockAA()
 	end
 	
+function Flee()
+	myHero:MoveTo(mousePos.x, mousePos.z)
+	local Name = myHero:GetSpellData(_W).name
+ 	for _, Enemys in pairs(GetEnemyHeroes()) do
+ 	if myHero:CanUseSpell(_W) == READY and ValidTarget(Enemys) and GetDistance(Enemys) <= 755 then
+	local AOECastPosition, MainTargetHitChance, nTargets = VP:GetCircularAOECastPosition(Enemys, 0, 80, 600, 2000, myHero)
+	if nTargets >= 2 then
+	CardSel = "Red"
+	elseif nTargets <= 1 then
+	CardSel = "Gold"
+	end	
+				
+	if Name == "PickACard" then
+	CastSpell(_W)
+	end
+				
+	if SelectedCard == CardSel then
+	CastSpell(_W)
+	end		
+end
+end
+end
+
 function BlockAA()
 	if Menu.combo.BlockAA then
 	if PickingCard then
@@ -668,9 +700,9 @@ function UltimateCard()
 	WREADY = (myHero:CanUseSpell(_W) == READY)
 	if WREADY and GetTickCount()-lastUse <= 2300 then
 	if myHero:GetSpellData(_W).name == selected then 
-	DelayAction(function() selected = nil end,1.0)
+	DelayAction(function() selected = nil end,0.2)
 	CastSpell(_W) 
-	DelayAction(function() Ulting = false end,0.5)
+	DelayAction(function() Ulting = false end,0.3)
 	end
 	end
 	if WREADY and myHero:GetSpellData(_W).name == "PickACard" and GetTickCount()-lastUse2 >= 2400 and GetTickCount()-lastUse >= 500 then 
