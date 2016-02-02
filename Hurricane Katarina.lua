@@ -1,5 +1,4 @@
 if myHero.charName ~= "Katarina" then return end
-if not FileExist(LIB_PATH .. "/SimpleLib.lua") then PrintChat("<font color=\"#831928\"><b>[Hurricane Katarina]</b></font> ".."<font color=\"#00D2FF\"><b>".."Missing lib: SimpleLib.".."</b></font>") return end
 
 function OnLoad() Katarina() end
 
@@ -8,11 +7,10 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 -- Script Status --
 
 class 'Katarina'
-
+local AlreadyUlt = false
 function Katarina:__init()
-	require 'SimpleLib'
 	Ulting = false
-	self.Version = 0.15
+	self.Version = 0.16
 	self.LastSpell = 0
 	self.Sequence = {1,2,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3}
 	self:SendMsg("[Loaded Version: "..self.Version.."]")
@@ -99,9 +97,16 @@ function Katarina:Menu()
   	--Auto Leveler Menu--
 	end
 	
-OrbwalkManager:LoadCommonKeys(Menu.Keys)
-ts = _SimpleTargetSelector(TARGET_LESS_CAST_PRIORITY, 775, DAMAGE_MAGICAL)
-ts:AddToMenu(Menu)
+ 	-- Keys Menu --
+	Menu.Keys:addParam("Combo", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte(" "))
+	Menu.Keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("C"))
+	Menu.Keys:addParam("LastHit", "LastHit", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("X"))
+	Menu.Keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("V"))
+	-- Keys Menu --
+
+ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 775, DAMAGE_MAGICAL)
+ts.name = "Katarina"
+Menu:addTS(ts)
 enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
 jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
 end
@@ -115,15 +120,53 @@ function Katarina:Tick()
 	if myHero.dead then return end
 	Target = self:Target()
 	if Ignite and Menu.KillSteal.Use then self:KillSteal() end
+	if AlreadyUlt then
 	if Ulting then 
-	OrbwalkManager:DisableMovement()
+	self:DisableMove()
 	return
 	else 
-	OrbwalkManager:EnableMovement()
+	self:EnableMove()
+	end
 	end
 	if Target ~= nil then self:Combo() self:Harass() end
 	self:LastHit()
 	self:LaneClear()
+end
+
+function Katarina:EnableMove()
+	if _G.Reborn_Loaded or _G.Reborn_Initialised or _G.AutoCarry ~= nil then
+	_G.AutoCarry.MyHero:MovementEnabled(true)
+	elseif _G.MMA_IsLoaded then
+	_G.MMA_AvoidMovement(false)
+	elseif _G.NebelwolfisOrbWalkerInit or _G.NebelwolfisOrbWalkerLoaded then
+	_G.NOWi:SetMove(true)
+	elseif _G._Pewalk then
+	_G._Pewalk.AllowMove(true)
+	elseif _G["BigFatOrb_Loaded"] then
+	_G["BigFatOrb_DisableMove"] = false
+	elseif _G.SxOrb then
+	_G.SxOrb:EnableMove()	
+	elseif G.SOWi then
+	_G.SOWi.Move = true
+	end
+end
+
+function Katarina:DisableMove()
+	if _G.Reborn_Loaded or _G.Reborn_Initialised or _G.AutoCarry ~= nil then
+	_G.AutoCarry.MyHero:MovementEnabled(false)
+	elseif _G.MMA_IsLoaded then
+	_G.MMA_AvoidMovement(true)
+	elseif _G.NebelwolfisOrbWalkerInit or _G.NebelwolfisOrbWalkerLoaded then
+	_G.NOWi:SetMove(false)
+	elseif _G._Pewalk then
+	_G._Pewalk.AllowMove(false)
+	elseif _G["BigFatOrb_Loaded"] then
+	_G["BigFatOrb_DisableMove"] = true
+	elseif _G.SxOrb then
+	_G.SxOrb:EnableMove()	
+	elseif G.SOWi then
+	_G.SOWi.Move = false
+	end
 end
 
 function Katarina:KillSteal()
@@ -140,11 +183,12 @@ end
 end
 
 function Katarina:Target()
+	ts:update()
 	if ts.target == nil then return nil else return ts.target end
 end
 
 function Katarina:Combo()
-	if not OrbwalkManager:IsCombo() then return end
+	if not Menu.Keys.Combo then return end
 	if self:Ready(_Q) and Menu.Combo.UseQ then self:CastQ(Target)
 	elseif self:Ready(_E) and Menu.Combo.UseE then self:CastE(Target)
 	elseif self:Ready(_W) and Menu.Combo.UseW then self:CastW(Target)
@@ -152,24 +196,22 @@ function Katarina:Combo()
 end
 
 function Katarina:Harass()
-	if not OrbwalkManager:IsHarass() then return end
+	if not Menu.Keys.Harass then return end
 	if Menu.Combo.UseQ then self:CastQ(Target) end
 	if Menu.Combo.UseW then self:CastW(Target) end
 end
 
 function Katarina:LastHit()
-	if not OrbwalkManager:IsLastHit() then return end
+	if not Menu.Keys.LastHit then return end
   	enemyMinions:update()
    	for i, minion in pairs(enemyMinions.objects) do
-   	if not OrbwalkManager:CanAttack() and OrbwalkManager.AA.LastTarget and minion.networkID ~= OrbwalkManager.AA.LastTarget.networkID and not OrbwalkManager:IsAttacking() then 
 	if Menu.LastHit.UseQ and self:SpellManager(_Q, dmg, minion) then self:CastQ(minion) end
 	if Menu.LastHit.UseW and self:SpellManager(_W, dmg, minion) then self:CastW(minion) end
-   	end
    	end
 end
 
 function Katarina:LaneClear()
-	if not OrbwalkManager:IsClear() then return end
+	if not Menu.Keys.LaneClear then return end
   	enemyMinions:update()
   	jungleMinions:update()
  	for i, minion in pairs(enemyMinions.objects) do
@@ -236,6 +278,7 @@ end
 function Katarina:CastR(unit)
 	if ValidTarget(unit) and GetDistance(unit) <= self:SpellManager(_R, range) and self:Ready(_R) then 
 	CastSpell(_R)
+	AlreadyUlt = true
 	end
 end
 
