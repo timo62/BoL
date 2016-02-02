@@ -1,5 +1,4 @@
 if myHero.charName ~= "Graves" then return end
-if not FileExist(LIB_PATH .. "/SimpleLib.lua") then PrintChat("<font color=\"#5E9C19\"><b>[El Graves]</b></font> ".."<font color=\"#695B45\"><b>".."Missing lib: SimpleLib.".."</b></font>") return end
 if not FileExist(LIB_PATH .. "/VPrediction.lua") then PrintChat("<font color=\"#5E9C19\"><b>[El Graves]</b></font> ".."<font color=\"#695B45\"><b>".."Missing lib: VPrediction.".."</b></font>") return end
 
 function OnLoad() Graves() end
@@ -11,10 +10,9 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 class 'Graves'
 
 function Graves:__init()
-	require 'SimpleLib'
 	require 'VPrediction'
 	VP = VPrediction()
-	self.Version = 0.13
+	self.Version = 0.14
 	self.LastSpell = 0
 	self.Bullets = 2
 	self.Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
@@ -97,12 +95,18 @@ function Graves:Menu()
   	Menu.AutoLeveler:addParam("Active", "Use AutoLeveler", SCRIPT_PARAM_ONOFF, true) 
   	--Auto Leveler Menu--
  	end
+ 	-- Keys Menu --
+	Menu.Keys:addParam("Combo", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
+	Menu.Keys:addParam("Harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, 67)
+	Menu.Keys:addParam("LaneClear", "LaneClear", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	Menu.Keys:addParam("LastHit", "LastHit", SCRIPT_PARAM_ONKEYDOWN, false, 88)
+	-- Keys Menu --
 
-OrbwalkManager:LoadCommonKeys(Menu.Keys)
-ts = _SimpleTargetSelector(TARGET_LESS_CAST_PRIORITY, 1600, DAMAGE_MAGICAL)
+ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 1600, DAMAGE_MAGICAL)
+ts.name = "Graves"
+Menu:addTS(ts)
 ts2 = TargetSelector(TARGET_LOW_HP, 1600, DAMAGE_MAGICAL)
 ts3 = TargetSelector(TARGET_NEAR_MOUSE, 1600, DAMAGE_MAGICAL)
-ts:AddToMenu(Menu)
 enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
 jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
 end
@@ -113,7 +117,8 @@ end
 
 function Graves:Tick()
 	if myHero.dead then return end
-	Target = self:Target()
+	ts:update()
+	Target = ts.target
 
 	if Target ~= nil then self:Combo() self:Harass() 
 	if Menu.Manual.Use then self:CastManual() end
@@ -137,25 +142,21 @@ end
 end
 end
 
-function Graves:Target()
-	if ts.target == nil then return nil else return ts.target end
-end
-
 function Graves:Combo()
-	if not OrbwalkManager:IsCombo() then return end
+	if not Menu.Keys.Combo then return end
 	if self:Ready(_Q) and Menu.Combo.UseQ then self:CastQ(Target) end
 	if self:Ready(_W) and Menu.Combo.UseW then self:CastW(Target) end
 	if self:Ready(_E) and Menu.Combo.UseE then self:CastE(Target) end
 end
 
 function Graves:Harass()
-	if not OrbwalkManager:IsHarass() then return end
+	if not Menu.Keys.Harass then return end
 	if Menu.Combo.UseQ then self:CastQ(Target) end
 	if Menu.Combo.UseW then self:CastW(Target) end
 end
 
 function Graves:LaneClear()
-	if not OrbwalkManager:IsClear() then return end
+	if not Menu.Keys.LaneClear then return end
   	enemyMinions:update()
   	jungleMinions:update()
  	for i, minion in pairs(enemyMinions.objects) do
@@ -213,7 +214,7 @@ function Graves:GetBestLineFarmPosition(range, width, objects)
  	local BestHit = 0
   	for i, object in ipairs(objects) do
   	local EndPos = Vector(myHero.pos) + range * (Vector(object) - Vector(myHero.pos)):normalized()
-  	local hit = CountObjectsOnLineSegment(myHero.pos, EndPos, width, objects)
+  	local hit = self:CountObjectsOnLineSegment(myHero.pos, EndPos, width, objects)
     if hit > BestHit then
     BestHit = hit
     BestPos = Vector(object)
@@ -223,6 +224,18 @@ function Graves:GetBestLineFarmPosition(range, width, objects)
     end
   	end
   	return BestPos, BestHit
+end
+
+function Graves:CountObjectsOnLineSegment(StartPos, EndPos, width, objects)
+	local n = 0
+	for i, object in ipairs(objects) do
+	local pointSegment, pointLine, isOnSegment = VectorPointProjectionOnLineSegment(StartPos, EndPos, object)
+	local w = width
+	if isOnSegment and GetDistanceSqr(pointSegment, object) < w * w and GetDistanceSqr(StartPos, EndPos) > GetDistanceSqr(StartPos, object) then
+	n = n + 1
+	end
+	end
+	return n
 end
 
 function Graves:CastQ(unit)
