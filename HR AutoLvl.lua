@@ -111,35 +111,6 @@ if id == _R then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></
 end
 end
 
-local serveradress = "raw.githubusercontent.com"
-local scriptadress = "/HiranN/BoL/master"
-local scriptname = "HR AutoLvl"
-function AutoLvl:CheckUpdate()
-  local ServerVersionDATA = GetWebResult(serveradress , scriptadress.."/"..scriptname..".version")
-  if ServerVersionDATA then
-  local ServerVersion = tonumber(ServerVersionDATA)
-  if ServerVersion then
-  if ServerVersion > tonumber(self.Version) then
-  self:SendMsg("<font color=\"#00D2FF\"><b>Updating, don't press F9.</b></font>")
-  self:DownloadUpdate()
-  else
-  self:SendMsg("<font color=\"#00D2FF\"><b>You have the latest version.</b></font>")
-  end
-  else
-  self:SendMsg("<font color=\"#00D2FF\"><b>An error occured, while updating, please reload.</b></font>")
-  end
-  else
-  self:SendMsg("<font color=\"#00D2FF\"><b>Could not connect to update Server.</b></font>")
-end
-
-function AutoLvl:DownloadUpdate()
-  DownloadFile("http://"..serveradress..scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function ()
-  self:SendMsg("<font color=\"#00D2FF\"><b>Updated, press 2x F9.</b></font>")
-  end)
-end
-end
-
-
 function AutoLvl:Sequence()
   Sequence = {
   ["Shyvana"] = {2,1,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
@@ -274,4 +245,32 @@ function AutoLvl:Sequence()
   ["Illaoi"] = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
   ["Jhin"] = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
 }
+end
+
+local serveradress = "raw.githubusercontent.com"
+local scriptadress = "/HiranN/BoL/master"
+local scriptname = "HR AutoLvl"
+function AutoLvl:CheckUpdate()
+  local ServerVersionDATA = GetWebResult(serveradress , scriptadress.."/"..scriptname..".version")
+  if ServerVersionDATA then
+  local ServerVersion = tonumber(ServerVersionDATA)
+  if ServerVersion then
+  if ServerVersion > tonumber(self.Version) then
+  self:SendMsg("<font color=\"#00D2FF\"><b>Updating, don't press F9.</b></font>")
+  self:DownloadUpdate()
+  else
+  self:SendMsg("<font color=\"#00D2FF\"><b>You have the latest version.</b></font>")
+  end
+  else
+  self:SendMsg("<font color=\"#00D2FF\"><b>An error occured, while updating, please reload.</b></font>")
+  end
+  else
+  self:SendMsg("<font color=\"#00D2FF\"><b>Could not connect to update Server.</b></font>")
+end
+
+function AutoLvl:DownloadUpdate()
+  DownloadFile("http://"..serveradress..scriptadress.."/"..scriptname..".lua",SCRIPT_PATH..scriptname..".lua", function ()
+  self:SendMsg("<font color=\"#00D2FF\"><b>Updated, press 2x F9.</b></font>")
+  end)
+end
 end
