@@ -1,4 +1,4 @@
-local LocalVersion = "0.8"
+local LocalVersion = "0.9"
 local AutoUpdate = true
 
 if myHero.charName ~= "Riven" then return end
@@ -49,51 +49,54 @@ function Update()
 end
 
 function OnLoad()
-		Menu = scriptConfig("Ez Riven", "EZRiven")
+    Menu = scriptConfig("Ez Riven", "EZRiven")
 
-		Menu:addSubMenu("Combo", "c")
-		Menu.c:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-		Menu.c:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
-		Menu.c:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
-		Menu.c:addParam("useR", "Use R", SCRIPT_PARAM_ONOFF, true)
-		Menu.c:addParam("combos", "Combo Mode", SCRIPT_PARAM_LIST, 1, {"Basic", "E-Q-Q-W-Q"})
+    Menu:addSubMenu("Combo", "c")
+    Menu.c:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+    Menu.c:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
+    Menu.c:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
+    Menu.c:addParam("useR", "Use R", SCRIPT_PARAM_ONOFF, true)
+    Menu.c:addParam("combos", "Combo Mode", SCRIPT_PARAM_LIST, 1, {"Basic", "E-Q-Q-W-Q"})
 
-		Menu:addSubMenu("LaneClear/JungleClear", "jc")
-		Menu.jc:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-		Menu.jc:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
-		Menu.jc:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
+    Menu:addSubMenu("LaneClear/JungleClear", "jc")
+    Menu.jc:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+    Menu.jc:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
+    Menu.jc:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
 
     Menu:addSubMenu("Auto W", "autoW")
       Menu.autoW:addParam("W", "Use Auto W",SCRIPT_PARAM_ONOFF, true)
       Menu.autoW:addParam("S", "x Enemies for Auto W", SCRIPT_PARAM_SLICE, 2, 0, 5, 0)
 
-  		Menu:addSubMenu("Items Settings", "items")
-  		Menu.items:addParam("Use", "Use Items", SCRIPT_PARAM_ONOFF, true) 
- 		Menu.items:addParam("UseBRK", "Use BRK", SCRIPT_PARAM_ONOFF, true) 
- 		Menu.items:addParam("UseHydra", "Use Hydra", SCRIPT_PARAM_ONOFF, true) 
- 		Menu.items:addParam("UseYoumu", "Use Youmuu", SCRIPT_PARAM_ONOFF, true) 
- 		Menu.items:addParam("UseQSS", "Use QSS", SCRIPT_PARAM_ONOFF, true)
- 		Menu.items:addParam("UseZhonya", "Use Zhonya", SCRIPT_PARAM_ONOFF, true)
-  		Menu.items:addParam("ZhonyaAmount", "Zhonya %", SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
+      Menu:addSubMenu("Items Settings", "items")
+      Menu.items:addParam("Use", "Use Items", SCRIPT_PARAM_ONOFF, true) 
+    Menu.items:addParam("UseBRK", "Use BRK", SCRIPT_PARAM_ONOFF, true) 
+    Menu.items:addParam("UseHydra", "Use Hydra", SCRIPT_PARAM_ONOFF, true) 
+    Menu.items:addParam("UseYoumu", "Use Youmuu", SCRIPT_PARAM_ONOFF, true) 
+    Menu.items:addParam("UseQSS", "Use QSS", SCRIPT_PARAM_ONOFF, true)
+    Menu.items:addParam("UseZhonya", "Use Zhonya", SCRIPT_PARAM_ONOFF, true)
+      Menu.items:addParam("ZhonyaAmount", "Zhonya %", SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
 
-  		Menu:addSubMenu("Draws Settings", "draws")
-  		Menu.draws:addParam("CDTracker", "Use CD Tracker", SCRIPT_PARAM_ONOFF, true) 
+      Menu:addSubMenu("Draws Settings", "draws")
+      Menu.draws:addParam("CDTracker", "Use CD Tracker", SCRIPT_PARAM_ONOFF, true) 
 
-  		if VIP_USER then
- 		Menu:addSubMenu("Auto Leveler", "AutoLvL")
-  		Menu.AutoLvL:addParam("On", "Use Auto Leveler", SCRIPT_PARAM_ONOFF, false)
-  		end
-		Menu:addParam("fleeKey", "Flee Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("T"))
+      Menu:addSubMenu("Emote Cancel", "emoteCancel")
+      Menu.emoteCancel:addParam("emoteC", "Choose Emote", SCRIPT_PARAM_LIST, 1, {"Dance", "Taunt", "Laugh", "Joke"})
 
-		ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 900, DAMAGE_PHYSICAL)
- 		ts.name = "Riven"
- 		Menu:addTS(ts)
-		enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
-		jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
-		PrintChat(scriptmsg.."<font color=\"#C2FDF3\"><b> Loaded Version: "..LocalVersion.."</b></font>")
-		FindUpdates()
-		CheckSummoner()
-		OrbWalk()
+      if VIP_USER then
+    Menu:addSubMenu("Auto Leveler", "AutoLvL")
+      Menu.AutoLvL:addParam("On", "Use Auto Leveler", SCRIPT_PARAM_ONOFF, false)
+      end
+    Menu:addParam("fleeKey", "Flee Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("T"))
+
+    ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 900, DAMAGE_PHYSICAL)
+    ts.name = "Riven"
+    Menu:addTS(ts)
+    enemyMinions = minionManager(MINION_ENEMY, 700, myHero, MINION_SORT_HEALTH_ASC)
+    jungleMinions = minionManager(MINION_JUNGLE, 700, myHero, MINION_SORT_MAXHEALTH_DEC)
+    PrintChat(scriptmsg.."<font color=\"#C2FDF3\"><b> Loaded Version: "..LocalVersion.."</b></font>")
+    FindUpdates()
+    CheckSummoner()
+    OrbWalk()
   ___GetInventorySlotItem = rawget(_G, "GetInventorySlotItem")
   _G.GetInventorySlotItem = GetSlotItem
   _G.ITEM_1 = 06
@@ -104,8 +107,8 @@ function OnLoad()
   _G.ITEM_6 = 11
   _G.ITEM_7 = 12
 end
-		function OrbWalk()
-    	OrbwalkList = {}
+    function OrbWalk()
+      OrbwalkList = {}
         if _G.Reborn_Loaded or _G.Reborn_Initialised or _G.AutoCarry ~= nil then
         DelayAction(function()SAC = true end,15)
         Menu:addSubMenu("OrbWalk", "OrbWalk")
@@ -221,15 +224,15 @@ end
 Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,}
 
 function OnTick()
-	Checks()
+  Checks()
   autoW()
 
-	if SAC then 
-	if _G.AutoCarry.Keys.AutoCarry then Combo() 
+  if SAC then 
+  if _G.AutoCarry.Keys.AutoCarry then Combo() 
     if Menu.items.Use then CastItems() end end
     if _G.AutoCarry.Keys.LaneClear then LaneJung() end
     elseif NX then
-	if _G.NebelwolfisOrbWalker.Config.k.Combo then Combo() 
+  if _G.NebelwolfisOrbWalker.Config.k.Combo then Combo() 
     if Menu.items.Use then CastItems() end end
     if _G.NebelwolfisOrbWalker.Config.k.LaneClear then LaneJung() end
     end
@@ -270,36 +273,36 @@ end
   end
 
 function LaneJung()
-		enemyMinions:update()
-		jungleMinions:update()
- 		for _, minion in pairs(enemyMinions.objects) do
-			if Menu.jc.useQ then CastQAA(minion) end
-			if Menu.jc.useW then CastW(minion) end
- 		end
- 		for _, minion in pairs(jungleMinions.objects) do
-			if Menu.jc.useQ then CastQAA(minion) end
-			if Menu.jc.useE then 
-				DelayAction(function ()
-					CastE(minion)
-				end,0.05)	
-			end
-			if Menu.jc.useW then 
-				DelayAction(function ()
-					CastW(minion)
-				end,0.05) 
-			end
- 		end
+    enemyMinions:update()
+    jungleMinions:update()
+    for _, minion in pairs(enemyMinions.objects) do
+      if Menu.jc.useQ then CastQAA(minion) end
+      if Menu.jc.useW then CastW(minion) end
+    end
+    for _, minion in pairs(jungleMinions.objects) do
+      if Menu.jc.useQ then CastQAA(minion) end
+      if Menu.jc.useE then 
+        DelayAction(function ()
+          CastE(minion)
+        end,0.05) 
+      end
+      if Menu.jc.useW then 
+        DelayAction(function ()
+          CastW(minion)
+        end,0.05) 
+      end
+    end
  end
 
 function Combo()
-	if Menu.c.combos == 1 then Combo1() end
-	if Menu.c.combos == 2 then Combo2() end
+  if Menu.c.combos == 1 then Combo1() end
+  if Menu.c.combos == 2 then Combo2() end
 end
 
 
 function Combo1()
-		if Target ~= nil then
-		Checks()
+    if Target ~= nil then
+    Checks()
 
     if Menu.c.useE and Menu.c.useR then
       CastSpell(_E,mousePos.x, mousePos.z)
@@ -310,44 +313,44 @@ function Combo1()
       CastSpell(_E, mousePos.x, mousePos.z)
     end
 
-		if Menu.c.useR then
-			CastR(Target)
-		end
+    if Menu.c.useR then
+      CastR(Target)
+    end
 
-		if Menu.c.useW then 
-			CastW(Target) 
-		end
+    if Menu.c.useW then 
+      CastW(Target) 
+    end
 
-		if Menu.c.useQ then 
-			CastQAA(Target) 
-		end
-		
-	end
+    if Menu.c.useQ then 
+      CastQAA(Target) 
+    end
+    
+  end
 end
 
 function Combo2()
-	if Target ~= nil then
-	Checks()
+  if Target ~= nil then
+  Checks()
 
-	if Menu.c.useQ then 
-		CastQAA(Target) 
-	end
+  if Menu.c.useQ then 
+    CastQAA(Target) 
+  end
 
-	if Menu.c.useW then
-		if Wready then
-		if QCount >= 2 and GetDistance(Target) <= 255 then
-		CastSpell(_W)
-		end
-	end
-	end
+  if Menu.c.useW then
+    if Wready then
+    if QCount >= 2 and GetDistance(Target) <= 255 then
+    CastSpell(_W)
+    end
+  end
+  end
 
-	if Menu.c.useE then
-		CastE(Target) 
-	end
+  if Menu.c.useE then
+    CastE(Target) 
+  end
 
-	if Menu.c.useR then
-		CastR(Target)
-	end
+  if Menu.c.useR then
+    CastR(Target)
+  end
 end
 end
 
@@ -359,41 +362,41 @@ function autoW()
   end
 
 function Flee()
-		if Menu.fleeKey then
-		myHero:MoveTo(mousePos.x, mousePos.z)
-		CastSpell(_Q, mousePos.x, mousePos.z)
-		CastSpell(_E, mousePos.x, mousePos.z)
-		end
+    if Menu.fleeKey then
+    myHero:MoveTo(mousePos.x, mousePos.z)
+    CastSpell(_Q, mousePos.x, mousePos.z)
+    CastSpell(_E, mousePos.x, mousePos.z)
+    end
 end
 
 function CastQAA(target)
-		if ValidTarget(target) and myHero:CanUseSpell(_Q) == READY and GetTickCount() > LastQ + 760 then
-		CastSpell(_Q, target.x, target.z)
-		end
+    if ValidTarget(target) and myHero:CanUseSpell(_Q) == READY and GetTickCount() > LastQ + 760 then
+    CastSpell(_Q, target.x, target.z)
+    end
 end
 
 function CastW(target)
-		if ValidTarget(target) and GetDistance(target) <= 255 and myHero:CanUseSpell(_W) == READY and myHero:GetSpellData(_Q).currentCd > 0.5 then
-		CastSpell(_W)
-		end
+    if ValidTarget(target) and GetDistance(target) <= 255 and myHero:CanUseSpell(_W) == READY and myHero:GetSpellData(_Q).currentCd > 0.5 then
+    CastSpell(_W)
+    end
 end
 
 function CastE(target)
-		if ValidTarget(target) and myHero:GetSpellData(_Q).currentCd > 0.5 then
-		CastSpell(_E, target.x, target.z)
-		end
+    if ValidTarget(target) and myHero:GetSpellData(_Q).currentCd > 0.5 then
+    CastSpell(_E, target.x, target.z)
+    end
 end
 
 function CastR(target)
-		if ValidTarget(target) then
-		if not UltOn() and myHero:CanUseSpell(_R) == READY then CastSpell(_R) end
-		if UltOn() then
-		if rDmg(target) >= target.health or RTIME-os.clock() <= -11 then
-		if GetDistance(target) <= 1000 and myHero:CanUseSpell(_R) == READY then 
-		CastSpell(_R, target.x, target.z) 
-		end
-		end
-		end
+    if ValidTarget(target) then
+    if not UltOn() and myHero:CanUseSpell(_R) == READY then CastSpell(_R) end
+    if UltOn() then
+    if rDmg(target) >= target.health or RTIME-os.clock() <= -11 then
+    if GetDistance(target) <= 1000 and myHero:CanUseSpell(_R) == READY then 
+    CastSpell(_R, target.x, target.z) 
+    end
+    end
+    end
 end
 end
 
@@ -413,100 +416,100 @@ function rDmg(unit)
   end
 
 function OnUpdateBuff(unit,buff)
-	if unit and buff and unit.isMe then
-		if buff.name=="RivenTriCleave" then 
-			QCount = QCount + 1
-		end
-	end
+  if unit and buff and unit.isMe then
+    if buff.name=="RivenTriCleave" then 
+      QCount = QCount + 1
+    end
+  end
 end
 
 function Checks()
-		ts:update()
-		Qready = (myHero:CanUseSpell(_Q) == READY)
-		Wready = (myHero:CanUseSpell(_W) == READY)
-		Eready = (myHero:CanUseSpell(_E) == READY)
-		Rready = (myHero:CanUseSpell(_R) == READY)
-		if ts.target and ts.target ~= nil and ValidTarget(ts.target) and not ts.target.dead then
-		Target = ts.target
-		else Target = nil
-		end
+    ts:update()
+    Qready = (myHero:CanUseSpell(_Q) == READY)
+    Wready = (myHero:CanUseSpell(_W) == READY)
+    Eready = (myHero:CanUseSpell(_E) == READY)
+    Rready = (myHero:CanUseSpell(_R) == READY)
+    if ts.target and ts.target ~= nil and ValidTarget(ts.target) and not ts.target.dead then
+    Target = ts.target
+    else Target = nil
+    end
 end
 
 function UltOn()
-	if RCasted then return true else return false end
+  if RCasted then return true else return false end
 end
 
 function OnDraw()
-	if Menu.draws.CDTracker then DrawCD() end
+  if Menu.draws.CDTracker then DrawCD() end
 end
 
 function GetHPBarPos(enemy)
-	enemy.barData = {PercentageOffset = {x = -0.05, y = 0}}--GetEnemyBarData()
-	local barPos = GetUnitHPBarPos(enemy)
-	local barPosOffset = GetUnitHPBarOffset(enemy)
-	local barOffset = { x = enemy.barData.PercentageOffset.x, y = enemy.barData.PercentageOffset.y }
-	local barPosPercentageOffset = { x = enemy.barData.PercentageOffset.x, y = enemy.barData.PercentageOffset.y }
-	local BarPosOffsetX = 171
-	local BarPosOffsetY = 46
-	local CorrectionY = 39
-	local StartHpPos = 31
+  enemy.barData = {PercentageOffset = {x = -0.05, y = 0}}--GetEnemyBarData()
+  local barPos = GetUnitHPBarPos(enemy)
+  local barPosOffset = GetUnitHPBarOffset(enemy)
+  local barOffset = { x = enemy.barData.PercentageOffset.x, y = enemy.barData.PercentageOffset.y }
+  local barPosPercentageOffset = { x = enemy.barData.PercentageOffset.x, y = enemy.barData.PercentageOffset.y }
+  local BarPosOffsetX = 171
+  local BarPosOffsetY = 46
+  local CorrectionY = 39
+  local StartHpPos = 31
 
-	barPos.x = math.floor(barPos.x + (barPosOffset.x - 0.5 + barPosPercentageOffset.x) * BarPosOffsetX + StartHpPos)
-	barPos.y = math.floor(barPos.y + (barPosOffset.y - 0.5 + barPosPercentageOffset.y) * BarPosOffsetY + CorrectionY)
+  barPos.x = math.floor(barPos.x + (barPosOffset.x - 0.5 + barPosPercentageOffset.x) * BarPosOffsetX + StartHpPos)
+  barPos.y = math.floor(barPos.y + (barPosOffset.y - 0.5 + barPosPercentageOffset.y) * BarPosOffsetY + CorrectionY)
 
-	local StartPos = Vector(barPos.x , barPos.y, 0)
-	local EndPos = Vector(barPos.x + 108 , barPos.y , 0)
-	return Vector(StartPos.x, StartPos.y, 0), Vector(EndPos.x, EndPos.y, 0)
+  local StartPos = Vector(barPos.x , barPos.y, 0)
+  local EndPos = Vector(barPos.x + 108 , barPos.y , 0)
+  return Vector(StartPos.x, StartPos.y, 0), Vector(EndPos.x, EndPos.y, 0)
 end
 
 function DrawCD()
-	for i = 1, heroManager.iCount, 1 do
-		local champ = heroManager:getHero(i)
-		if champ ~= nil and champ ~= myHero and champ.visible and champ.dead == false then
-			local barPos = GetHPBarPos(champ)
-			if OnScreen(barPos.x, barPos.y) then
-				local cd = {}
-				cd[0] = math.ceil(champ:GetSpellData(SPELL_1).currentCd)
-				cd[1] = math.ceil(champ:GetSpellData(SPELL_2).currentCd)
-				cd[2] = math.ceil(champ:GetSpellData(SPELL_3).currentCd)
-				cd[3] = math.ceil(champ:GetSpellData(SPELL_4).currentCd)
-		   	
-				local spellColor = {}
-				spellColor[0] = 0xBBFFD700;
-				spellColor[1] = 0xBBFFD700;
-				spellColor[2] = 0xBBFFD700;
-				spellColor[3] = 0xBBFFD700;
-									   
-				if cd[0] == nil or cd[0] == 0 then cd[0] = "Q" spellColor[0] = 0xBBFFFFFF end
-				if cd[1] == nil or cd[1] == 0 then cd[1] = "W" spellColor[1] = 0xBBFFFFFF end
-				if cd[2] == nil or cd[2] == 0 then cd[2] = "E" spellColor[2] = 0xBBFFFFFF end
-				if cd[3] == nil or cd[3] == 0 then cd[3] = "R" spellColor[3] = 0xBBFFFFFF end
-		   	
-				if champ:GetSpellData(SPELL_1).level == 0 then spellColor[0] = 0xBBFF0000 end
-				if champ:GetSpellData(SPELL_2).level == 0 then spellColor[1] = 0xBBFF0000 end
-				if champ:GetSpellData(SPELL_3).level == 0 then spellColor[2] = 0xBBFF0000 end
-				if champ:GetSpellData(SPELL_4).level == 0 then spellColor[3] = 0xBBFF0000 end
-				DrawRectangle(barPos.x-6, barPos.y-40, 80, 15, 0xBB202020)
-				DrawText("[" .. cd[0] .. "]" ,12, barPos.x-5+2, barPos.y-40, spellColor[0])
-				DrawText("[" .. cd[1] .. "]", 12, barPos.x+15+2, barPos.y-40, spellColor[1])
-				DrawText("[" .. cd[2] .. "]", 12, barPos.x+35+2, barPos.y-40, spellColor[2])
-				DrawText("[" .. cd[3] .. "]", 12, barPos.x+54+2, barPos.y-40, spellColor[3])
-			end
-		end
-	end
+  for i = 1, heroManager.iCount, 1 do
+    local champ = heroManager:getHero(i)
+    if champ ~= nil and champ ~= myHero and champ.visible and champ.dead == false then
+      local barPos = GetHPBarPos(champ)
+      if OnScreen(barPos.x, barPos.y) then
+        local cd = {}
+        cd[0] = math.ceil(champ:GetSpellData(SPELL_1).currentCd)
+        cd[1] = math.ceil(champ:GetSpellData(SPELL_2).currentCd)
+        cd[2] = math.ceil(champ:GetSpellData(SPELL_3).currentCd)
+        cd[3] = math.ceil(champ:GetSpellData(SPELL_4).currentCd)
+        
+        local spellColor = {}
+        spellColor[0] = 0xBBFFD700;
+        spellColor[1] = 0xBBFFD700;
+        spellColor[2] = 0xBBFFD700;
+        spellColor[3] = 0xBBFFD700;
+                     
+        if cd[0] == nil or cd[0] == 0 then cd[0] = "Q" spellColor[0] = 0xBBFFFFFF end
+        if cd[1] == nil or cd[1] == 0 then cd[1] = "W" spellColor[1] = 0xBBFFFFFF end
+        if cd[2] == nil or cd[2] == 0 then cd[2] = "E" spellColor[2] = 0xBBFFFFFF end
+        if cd[3] == nil or cd[3] == 0 then cd[3] = "R" spellColor[3] = 0xBBFFFFFF end
+        
+        if champ:GetSpellData(SPELL_1).level == 0 then spellColor[0] = 0xBBFF0000 end
+        if champ:GetSpellData(SPELL_2).level == 0 then spellColor[1] = 0xBBFF0000 end
+        if champ:GetSpellData(SPELL_3).level == 0 then spellColor[2] = 0xBBFF0000 end
+        if champ:GetSpellData(SPELL_4).level == 0 then spellColor[3] = 0xBBFF0000 end
+        DrawRectangle(barPos.x-6, barPos.y-40, 80, 15, 0xBB202020)
+        DrawText("[" .. cd[0] .. "]" ,12, barPos.x-5+2, barPos.y-40, spellColor[0])
+        DrawText("[" .. cd[1] .. "]", 12, barPos.x+15+2, barPos.y-40, spellColor[1])
+        DrawText("[" .. cd[2] .. "]", 12, barPos.x+35+2, barPos.y-40, spellColor[2])
+        DrawText("[" .. cd[3] .. "]", 12, barPos.x+54+2, barPos.y-40, spellColor[3])
+      end
+    end
+  end
 end
 
 function OnApplyBuff(unit, source, buff)
-	if unit and buff and unit == myHero and buff.name == "RivenFengShuiEngine" then RCasted = true RTIME = os.clock() end
+  if unit and buff and unit == myHero and buff.name == "RivenFengShuiEngine" then RCasted = true RTIME = os.clock() end
 end
 
 function OnRemoveBuff(unit, buff)
-	if unit and buff and unit == myHero and buff.name == "rivenwindslashready" then RCasted = false RTIME = 0 end
-	if unit and buff and unit.isMe then
-		if buff.name=="RivenTriCleave" then 
-		  	QCount = 0	
-		end
-	end
+  if unit and buff and unit == myHero and buff.name == "rivenwindslashready" then RCasted = false RTIME = 0 end
+  if unit and buff and unit.isMe then
+    if buff.name=="RivenTriCleave" then 
+        QCount = 0  
+    end
+  end
 end
 
 function OrbAttack(enemy)
@@ -565,23 +568,27 @@ function OnAnimation(unit, animation)
     -- something else
   end
 
-	if unit.isMe then
-	if animation == "Spell1a" or animation == "Spell1b" then
-  	DelayAction(function() DoEmote(0) end, 0.3-GetLatency()/1000)
-  	ResetAAs()
+  if unit.isMe then
+  if animation == "Spell1a" or animation == "Spell1b" then
+    DelayAction(function() Emote() end, 0.3-GetLatency()/1000)
+    ResetAAs()
     LastQ = GetTickCount()
-	elseif animation == "Spell1c" then
-  	DelayAction(function() DoEmote(0) end, 0.4-GetLatency()/1000)
-  	ResetAAs()
+  elseif animation == "Spell1c" then
+    DelayAction(function() Emote() end, 0.4-GetLatency()/1000)
+    ResetAAs()
     LastQ = GetTickCount()
 end
 end
 end
 
+function Emote()
+  DoEmote(Menu.emoteCancel.emoteC-1)
+end
+
 function ResetAAs()
-	if SAC then
-	_G.AutoCarry.Orbwalker:ResetAttackTimer()
-	elseif NX then
-	_G.NebelwolfisOrbWalker:ResetAA()
-	end
+  if SAC then
+  _G.AutoCarry.Orbwalker:ResetAttackTimer()
+  elseif NX then
+  _G.NebelwolfisOrbWalker:ResetAA()
+  end
 end
