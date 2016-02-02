@@ -8,10 +8,10 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 class 'AutoLvl'
 function AutoLvl:__init()
-	self.Version = 0.4
-	self.LastSpell = 0
-	self:Menu()
-	self:CheckUpdate()
+  self.Version = 0.5
+  self.LastSpell = 0
+  self:Menu()
+  self:CheckUpdate()
   AddTickCallback(function() self:Tick() end)
   self:SendMsg("[Loaded]")
 end
@@ -22,7 +22,7 @@ function AutoLvl:Menu()
 end
 
 function AutoLvl:SendMsg(msg)
-	PrintChat("<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>".."<font color=\"#00D2FF\"><b>"..msg.."</b></font>")
+  PrintChat("<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>".."<font color=\"#00D2FF\"><b>"..msg.."</b></font>")
 end
 
   ListBlock = {
@@ -34,14 +34,14 @@ function AutoLvl:Tick()
   local Block = true 
   if myHero.level == 1 and myHero:GetSpellData(_Q).level <= 0 and myHero:GetSpellData(_W).level <= 0 and myHero:GetSpellData(_E).level <= 0 and Block then
   Block = false
-  DelayAction(function()LevelSpell(Sequence[myHero.level]) end,0.5)
+  DelayAction(function()LevelSpell(Sequence[myHero.charName][myHero.level]) end,0.5)
   end
   return 
   end
 
   if Menu.On and os.clock() - self.LastSpell >= 1.0 then
   self.LastSpell = os.clock()  
-  DelayAction(function() autoLevelSetSequence(Sequence) end,0.5)
+  DelayAction(function() autoLevelSetSequence(Sequence[myHero.charName]) end,0.5)
 end
 end
 
@@ -51,7 +51,7 @@ function OnRecvPacket(p)
   p.pos = 2
   local character = objManager:GetObjectByNetworkId(p:DecodeF())
   if character.valid and character.charName == myHero.charName then
-  DelayAction(function()LevelSpell(Sequence[myHero.level]) end,0.5)
+  DelayAction(function()LevelSpell(Sequence[myHero.charName][myHero.level]) end,0.5)
   end
   end
 end
@@ -109,266 +109,136 @@ function AutoLvl:DownloadUpdate()
 end
 end
 
-  if myHero.charName == 'Shyvana' then
-  Sequence = {2,1,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Gragas' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'JarvanIV' then
-  Sequence = {3,1,2,1,1,4,2,3,1,3,4,1,2,2,3,4,3,2}
-	elseif myHero.charName == 'Irelia' then
-  Sequence = {2,3,1,2,2,4,3,3,2,1,4,2,3,1,1,4,3,1}
-	elseif myHero.charName == 'Garen' then
-  Sequence = {1,3,3,2,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Gnar' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Aatrox' then
-  Sequence = {2,1,2,3,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Amumu' then
-  Sequence = {2,3,1,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1}
-	elseif myHero.charName == 'Nunu' then
-  Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Fiddlesticks' then
-  Sequence = {2,3,2,1,1,4,1,3,1,3,4,1,2,3,2,4,3,2}
-	elseif myHero.charName == 'Teemo' then
-  Sequence = {3,1,2,1,1,4,3,3,2,3,4,1,1,3,2,4,2,2}
-	elseif myHero.charName == 'ChoGath' then
-  Sequence = {1,2,3,1,1,4,1,1,2,2,4,2,3,2,3,4,3,3}
-	elseif myHero.charName == 'Darius' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,3,2,2,3,4,3,3}
-	elseif myHero.charName == 'DrMundo' then
-  Sequence = {1,3,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Elise' then
-  Sequence = {2,1,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Evelynn' then
-  Sequence = {1,3,2,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Fiora' then
-  Sequence = {2,3,1,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Gangplank' then
-  Sequence = {1,2,2,3,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Hecarim' then
-  Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Jax' then
-  Sequence = {2,3,1,1,1,4,3,2,3,2,4,2,1,1,3,4,2,3}
-	elseif myHero.charName == 'Jayce' then
-  Sequence = {1,3,1,2,1,2,1,2,1,2,1,2,2,3,3,3,3,3}
-	elseif myHero.charName == 'Ahri' then
-  Sequence = {1,3,2,1,1,4,1,2,1,2,4,2,3,2,3,4,3,3}
-	elseif myHero.charName == 'Akali' then
-  Sequence = {1,2,1,3,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Anivia' then
-  Sequence = {1,3,3,1,3,4,3,2,3,2,4,2,2,2,1,4,1,1}
-	elseif myHero.charName == 'Annie' then
-  Sequence = {1,2,1,3,1,4,1,1,2,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Azir' then
-  Sequence = {2,1,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Brand' then
-  Sequence = {2,1,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Cassiopeia' then
-  Sequence = {3,1,2,3,3,4,1,1,3,3,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Orianna' then
-  Sequence = {3,1,2,1,1,4,2,1,3,1,4,2,3,2,2,4,3,3}
-	elseif myHero.charName == 'Lux' then
-  Sequence = {3,1,2,3,3,4,1,2,3,1,4,2,3,1,1,4,2,2}
-	elseif myHero.charName == 'Diana' then
-  Sequence = {2,1,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Ekko' then
-  Sequence = {2,1,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3}
-	elseif myHero.charName == 'Ezreal' then
-  Sequence = {1,2,3,1,1,4,2,2,1,3,4,1,2,2,3,4,3,3}
-	elseif myHero.charName == 'Fizz' then
-  Sequence = {2,1,3,2,2,4,3,2,1,2,4,1,1,3,1,4,3,3}
-	elseif myHero.charName == 'Galio' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,3,2,3,4,3,3}
-	elseif myHero.charName == 'Heimerdinger' then
-  Sequence = {1,2,3,1,1,4,2,2,2,1,4,1,2,3,3,4,3,3}
-	elseif myHero.charName == 'Ashe' then
-  Sequence = {2,1,3,2,2,4,1,2,1,2,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Kalista' then
-  Sequence = {3,1,3,2,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Graves' then
-  Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Caitlyn' then
-  Sequence = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Vayne' then
-  Sequence = {2,1,3,2,2,4,1,2,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'MissFortune' then
-  Sequence = {1,2,3,1,2,4,1,1,2,1,4,2,2,3,3,4,3,3}
-  elseif myHero.charName == 'Corki' then
-  Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Draven' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Jinx' then
-  Sequence = {1,2,3,1,1,4,2,1,2,1,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Leona' then
-  Sequence = {1,3,2,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Alistar' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Janna' then
-  Sequence = {3,1,3,2,3,4,3,2,3,2,4,2,2,1,1,4,1,1}
-	elseif myHero.charName == 'Braum' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Bard' then
-  Sequence = {1,2,3,1,1,4,2,1,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Blitzcrank' then
-  Sequence = {1,3,2,1,1,4,2,1,3,1,4,2,2,2,3,4,3,3}
-	elseif myHero.charName == 'Morgana' then
-  Sequence = {2,1,3,2,2,4,1,1,3,1,4,1,2,2,3,4,3,3}
-	elseif myHero.charName == 'Soraka' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Karma' then
-  Sequence = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Karthus' then
-  Sequence = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Kassadin' then
-  Sequence = {2,1,3,3,2,4,1,1,3,1,4,2,1,2,3,4,3,2}
-	elseif myHero.charName == 'Katarina' then
-  Sequence = {1,2,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3}
-	elseif myHero.charName == 'Kayle' then
-  Sequence = {3,2,1,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Kennen' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'KhaZix' then
-  Sequence = {1,3,2,1,1,4,1,1,3,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'KogMaw' then
-  Sequence = {2,3,3,1,3,4,3,2,3,2,4,2,2,1,1,4,1,1}
-	elseif myHero.charName == 'Leblanc' then
-  Sequence = {2,1,3,2,1,4,2,2,1,3,4,2,1,1,3,4,3,3}
-	elseif myHero.charName == 'LeeSin' then
-  Sequence = {1,2,3,1,1,4,1,3,1,3,4,2,2,2,2,4,3,3}
-	elseif myHero.charName == 'Riven' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Viktor' then
-  Sequence = {1,3,3,2,3,4,3,1,3,1,4,1,2,1,2,4,2,2}
-	elseif myHero.charName == 'Lissandra' then
-  Sequence = {1,3,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Lucian' then
-  Sequence = {1,3,2,1,1,4,1,2,1,3,4,3,2,3,2,4,2,3}
-	elseif myHero.charName == 'Lulu' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'MasterYi' then
-  Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Malphite' then
-  Sequence = {3,2,1,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Malzahar' then
-  Sequence = {3,2,1,3,3,4,1,3,2,3,4,2,2,1,1,4,1,2}
-	elseif myHero.charName == 'Maokai' then
-  Sequence = {3,1,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Mordekaiser' then
-  Sequence = {3,2,3,2,1,4,3,1,3,2,4,2,2,3,1,4,1,1}
-	elseif myHero.charName == 'Nami' then
-  Sequence = {1,2,3,2,2,4,2,3,2,1,4,3,3,3,1,4,1,1}
-	elseif myHero.charName == 'Nasus' then
-  Sequence = {1,2,3,1,1,4,3,1,2,1,4,3,3,2,3,4,2,2}
-	elseif myHero.charName == 'Nautilus' then
-  Sequence = {3,1,2,3,3,4,3,2,3,2,4,2,2,1,1,4,1,1}
-	elseif myHero.charName == 'Nidalee' then
-  Sequence = {1,3,2,1,1,4,3,1,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Nocturne' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-  elseif myHero.charName == 'Olaf' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Pantheon' then
-  Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Poppy' then
-  Sequence = {1,3,2,1,1,4,2,1,3,1,4,2,2,2,3,4,3,3}
-	elseif myHero.charName == 'Quinn' then
-  Sequence = {1,3,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Rammus' then
-  Sequence = {2,1,3,3,2,4,3,3,3,2,4,2,2,1,1,4,1,1}
-	elseif myHero.charName == 'RekSai' then
-  Sequence = {2,1,3,2,1,4,1,1,2,1,4,3,2,2,3,4,2,3}
-	elseif myHero.charName == 'Renekton' then
-  Sequence = {2,3,1,1,1,4,1,3,1,3,4,3,2,3,2,4,2,2}
-	elseif myHero.charName == 'Rengar' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Rumble' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Ryze' then
-  Sequence = {1,2,3,1,1,4,2,1,2,1,4,3,2,3,2,4,3,3}
-	elseif myHero.charName == 'Sejuani' then
-  Sequence = {2,3,1,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1}
-	elseif myHero.charName == 'Shaco' then
-  Sequence = {2,3,1,3,3,4,3,2,3,2,4,2,2,1,1,4,1,1}
-	elseif myHero.charName == 'Shen' then
-  Sequence = {1,3,1,2,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Singed' then
-  Sequence = {1,3,1,3,1,4,1,2,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Sion' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Sivir' then
-  Sequence = {1,3,2,1,1,4,3,2,1,2,4,1,2,2,3,4,3,3}
-	elseif myHero.charName == 'Skarner' then
-  Sequence = {1,2,1,3,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Sona' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Swain' then
-  Sequence = {2,3,3,1,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Syndra' then
-  Sequence = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'TahmKench' then
-  Sequence = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Talon' then
-  Sequence = {2,3,2,1,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-  elseif myHero.charName == 'Taric' then
-  Sequence = {3,1,2,3,3,4,3,2,3,2,4,2,2,1,1,4,1,1}
-  elseif myHero.charName == 'Teemo' then
-  Sequence = {3,1,2,1,3,4,1,3,1,3,4,3,1,2,2,4,2,2}
-	elseif myHero.charName == 'Thresh' then
-  Sequence = {3,1,2,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Tristana' then
-  Sequence = {3,1,2,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Trundle' then
-  Sequence = {1,2,1,3,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Tryndamere' then
-  Sequence = {3,1,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'TwistedFate' then
-  Sequence = {2,1,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Twitch' then
-  Sequence = {3,2,3,1,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Udyr' then
-  Sequence = {4,2,4,3,4,2,4,2,4,3,2,3,2,3,3,1,1,1}
-	elseif myHero.charName == 'Urgot' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Zed' then
-  Sequence = {1,2,3,1,1,4,1,3,2,1,4,3,3,2,3,4,2,2}
-	elseif myHero.charName == 'Varus' then
-  Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Veigar' then
-  Sequence = {1,2,3,2,2,4,1,2,3,1,4,2,1,1,3,4,3,3}
-	elseif myHero.charName == 'VelKoz' then
-  Sequence = {2,3,1,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-	elseif myHero.charName == 'Vi' then
-  Sequence = {2,3,1,1,1,4,1,2,3,1,4,3,2,3,2,4,2,3}
-	elseif myHero.charName == 'Viktor' then
-  Sequence = {1,3,3,2,3,4,3,1,3,1,4,1,2,1,2,4,2,2}
-  elseif myHero.charName == 'Vladimir' then
-  Sequence = {1,2,1,3,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Volibear' then
-  Sequence = {3,2,1,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1}
-	elseif myHero.charName == 'Warwick' then
-  Sequence = {2,1,3,1,2,4,2,1,2,1,4,2,1,3,3,4,3,3}
-	elseif myHero.charName == 'MonkeyKing' then
-  Sequence = {3,1,2,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2}
-	elseif myHero.charName == 'Xerath' then
-  Sequence = {1,2,3,1,1,4,2,1,2,1,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'XinZhao' then
-  Sequence = {1,2,3,1,1,4,2,1,2,1,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Yasuo' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Yorick' then
-  Sequence = {3,2,3,1,3,4,3,2,3,2,4,2,2,1,1,4,1,1}
-	elseif myHero.charName == 'Zac' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-	elseif myHero.charName == 'Ziggs' then
-  Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}	
-	elseif myHero.charName == 'Zyra' then
-  Sequence = {3,1,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}	
-	elseif myHero.charName == 'Zilean' then
-  Sequence = {1,2,1,3,1,4,1,3,1,3,4,3,2,3,2,4,2,2}	
-	elseif myHero.charName == 'Kindred' then
-  Sequence = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3}
-	elseif myHero.charName == 'Illaoi' then
-  Sequence = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3}
-  elseif myHero.charName == 'Jhin' then
-  Sequence = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2}
-end
+  Sequence = {
+  ["Shyvana"] = {2,1,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Gragas"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["JarvanIV"] = {3,1,2,1,1,4,2,3,1,3,4,1,2,2,3,4,3,2},
+  ["Irelia"] = {2,3,1,2,2,4,3,3,2,1,4,2,3,1,1,4,3,1},
+  ["Garen"] = {1,3,3,2,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Gnar"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Aatrox"] = {2,1,2,3,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Amumu"] = {2,3,1,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1},
+  ["Nunu"] = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Fiddlesticks"] = {2,3,2,1,1,4,1,3,1,3,4,1,2,3,2,4,3,2},
+  ["Teemo"] = {3,1,2,1,1,4,3,3,2,3,4,1,1,3,2,4,2,2},
+  ["ChoGath"] = {1,2,3,1,1,4,1,1,2,2,4,2,3,2,3,4,3,3},
+  ["Darius"] = {1,2,3,1,1,4,1,2,1,2,4,3,2,2,3,4,3,3},
+  ["DrMundo"] = {1,3,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Elise"] = {2,1,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Evelynn"] = {1,3,2,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2},
+  ["Fiora"] = {2,3,1,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Gangplank"] = {1,2,2,3,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Hecarim"] = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2},
+  ["Jax"] = {2,3,1,1,1,4,3,2,3,2,4,2,1,1,3,4,2,3},
+  ["Jayce"] = {1,3,1,2,1,2,1,2,1,2,1,2,2,3,3,3,3,3},
+  ["Ahri"] = {1,3,2,1,1,4,1,2,1,2,4,2,3,2,3,4,3,3},
+  ["Akali"] = {1,2,1,3,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Anivia"] = {1,3,3,1,3,4,3,2,3,2,4,2,2,2,1,4,1,1},
+  ["Annie"] = {1,2,1,3,1,4,1,1,2,2,4,2,2,3,3,4,3,3},
+  ["Azir"] = {2,1,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Brand"] = {2,1,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Cassiopeia"] = {3,1,2,3,3,4,1,1,3,3,4,1,1,2,2,4,2,2},
+  ["Orianna"] = {3,1,2,1,1,4,2,1,3,1,4,2,3,2,2,4,3,3},
+  ["Lux"] = {3,1,2,3,3,4,1,2,3,1,4,2,3,1,1,4,2,2},
+  ["Diana"] = {2,1,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Ekko"] = {2,1,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3},
+  ["Ezreal"] = {1,2,3,1,1,4,2,2,1,3,4,1,2,2,3,4,3,3},
+  ["Fizz"] = {2,1,3,2,2,4,3,2,1,2,4,1,1,3,1,4,3,3},
+  ["Galio"] = {1,2,3,1,1,4,1,2,1,2,4,2,3,2,3,4,3,3},
+  ["Heimerdinger"] = {1,2,3,1,1,4,2,2,2,1,4,1,2,3,3,4,3,3},
+  ["Ashe"] = {2,1,3,2,2,4,1,2,1,2,4,1,1,3,3,4,3,3},
+  ["Kalista"] = {3,1,3,2,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Graves"] = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2},
+  ["Caitlyn"] = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Vayne"] = {2,1,3,2,2,4,1,2,2,1,4,1,1,3,3,4,3,3},
+  ["MissFortune"] = {1,2,3,1,2,4,1,1,2,1,4,2,2,3,3,4,3,3},
+  ["Corki"] = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Draven"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Jinx"] = {1,2,3,1,1,4,2,1,2,1,4,2,2,3,3,4,3,3},
+  ["Leona"] = {1,3,2,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Alistar"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Janna"] = {3,1,3,2,3,4,3,2,3,2,4,2,2,1,1,4,1,1},
+  ["Braum"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Bard"] = {1,2,3,1,1,4,2,1,1,2,4,2,2,3,3,4,3,3},
+  ["Blitzcrank"] = {1,3,2,1,1,4,2,1,3,1,4,2,2,2,3,4,3,3},
+  ["Morgana"] = {2,1,3,2,2,4,1,1,3,1,4,1,2,2,3,4,3,3},
+  ["Soraka"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Karma"] = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Karthus"] = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Kassadin"] = {2,1,3,3,2,4,1,1,3,1,4,2,1,2,3,4,3,2},
+  ["Katarina"] = {1,2,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3},
+  ["Kayle"] = {3,2,1,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Kennen"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["KhaZix"] = {1,3,2,1,1,4,1,1,3,3,4,3,3,2,2,4,2,2},
+  ["KogMaw"] = {2,3,3,1,3,4,3,2,3,2,4,2,2,1,1,4,1,1},
+  ["Leblanc"] = {2,1,3,2,1,4,2,2,1,3,4,2,1,1,3,4,3,3},
+  ["LeeSin"] = {1,2,3,1,1,4,1,3,1,3,4,2,2,2,2,4,3,3},
+  ["Riven"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Viktor"] = {1,3,3,2,3,4,3,1,3,1,4,1,2,1,2,4,2,2},
+  ["Lissandra"] = {1,3,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Lucian"] = {1,3,2,1,1,4,1,2,1,3,4,3,2,3,2,4,2,3},
+  ["Lulu"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["MasterYi"] = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2},
+  ["Malphite"] = {3,2,1,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Malzahar"] = {3,2,1,3,3,4,1,3,2,3,4,2,2,1,1,4,1,2},
+  ["Maokai"] = {3,1,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Mordekaiser"] = {3,2,3,2,1,4,3,1,3,2,4,2,2,3,1,4,1,1},
+  ["Nami"] = {1,2,3,2,2,4,2,3,2,1,4,3,3,3,1,4,1,1},
+  ["Nasus"] = {1,2,3,1,1,4,3,1,2,1,4,3,3,2,3,4,2,2},
+  ["Nautilus"] = {3,1,2,3,3,4,3,2,3,2,4,2,2,1,1,4,1,1},
+  ["Nidalee"] = {1,3,2,1,1,4,3,1,1,3,4,3,3,2,2,4,2,2},
+  ["Nocturne"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Olaf"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Pantheon"] = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Poppy"] = {1,3,2,1,1,4,2,1,3,1,4,2,2,2,3,4,3,3},
+  ["Quinn"] = {1,3,2,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Rammus"] = {2,1,3,3,2,4,3,3,3,2,4,2,2,1,1,4,1,1},
+  ["RekSai"] = {2,1,3,2,1,4,1,1,2,1,4,3,2,2,3,4,2,3},
+  ["Renekton"] = {2,3,1,1,1,4,1,3,1,3,4,3,2,3,2,4,2,2},
+  ["Rengar"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Rumble"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Ryze"] = {1,2,3,1,1,4,2,1,2,1,4,3,2,3,2,4,3,3},
+  ["Sejuani"] = {2,3,1,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1},
+  ["Shaco"] = {2,3,1,3,3,4,3,2,3,2,4,2,2,1,1,4,1,1},
+  ["Shen"] = {1,3,1,2,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Singed"] = {1,3,1,3,1,4,1,2,1,3,4,3,3,2,2,4,2,2},
+  ["Sion"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Sivir"] = {1,3,2,1,1,4,3,2,1,2,4,1,2,2,3,4,3,3},
+  ["Skarner"] = {1,2,1,3,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Sona"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Swain"] = {2,3,3,1,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Syndra"] = {1,3,1,2,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["TahmKench"] = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Talon"] = {2,3,2,1,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Taric"] = {3,1,2,3,3,4,3,2,3,2,4,2,2,1,1,4,1,1},
+  ["Teemo"] = {3,1,2,1,3,4,1,3,1,3,4,3,1,2,2,4,2,2},
+  ["Thresh"] = {3,1,2,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Tristana"] = {3,1,2,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2},
+  ["Trundle"] = {1,2,1,3,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Tryndamere"] = {3,1,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["TwistedFate"] = {2,1,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Twitch"] = {3,2,3,1,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Udyr"] = {4,2,4,3,4,2,4,2,4,3,2,3,2,3,3,1,1,1},
+  ["Urgot"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Zed"] = {1,2,3,1,1,4,1,3,2,1,4,3,3,2,3,4,2,2},
+  ["Varus"] = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Veigar"] = {1,2,3,2,2,4,1,2,3,1,4,2,1,1,3,4,3,3},
+  ["VelKoz"] = {2,3,1,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Vi"] = {2,3,1,1,1,4,1,2,3,1,4,3,2,3,2,4,2,3},
+  ["Viktor"] = {1,3,3,2,3,4,3,1,3,1,4,1,2,1,2,4,2,2},
+  ["Vladimir"] = {1,2,1,3,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Volibear"] = {3,2,1,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1},
+  ["Warwick"] = {2,1,3,1,2,4,2,1,2,1,4,2,1,3,3,4,3,3},
+  ["MonkeyKing"] = {3,1,2,3,3,4,3,1,3,1,4,1,1,2,2,4,2,2},
+  ["Xerath"] = {1,2,3,1,1,4,2,1,2,1,4,2,2,3,3,4,3,3},
+  ["XinZhao"] = {1,2,3,1,1,4,2,1,2,1,4,2,2,3,3,4,3,3},
+  ["Yasuo"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Yorick"] = {3,2,3,1,3,4,3,2,3,2,4,2,2,1,1,4,1,1},
+  ["Zac"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+  ["Ziggs"] = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},  
+  ["Zyra"] = {3,1,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},  
+  ["Zilean"] = {1,2,1,3,1,4,1,3,1,3,4,3,2,3,2,4,2,2},
+  ["Kindred"] = {1,2,3,1,1,4,1,2,1,2,4,2,2,3,3,4,3,3},
+  ["Illaoi"] = {1,2,3,2,2,4,2,1,2,1,4,1,1,3,3,4,3,3},
+  ["Jhin"] = {1,2,3,1,1,4,1,3,1,3,4,3,3,2,2,4,2,2},
+}
