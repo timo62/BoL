@@ -22,7 +22,7 @@ end
 
 function AutoLvl:Menu()
   Menu = scriptConfig("Hr AutoLeveler", "HrAutoLvl"..myHero.charName)
-  Menu:addParam("On", "Active AutoLeveler", SCRIPT_PARAM_ONOFF, true) 
+  Menu:addParam("On", "Active AutoLeveler", SCRIPT_PARAM_ONOFF, false) 
   Menu:addSubMenu("Setup levels", "Levels")
   Menu.Levels:addSubMenu("Levels", "ll")
   Menu.Levels:addParam("Changer", "Setup level skills", SCRIPT_PARAM_LIST, 1, {"Automatic", "Manual"}) 
