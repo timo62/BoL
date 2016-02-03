@@ -10,7 +10,7 @@ class 'Katarina'
 local AlreadyUlt = false
 function Katarina:__init()
 	Ulting = false
-	self.Version = 0.16
+	self.Version = 0.17
 	self.LastSpell = 0
 	self.Sequence = {1,2,3,1,1,4,2,2,1,2,4,1,2,3,3,4,3,3}
 	self:SendMsg("[Loaded Version: "..self.Version.."]")
@@ -242,7 +242,7 @@ local offsets = {
 [_R] = 0xAA,
 }
 local p = CLoLPacket(0x0153)
-p.vTable = 0xFE9264
+p.vTable = 0xF700D0
 p:EncodeF(myHero.networkID)
 p:Encode1(offsets[id])
 for i = 1, 4 do p:Encode1(0xF7) end
