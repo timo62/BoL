@@ -1,4 +1,4 @@
-local LocalVersion = "0.96" 
+local LocalVersion = "0.97" 
 local AutoUpdate = true
 
   local ChampSupportedList = {
