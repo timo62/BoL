@@ -11,7 +11,7 @@ local selected = nil
 local lastUse,lastUse2 = 0,0
 local WREADY = false
 local SelectedCard = nil
-local LocalVersion = "3.3"
+local LocalVersion = "3.4"
 local autoupdate = true --Change to false if you don't wan't autoupdates
 
 	function OnLoad()
@@ -245,6 +245,7 @@ function Flee()
 				
 	if SelectedCard == CardSel then
 	CastSpell(_W)
+	DelayAction(function() myHero:Attack(Enemys) end,0.25)
 	end		
 end
 end
