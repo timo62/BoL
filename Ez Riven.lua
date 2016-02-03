@@ -1,4 +1,4 @@
-local LocalVersion = "0.9"
+local LocalVersion = "0.91"
 local AutoUpdate = true
 
 if myHero.charName ~= "Riven" then return end
@@ -257,7 +257,7 @@ end
   [_R] = 0xAA,
   }
   local p = CLoLPacket(0x0153)
-  p.vTable = 0xFE9264
+  p.vTable = 0xF700D0
   p:EncodeF(myHero.networkID)
   p:Encode1(offsets[id])
   for i = 1, 4 do p:Encode1(0xF7) end
