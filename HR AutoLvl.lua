@@ -10,10 +10,11 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 class 'AutoLvl'
 function AutoLvl:__init()
-  self.Version = 0.9
+  self.Version = 0.91
   LastSpell = 0
   self:Menu()
   self:CheckUpdate()
+  self:CheckAuto()
   AddTickCallback(function() self:Tick() end)
   self:SendMsg("[Loaded]")
   self:SendMsg("[Turned to OFF. Turn ON in Menu]")
@@ -23,7 +24,12 @@ end
 function AutoLvl:Menu()
   Menu = scriptConfig("Hr AutoLeveler", "HrAutoLvl"..myHero.charName)
   Menu:addParam("On", "Active AutoLeveler", SCRIPT_PARAM_ONOFF, false) 
-  Menu:addParam("Humanizer", "Humanizer in MS", SCRIPT_PARAM_SLICE, 400, 0, 1000, 0)
+  Menu:addParam("Changer", "Method to use AutoLeveler", SCRIPT_PARAM_LIST, 2, {"From Script", "From BoL"}) 
+  Menu:setCallback("Changer", function(value)
+  self:SendMsg("[Press F9 2x to change method of AutoLeveler]")
+  end) 
+  Menu:addParam("info", "Script function working in Patch: ", SCRIPT_PARAM_INFO, "6.2HF")
+  Menu:addParam("info2", "BoL function working in Patch: ", SCRIPT_PARAM_INFO, "6.2HF")
   Menu:addSubMenu("Setup levels", "Levels")
   Menu.Levels:addSubMenu("Levels", "ll")
   Menu.Levels:addParam("Changer", "Setup level skills", SCRIPT_PARAM_LIST, 1, {"Automatic", "Manual"}) 
@@ -65,9 +71,14 @@ ListBlock = {
 }
 
 function AutoLvl:Tick()
-  if Menu.On then
+  if Menu.On and os.clock() - LastSpell >= 2 then
+  LastSpell = os.clock()  
   autoLevelSetSequence(Sequence[myHero.charName])
-end
+  end
+
+  if Menu.Changer == 2 and not Menu.On then
+  autoLevelSetSequence(nil)
+  end
 
   if Menu.Levels.Changer == 1 then
   self:Sequence()
@@ -80,38 +91,39 @@ end
 end
 end
 
-if ListBlock[myHero.charName] then
-_G.GetHeroLeveled = function()
-return player:GetSpellData(SPELL_1).level + player:GetSpellData(SPELL_2).level + player:GetSpellData(SPELL_3).level + player:GetSpellData(SPELL_4).level-1
-end
-end
+  if ListBlock[myHero.charName] then
+  _G.GetHeroLeveled = function()
+  return player:GetSpellData(SPELL_1).level + player:GetSpellData(SPELL_2).level + player:GetSpellData(SPELL_3).level + player:GetSpellData(SPELL_4).level-1
+  end
+  end
 
-_G.LevelSpell = function(id)
-if (string.find(GetGameVersion(), 'Releases/6.2') ~= nil) and Menu.On and os.clock() - LastSpell >= 2 then
-LastSpell = os.clock()  
-DelayAction(function()
-local msg = "<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>"
-local offsets = { 
-[_Q] = 0x41, [1] = 0x41,
-[_W] = 0xFC, [2] = 0xFC,
-[_E] = 0x64, [3] = 0x64,
-[_R] = 0xAA, [4] = 0xAA,
-}
-local p = CLoLPacket(0x0153)
-p.vTable = 0xF700D0
-p:EncodeF(myHero.networkID)
-p:Encode1(offsets[id])
-for i = 1, 4 do p:Encode1(0xF7) end
-for i = 1, 4 do p:Encode1(0xAF) end
-p:Encode1(0x8F)
-for i = 1, 4 do p:Encode1(0xA5) end
-SendPacket(p)
-if id == _Q then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>Q</b></font>") end
-if id == _W then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>W</b></font>") end
-if id == _E then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>E</b></font>") end
-if id == _R then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>R</b></font>") end
-end,Menu.Humanizer/1000)
-end
+  function AutoLvl:CheckAuto()
+  if Menu.Changer == 1 then
+  _G.LevelSpell = function(id)
+  if (string.find(GetGameVersion(), 'Releases/6.2') ~= nil) and Menu.On then
+  local msg = "<font color=\"#DD4050\"><b>[HR AutoLvl] </b></font>"
+  local offsets = { 
+  [_Q] = 0x41,
+  [_W] = 0xFC,
+  [_E] = 0x64,
+  [_R] = 0xAA,
+  }
+  local p = CLoLPacket(0x0153)
+  p.vTable = 0xF700D0
+  p:EncodeF(myHero.networkID)
+  p:Encode1(offsets[id])
+  for i = 1, 4 do p:Encode1(0xF7) end
+  for i = 1, 4 do p:Encode1(0xAF) end
+  p:Encode1(0x8F)
+  for i = 1, 4 do p:Encode1(0xA5) end
+  SendPacket(p)
+  if id == _Q then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>Q</b></font>") end
+  if id == _W then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>W</b></font>") end
+  if id == _E then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>E</b></font>") end
+  if id == _R then PrintChat(msg.."<font color=\"#00D2FF\"><b>Auto Leveler: </b></font>".."<font color=\"#b71c1c\"><b>R</b></font>") end
+  end
+  end
+  end
 end
 
 function AutoLvl:Sequence()
