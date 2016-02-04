@@ -10,7 +10,7 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 
 class 'AutoLvl'
 function AutoLvl:__init()
-  self.Version = 0.91
+  self.Version = 1.0
   LastSpell = 0
   self:Menu()
   self:CheckUpdate()
