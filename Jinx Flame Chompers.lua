@@ -71,8 +71,8 @@ function Jinx:Menu()
 	ts.name = "Jinx"
 	Menu:addTS(ts)
 
-	Menu:addParam("info", "Author: HiranN", SCRIPT_PARAM_INFO, "")
-	Menu:addParam("info2", "Your Region: "..GetGameRegion(), SCRIPT_PARAM_INFO, "")
+	Menu:addParam("info", "Author:", SCRIPT_PARAM_INFO, "HiranN")
+	Menu:addParam("info2", "Your Region:", SCRIPT_PARAM_INFO, GetGameRegion())
 end
 
 function Jinx:SendMsg(msg)
