@@ -12,7 +12,7 @@ class 'Graves'
 function Graves:__init()
 	require 'VPrediction'
 	VP = VPrediction()
-	self.Version = 0.15
+	self.Version = 0.16
 	self.LastSpell = 0
 	self.Bullets = 2
 	self.Sequence = {1,2,3,1,1,4,3,1,3,1,4,3,3,2,2,4,2,2}
@@ -53,7 +53,6 @@ function Graves:Menu()
 	Menu.Combo:addParam("UseQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.Combo:addParam("UseW", "Use W", SCRIPT_PARAM_ONOFF, true) 
 	Menu.Combo:addParam("UseE", "Use E", SCRIPT_PARAM_ONOFF, true) 
-	Menu.Combo:addParam("UseR", "Use R", SCRIPT_PARAM_ONOFF, true)
   	--Combo Menu--
 
   	--Harass Menu--
