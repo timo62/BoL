@@ -283,7 +283,7 @@ function Nasus:CheckUpdates()
     local ServerVersion = tonumber(ServerVersionDATA)
     if ServerVersion then
     if ServerVersion > tonumber(self.Version) then
-    self:SendMsg("Updating to version: "..self.Version..", don't press F9")
+    self:SendMsg("Updating, don't press F9")
     self:DownloadUpdate()
     else
     self:SendMsg("You have the latest version")
