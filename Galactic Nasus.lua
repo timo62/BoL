@@ -18,7 +18,7 @@ function Nasus:__init()
 	self:LoadTableOrbs()
 	self:LoadOrb()
 	self:Callbacks()
-	self:SendMsg("Loaded [Version: "..self.Version.."] ")
+	self:SendMsg("Loaded Version: "..self.Version)
 	self:CheckUpdates()
 end
 
@@ -54,7 +54,7 @@ if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMON
 end
 
 function Nasus:SendMsg(msg)
-	PrintChat("<font color=\"#25A071\"><b>[Galactic Nasus]</b></font> ".."<font color=\"#B8860B\"><b>"..msg..".</b></font>")
+	PrintChat("<font color=\"#E94F42\"><b>[Galactic Nasus]</b></font> ".."<font color=\"#64e3ee\"><b>"..msg..".</b></font>")
 end
 
 function Nasus:LoadTableOrbs()
