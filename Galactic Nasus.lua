@@ -48,7 +48,7 @@ if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMON
 	Menu.KillSteal:addParam("Ignite", "KillSteal with ignite", SCRIPT_PARAM_ONOFF, true) end
  
 	Menu:addSubMenu("Draws", "Draws")	
-	Menu.Draws:addParam("MinionsDmg", "Draw Q Damage on minions", SCRIPT_PARAM_ONOFF, true) 
+	Menu.Draws:addParam("MinionsDmg", "Draw on minions", SCRIPT_PARAM_ONOFF, true) 
 
 	ts.name = "Nasus"
 	Menu:addTS(ts)
