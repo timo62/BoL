@@ -11,7 +11,7 @@ function Nasus:__init()
 	if self.QStacks == "" then self.QStacks = 0 end
 	if GetInGameTimer() <= 75 then self.QStacks = 0 end
 	self:Remove(LIB_PATH.."GalacticNasus.txt", 0, 25)
-	self.Version = 0.2
+	self.Version = 0.3
 	self.OrbWalkers = {}
 	self.LoadedOrb = nil
 	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 1600, DAMAGE_MAGICAL)
@@ -36,6 +36,8 @@ if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMON
 	Menu.Combo:addParam("Q", "Use Q", SCRIPT_PARAM_ONOFF, true)
 	Menu.Combo:addParam("W", "Use W", SCRIPT_PARAM_ONOFF, true) 
 	Menu.Combo:addParam("E", "Use E", SCRIPT_PARAM_ONOFF, true) 
+    Menu.Combo:addParam("ManaW", "% Mana to not use W", SCRIPT_PARAM_SLICE, 25, 0, 100, 0)
+    Menu.Combo:addParam("ManaE", "% Mana to not use E", SCRIPT_PARAM_SLICE, 30, 0, 100, 0)
 
 	Menu.LastHit:addParam("Q", "Use Q", SCRIPT_PARAM_ONOFF, true)
 
@@ -233,9 +235,9 @@ end
 function Nasus:Combo(target)
 	if not ValidTarget(target) then return end
 	if self:Keys() == "Combo" then
-	if Menu.Combo.Q and GetDistance(target) <= 265 then CastSpell(_Q) end
-	if Menu.Combo.W and GetDistance(target) <= 600 then CastSpell(_W, target) end
-	if Menu.Combo.E and GetDistance(target) <= 265 then CastSpell(_E, target.x, target.z) end
+	if Menu.Combo.Q and GetDistance(target) <= 280 then CastSpell(_Q) end
+	if Menu.Combo.W and GetDistance(target) <= 600 and Menu.Combo.ManaW <= 100*myHero.mana/myHero.maxMana then CastSpell(_W, target) end
+	if Menu.Combo.E and GetDistance(target) <= 350 and Menu.Combo.ManaE <= 100*myHero.mana/myHero.maxMana then CastSpell(_E, target.x, target.z) end
 end
 end
 
