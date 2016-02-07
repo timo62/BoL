@@ -11,7 +11,7 @@ function Nasus:__init()
 	if self.QStacks == "" then self.QStacks = 0 end
 	if GetInGameTimer() <= 75 then self.QStacks = 0 end
 	self:Remove(LIB_PATH.."GalacticNasus.txt", 0, 25)
-	self.Version = 0.1
+	self.Version = 0.2
 	self.OrbWalkers = {}
 	self.LoadedOrb = nil
 	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 1600, DAMAGE_MAGICAL)
@@ -46,6 +46,9 @@ if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then Ignite = SUMMON
 	Menu:addSubMenu("KillSteal", "KillSteal")	
 	Menu.KillSteal:addParam("Enable", "Enable KillSteal", SCRIPT_PARAM_ONOFF, true) 
 	Menu.KillSteal:addParam("Ignite", "KillSteal with ignite", SCRIPT_PARAM_ONOFF, true) end
+ 
+	Menu:addSubMenu("Draws", "Draws")	
+	Menu.Draws:addParam("MinionsDmg", "Draw Q Damage on minions", SCRIPT_PARAM_ONOFF, true) 
 
 	ts.name = "Nasus"
 	Menu:addTS(ts)
@@ -194,12 +197,43 @@ function Nasus:Callbacks()
 	self:LaneClear()
 	self:KillSteal()
 	end)
+	AddDrawCallback(function()
+	if Menu.Draws.MinionsDmg then
+  	enemyMinions:update()
+  	jungleMinions:update()
+ 	for i, minion in pairs(enemyMinions.objects) do
+	self:DrawBarPos(minion)
+	end
+	end
+	end)
+end
+
+function Nasus:DrawBarPos(unit)
+	local barPos = GetUnitHPBarPos(unit)
+	local Color = (self:GetQDamage(unit) >= unit.health) and 0xFF009900 or 0xFFFF0000
+	if unit.charName:lower():find("minion") then 
+	self:DrawRectangle(barPos.x - 30, barPos.y-2, 60, 4, Color)
+ 	if self:GetQDamage(unit) >= unit.health then 
+ 	DrawCircle(unit.x, unit.y, unit.z, 50, 0xFF009900)
+ 	end
+	end
+end
+
+function Nasus:DrawRectangle(x, y, width, height, color)  
+  	local A = x - 1
+  	local B = x + width
+  	local C = y - 1
+  	local D = y + height
+  	DrawLine(A, C, B, C,     1, color) --> ---
+  	DrawLine(A, C, A, D,     1, color) --> |
+  	DrawLine(B, C, B, D,	 1, color) -->   |
+  	DrawLine(A, D, B, D,     1, color) --> ___
 end
 
 function Nasus:Combo(target)
 	if not ValidTarget(target) then return end
 	if self:Keys() == "Combo" then
-	if Menu.Combo.Q and GetDistance(target) <= 255 then CastSpell(_Q) end
+	if Menu.Combo.Q and GetDistance(target) <= 265 then CastSpell(_Q) end
 	if Menu.Combo.W and GetDistance(target) <= 600 then CastSpell(_W, target) end
 	if Menu.Combo.E and GetDistance(target) <= 265 then CastSpell(_E, target.x, target.z) end
 end
@@ -210,11 +244,11 @@ function Nasus:LastHit()
   	enemyMinions:update()
   	jungleMinions:update()
  	for i, minion in pairs(enemyMinions.objects) do
-	if Menu.LastHit.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 255 then 
+	if Menu.LastHit.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 275 then 
 	CastSpell(_Q) myHero:Attack(minion) end
 	end
  	for i, minion in pairs(jungleMinions.objects) do
-	if Menu.LastHit.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 255 then 
+	if Menu.LastHit.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 275 then 
 	CastSpell(_Q) myHero:Attack(minion) end
 	end
 	end
@@ -226,19 +260,19 @@ function Nasus:LaneClear()
   	jungleMinions:update()
  	for i, minion in pairs(enemyMinions.objects) do
  	if Menu.LaneClear.QL then 
-	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 255 then 
+	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 275 then 
 	CastSpell(_Q) myHero:Attack(minion) end
 	elseif not Menu.LaneClear.QL then
-	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and GetDistance(minion) <= 255 then 
+	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and GetDistance(minion) <= 275 then 
 	CastSpell(_Q) myHero:Attack(minion) end
 	end
 	end
  	for i, minion in pairs(jungleMinions.objects) do
  	if Menu.LaneClear.QL then 
-	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 255 then 
+	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and self:GetQDamage(minion) >= minion.health and GetDistance(minion) <= 275 then 
 	CastSpell(_Q) myHero:Attack(minion) end
 	elseif not Menu.LaneClear.QL then
-	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and GetDistance(minion) <= 255 then 
+	if Menu.LaneClear.Q and myHero:CanUseSpell(_Q) == READY and GetDistance(minion) <= 275 then 
 	CastSpell(_Q) myHero:Attack(minion) end
 	end
 	end
