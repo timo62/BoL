@@ -1,4 +1,4 @@
-local LocalVersion = "0.91"
+local LocalVersion = "1.0"
 local AutoUpdate = true
 
 if myHero.charName ~= "Riven" then return end
@@ -6,6 +6,7 @@ local LastQ = 0
 local Wrange = 260
 local Rrange2 = 900
 local RCasted = false
+local WCasted = false
 local LastSpell = 0
 local Loaded = false
 local SAC = false
@@ -49,45 +50,8 @@ function Update()
 end
 
 function OnLoad()
-    Menu = scriptConfig("Ez Riven", "EZRiven")
-
-    Menu:addSubMenu("Combo", "c")
-    Menu.c:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-    Menu.c:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
-    Menu.c:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
-    Menu.c:addParam("useR", "Use R", SCRIPT_PARAM_ONOFF, true)
-    Menu.c:addParam("combos", "Combo Mode", SCRIPT_PARAM_LIST, 1, {"Basic", "E-Q-Q-W-Q"})
-
-    Menu:addSubMenu("LaneClear/JungleClear", "jc")
-    Menu.jc:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
-    Menu.jc:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
-    Menu.jc:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
-
-    Menu:addSubMenu("Auto W", "autoW")
-      Menu.autoW:addParam("W", "Use Auto W",SCRIPT_PARAM_ONOFF, true)
-      Menu.autoW:addParam("S", "x Enemies for Auto W", SCRIPT_PARAM_SLICE, 2, 0, 5, 0)
-
-      Menu:addSubMenu("Items Settings", "items")
-      Menu.items:addParam("Use", "Use Items", SCRIPT_PARAM_ONOFF, true) 
-    Menu.items:addParam("UseBRK", "Use BRK", SCRIPT_PARAM_ONOFF, true) 
-    Menu.items:addParam("UseHydra", "Use Hydra", SCRIPT_PARAM_ONOFF, true) 
-    Menu.items:addParam("UseYoumu", "Use Youmuu", SCRIPT_PARAM_ONOFF, true) 
-    Menu.items:addParam("UseQSS", "Use QSS", SCRIPT_PARAM_ONOFF, true)
-    Menu.items:addParam("UseZhonya", "Use Zhonya", SCRIPT_PARAM_ONOFF, true)
-      Menu.items:addParam("ZhonyaAmount", "Zhonya %", SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
-
-      Menu:addSubMenu("Draws Settings", "draws")
-      Menu.draws:addParam("CDTracker", "Use CD Tracker", SCRIPT_PARAM_ONOFF, true) 
-
-      Menu:addSubMenu("Emote Cancel", "emoteCancel")
-      Menu.emoteCancel:addParam("emoteC", "Choose Emote", SCRIPT_PARAM_LIST, 1, {"Dance", "Taunt", "Laugh", "Joke"})
-
-      if VIP_USER then
-    Menu:addSubMenu("Auto Leveler", "AutoLvL")
-      Menu.AutoLvL:addParam("On", "Use Auto Leveler", SCRIPT_PARAM_ONOFF, false)
-      end
-    Menu:addParam("fleeKey", "Flee Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("T"))
-
+    Menu()
+    SkinLoad()
     ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 900, DAMAGE_PHYSICAL)
     ts.name = "Riven"
     Menu:addTS(ts)
@@ -224,6 +188,13 @@ end
 Sequence = {1,3,2,1,1,4,1,3,1,3,4,3,3,2,2,4,2,}
 
 function OnTick()
+
+    --[[if not Wready then
+      DelayAction(function()
+        WCasted = false
+      end, 7)
+    end]]
+
   Checks()
   autoW()
 
@@ -272,6 +243,73 @@ end
   end
   end
 
+  function Menu()
+    Menu = scriptConfig("Ez Riven", "EZRiven")
+
+    Menu:addSubMenu("Combo", "c")
+      Menu.c:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+      Menu.c:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
+      Menu.c:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
+      Menu.c:addParam("useR", "Use R", SCRIPT_PARAM_ONOFF, true)
+      Menu.c:addParam("combos", "Combo Mode", SCRIPT_PARAM_LIST, 1, {"Basic", "E-Q-Q-W-Q", "Burst"})
+
+    Menu:addSubMenu("LaneClear/JungleClear", "jc")
+      Menu.jc:addParam("useQ", "Use Q", SCRIPT_PARAM_ONOFF, true)
+      Menu.jc:addParam("useW", "Use W", SCRIPT_PARAM_ONOFF, true)
+      Menu.jc:addParam("useE", "Use E", SCRIPT_PARAM_ONOFF, true)
+
+    Menu:addSubMenu("Auto W", "autoW")
+      Menu.autoW:addParam("W", "Use Auto W",SCRIPT_PARAM_ONOFF, true)
+      Menu.autoW:addParam("S", "x Enemies for Auto W", SCRIPT_PARAM_SLICE, 2, 0, 5, 0)
+
+    Menu:addSubMenu("Items Settings", "items")
+      Menu.items:addParam("Use", "Use Items", SCRIPT_PARAM_ONOFF, true) 
+      Menu.items:addParam("UseBRK", "Use BRK", SCRIPT_PARAM_ONOFF, true) 
+      Menu.items:addParam("UseHydra", "Use Hydra", SCRIPT_PARAM_ONOFF, true) 
+      Menu.items:addParam("UseYoumu", "Use Youmuu", SCRIPT_PARAM_ONOFF, true) 
+      Menu.items:addParam("UseQSS", "Use QSS", SCRIPT_PARAM_ONOFF, true)
+      Menu.items:addParam("UseZhonya", "Use Zhonya", SCRIPT_PARAM_ONOFF, true)
+      Menu.items:addParam("ZhonyaAmount", "Zhonya %", SCRIPT_PARAM_SLICE, 15, 0, 100, 0)
+
+    Menu:addSubMenu("Draws Settings", "draws")
+      Menu.draws:addParam("CDTracker", "Use CD Tracker", SCRIPT_PARAM_ONOFF, true) 
+
+    Menu:addSubMenu("Emote Cancel", "emoteCancel")
+      Menu.emoteCancel:addParam("emoteC", "Choose Emote", SCRIPT_PARAM_LIST, 1, {"Dance", "Taunt", "Laugh", "Joke"})
+
+    Menu:addSubMenu("Skin Changer", "skin")
+
+      if VIP_USER then
+    Menu:addSubMenu("Auto Leveler", "AutoLvL")
+      Menu.AutoLvL:addParam("On", "Use Auto Leveler", SCRIPT_PARAM_ONOFF, false)
+      end
+    Menu:addParam("fleeKey", "Flee Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("T"))
+  end
+
+  -- Credits PvPSuite
+function SkinLoad()
+    theMenu = scriptConfig(myHero.charName .. ' Skin Changer', myHero.charName:lower() .. 'SkinChanger')
+    theMenu:addParam('changeSkin', 'Change Skin', SCRIPT_PARAM_ONOFF, false);
+    theMenu:setCallback('changeSkin', function(nV)
+        if (nV) then
+            SetSkin(myHero, theMenu.skinID)
+        else
+            SetSkin(myHero, -1)
+        end
+    end)
+    theMenu:addParam('skinID', 'Skin', SCRIPT_PARAM_LIST, 1, {"Redeemed", "Crimson Elite", "Battle Bunny", "Championship", "Dragonblade", "Arcade", "Classic"})
+    theMenu:setCallback('skinID', function(nV)
+        if (theMenu.changeSkin) then
+            SetSkin(myHero, nV)
+        end
+    end)
+    
+    if (theMenu.changeSkin) then
+        SetSkin(myHero, theMenu.skinID)
+    end
+end
+-- Credits PvPSuite
+
 function LaneJung()
     enemyMinions:update()
     jungleMinions:update()
@@ -297,12 +335,13 @@ function LaneJung()
 function Combo()
   if Menu.c.combos == 1 then Combo1() end
   if Menu.c.combos == 2 then Combo2() end
+  if Menu.c.combos == 3 then Combo3() end
 end
 
 
 function Combo1()
     if Target ~= nil then
-    Checks()
+      Checks()
 
     if Menu.c.useE and Menu.c.useR then
       CastSpell(_E,mousePos.x, mousePos.z)
@@ -330,34 +369,68 @@ end
 
 function Combo2()
   if Target ~= nil then
-  Checks()
+    Checks()
 
-  if Menu.c.useQ then 
-    CastQAA(Target) 
-  end
+    if Menu.c.useQ then 
+      CastQAA(Target) 
+    end
 
-  if Menu.c.useW then
-    if Wready then
-    if QCount >= 2 and GetDistance(Target) <= 255 then
-    CastSpell(_W)
+    if Menu.c.useW then
+      if Wready then
+        if QCount >= 2 then
+          CastW2(Target)
+        end
+      end
+    end
+
+    if Menu.c.useE and Menu.c.useR then
+      CastE(Target)
+      CastSpell(_R)
+    end
+
+    if Menu.c.useR then
+      CastR(Target)
     end
   end
-  end
-
-  if Menu.c.useE then
-    CastE(Target) 
-  end
-
-  if Menu.c.useR then
-    CastR(Target)
-  end
 end
+
+--Burst Combo Ghostblade-E-R-(F)-W-AA-Hydra-Q-AA-Q-AA-R-Q3
+function Combo3()
+ if Target ~= nil then
+    Checks()
+    if Menu.c.useE and Menu.c.useR and RCasted == false then
+      CastSpell(_E,mousePos.x, mousePos.z)
+      CastSpell(_R)
+    end
+
+    if Menu.c.useW then 
+      CastW2(Target) 
+    end
+    -- AA zwischen W & Q1
+    -- + Hydra Cast
+    -- x2
+    if Menu.c.useQ and QCount == 0 then 
+      CastQAA(Target)
+    end
+
+    if Menu.c.useQ and QCount == 1 then 
+      CastQAA(Target)
+    end
+
+    if Menu.c.useR then 
+      CastSpell(_R, Target.x, Target.z)
+    end
+
+    if Menu.c.useQ and QCount == 2 then 
+      CastQAA(Target)
+    end
+  end
 end
 
 function autoW()
   Checks()
     if Menu.autoW.W and CountEnemyHeroInRange(Wrange) >= Menu.autoW.S then
-      CastW(Target)
+      CastSpell(_W)
     end
   end
 
@@ -381,6 +454,12 @@ function CastW(target)
     end
 end
 
+function CastW2(target)
+    if ValidTarget(target) and GetDistance(target) <= 255 and myHero:CanUseSpell(_W) == READY then
+    CastSpell(_W)
+    end
+end
+
 function CastE(target)
     if ValidTarget(target) and myHero:GetSpellData(_Q).currentCd > 0.5 then
     CastSpell(_E, target.x, target.z)
@@ -393,7 +472,7 @@ function CastR(target)
     if UltOn() then
     if rDmg(target) >= target.health or RTIME-os.clock() <= -11 then
     if GetDistance(target) <= 1000 and myHero:CanUseSpell(_R) == READY then 
-    CastSpell(_R, target.x, target.z) 
+    CastSpell(_R, Target.x, Target.z) 
     end
     end
     end
@@ -512,6 +591,17 @@ function OnRemoveBuff(unit, buff)
   end
 end
 
+UseEList = {
+  ["RocketGrabMissile"] = true, ["AhriSeduce"] = true, ["BandageToss"] = true, ["FlashFrostSpell"] = true, ["InfernalGuardian"] = true, ["EnchantedCrystalArrow"] = true,
+  ["AzirR"] = true, ["BrandBlaze"] = true, ["BraumR"] = true, ["CassiopeiaPetrifyingGaze"] = true, ["DravenRCast"] = true, ["EliseHumanE"] = true,
+  ["EzrealTrueshotBarrage"] = true, ["FizzMarinerDoom"] = true, ["GragasR"] = true, ["GragasE"] = true, ["JinxR"] = true, ["LeblancSoulShackle"] = true,
+    ["LeonaSolarFlare"] = true, ["LuxMaliceCannon"] = true, ["LuxLightBinding"] = true, ["DarkBindingMissile"] = true, ["NamiQ"] = true, ["NautilusAnchorDrag"] = true,
+  ["OrianaDetonateCommand"] = true, ["rivenizunablade"] = true, ["RumbleCarpetBomb"] = true, ["SejuaniGlacialPrisonCast"] = true, ["ShenShadowDash"] = true, ["SonaCrescendo"] = true,
+  ["SwainShadowGrasp"] = true, ["ThreshQ"] = true, ["ThreshE"] = true, ["VarusR"] = true, ["VelKozE"] = true, ["VelKozR"] = true,
+    ["ZiggsR"] = true, ["ZyraGraspingRoots"] = true, ["ZyraBrambleZone"] = true,
+}
+
+
 function OrbAttack(enemy)
  
   if Mode == "A" then
@@ -541,9 +631,20 @@ function OnProcessAttack(unit, spell)
 end
 
 function OnProcessSpell(unit, spell)
-   if unit == nil or unit.networkID ~= myHero.networkID then
-    return
+   if unit == nil or unit.networkID ~= myHero.networkID then return end
+
+    if unit.team ~= myHero.team and spell and UseEList[spell.name] then
+      if GetDistance(spell.endPos) <= 250 then
+        CastSpell(_E, spell.endPos.x+spell.startPos.x, spell.endPos.z+spell.startPos.x)
+      end
+    end
+
+  if spell.name == "RivenMartyr" then
+    if Wready then
+      WCasted = true
+    end
   end
+
   
   if spell.name == "RivenTriCleave" then
     LastQ = os.clock()-GetLatency()/2000
@@ -569,16 +670,16 @@ function OnAnimation(unit, animation)
   end
 
   if unit.isMe then
-  if animation == "Spell1a" or animation == "Spell1b" then
-    DelayAction(function() Emote() end, 0.3-GetLatency()/1000)
-    ResetAAs()
-    LastQ = GetTickCount()
-  elseif animation == "Spell1c" then
-    DelayAction(function() Emote() end, 0.4-GetLatency()/1000)
-    ResetAAs()
-    LastQ = GetTickCount()
-end
-end
+    if animation == "Spell1a" or animation == "Spell1b" then
+      DelayAction(function() Emote() end, 0.3-GetLatency()/1000)
+      ResetAAs()
+      LastQ = GetTickCount()
+    elseif animation == "Spell1c" then
+      DelayAction(function() Emote() end, 0.4-GetLatency()/1000)
+      ResetAAs()
+      LastQ = GetTickCount()
+    end
+  end
 end
 
 function Emote()
